@@ -2,46 +2,47 @@ module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        // Surface elevation — whisper-quiet shifts
-        canvas:      '#f8f9fb',
+        // Surface elevation — driven by CSS variables for theming
+        canvas:      'var(--color-canvas)',
         surface: {
-          DEFAULT: '#ffffff',
-          100:     '#ffffff',
-          200:     '#f4f5f7',
-          300:     '#edeef1',
+          DEFAULT: 'var(--color-surface)',
+          100:     'var(--color-surface-100)',
+          200:     'var(--color-surface-200)',
+          300:     'var(--color-surface-300)',
         },
         // Foreground — 4-level text hierarchy
         ink: {
-          DEFAULT: '#1a1d23',
-          secondary: '#4b5160',
-          tertiary:  '#7c8294',
-          muted:     '#a9aeb8',
+          DEFAULT:   'var(--color-ink)',
+          secondary: 'var(--color-ink-secondary)',
+          tertiary:  'var(--color-ink-tertiary)',
+          muted:     'var(--color-ink-muted)',
         },
         // Borders — subtle progression
         edge: {
-          DEFAULT: 'rgba(0,0,0,0.08)',
-          subtle:  'rgba(0,0,0,0.05)',
-          strong:  'rgba(0,0,0,0.14)',
+          DEFAULT: 'var(--color-edge)',
+          subtle:  'var(--color-edge-subtle)',
+          strong:  'var(--color-edge-strong)',
         },
-        // Brand — Ibn Khaldoun university blue
+        // Brand — driven by accent theme
         brand: {
-          DEFAULT: '#1d4ed8',
-          light:   '#dbeafe',
-          dark:    '#1e3a8a',
-          hover:   '#1e40af',
+          DEFAULT: 'var(--color-brand)',
+          light:   'var(--color-brand-light)',
+          dark:    'var(--color-brand-dark)',
+          hover:   'var(--color-brand-hover)',
         },
         // Semantic
-        success:   '#16a34a',
-        warning:   '#ca8a04',
-        danger:    '#dc2626',
+        success:   'var(--color-success)',
+        warning:   'var(--color-warning)',
+        danger:    'var(--color-danger)',
         // Control
         control: {
-          bg:     '#f1f2f5',
-          border: '#d1d5db',
-          focus:  '#93bbfd',
+          bg:     'var(--color-control-bg)',
+          border: 'var(--color-control-border)',
+          focus:  'var(--color-control-focus)',
         },
       },
       fontFamily: {
@@ -54,8 +55,8 @@ module.exports = {
         xl:  '16px',
       },
       boxShadow: {
-        soft: '0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)',
-        card: '0 2px 8px rgba(0,0,0,0.06), 0 0 0 0.5px rgba(0,0,0,0.04)',
+        soft: 'var(--shadow-soft)',
+        card: 'var(--shadow-card)',
       },
       spacing: {
         '18': '4.5rem',
