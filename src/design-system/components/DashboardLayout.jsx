@@ -13,6 +13,7 @@ import React, { useState } from 'react';
 import Sidebar from './navigation/Sidebar';
 import Topbar from './navigation/Topbar';
 import TeacherDashboard from '../../pages/TeacherDashboard';
+import StudentDashboard from '../../pages/StudentDashboard';
 
 /* ── 11 Modules ─────────────────────────────────────────────── */
 const ALL_MODULES = [
@@ -60,12 +61,7 @@ const DashboardLayout = ({ children }) => {
 
         {/* Scrollable content area */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">
-          {children || (role === 'teacher' ? <TeacherDashboard /> : (
-            <div className="p-8">
-              <h2 className="text-xl font-bold text-ink tracking-tight mb-2">Welcome, Student</h2>
-              <p className="text-sm text-ink-tertiary">Your student dashboard is coming soon.</p>
-            </div>
-          ))}
+          {children || (role === 'teacher' ? <TeacherDashboard /> : <StudentDashboard />)}
         </main>
       </div>
     </div>
