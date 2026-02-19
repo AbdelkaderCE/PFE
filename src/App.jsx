@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import LoginPage from './pages/LoginPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 
-function App() {
+export default function App() {
   const [page, setPage] = useState('login');
 
   return (
@@ -12,5 +12,3 @@ function App() {
     </>
   );
 }
-
-export default App;
