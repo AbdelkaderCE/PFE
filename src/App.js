@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
-import LoginPage from './pages/LoginPage';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
+
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import DevNav from './DevNav';
+import { DEV_PAGES } from './pages/_devPages';
 
 function App() {
-  const [page, setPage] = useState('login');
-
   return (
-    <>
-      {page === 'login' && <LoginPage onForgotPassword={() => setPage('forgot')} />}
-      {page === 'forgot' && <ForgotPasswordPage onBackToLogin={() => setPage('login')} />}
-    </>
+    <BrowserRouter>
+      <DevNav />
+      <Routes>
+        {DEV_PAGES.map(({ path, element }) => (
+          <Route key={path} path={path} element={element} />
+        ))}
+      </Routes>
+    </BrowserRouter>
   );
 }
 
