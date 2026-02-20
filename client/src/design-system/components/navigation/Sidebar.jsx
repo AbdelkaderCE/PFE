@@ -9,7 +9,7 @@
   Spacing: 4px base. 12px item padding. 4px gap between items.
 */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 
 /* ── SVG Icon Components (stroke 1.5, 20×20) ──────────────── */
 const icons = {
@@ -94,6 +94,16 @@ const SECTIONS = {
 
 export default function Sidebar({ modules = [], open = false, onClose, onNavigate, activeKey }) {
   let lastSection = null;
+
+  /* Lock body scroll when mobile sidebar is open */
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
 
   return (
     <>

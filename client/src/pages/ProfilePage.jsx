@@ -132,9 +132,9 @@ export default function ProfilePage() {
       </div>
 
       {/* ── Identity Card ──────────────────────────────────── */}
-      <div className="bg-surface rounded-lg border border-edge shadow-card overflow-hidden">
+      <div className="relative bg-surface rounded-lg border border-edge shadow-card">
         {/* Brand banner */}
-        <div className="h-24 bg-gradient-to-r from-brand to-brand-hover relative">
+        <div className="h-24 bg-gradient-to-r from-brand to-brand-hover relative rounded-t-lg overflow-hidden">
           <div className="absolute inset-0 opacity-10">
             <svg className="w-full h-full" viewBox="0 0 400 96" fill="none" preserveAspectRatio="xMidYMid slice">
               <circle cx="350" cy="20" r="80" fill="white" opacity="0.1" />
@@ -145,22 +145,23 @@ export default function ProfilePage() {
 
         <div className="px-6 pb-6">
           {/* Avatar — overlaps the banner */}
-          <div className="-mt-10 flex items-end gap-5">
+          <div className="-mt-10 relative z-10">
             <div className="shrink-0 w-20 h-20 rounded-full bg-brand-light border-4 border-surface flex items-center justify-center shadow-card">
               <span className="text-2xl font-bold text-brand">{initials}</span>
             </div>
-            <div className="pb-1 min-w-0">
-              <h2 className="text-lg font-bold text-ink tracking-tight">
-                {profile.firstName} {profile.lastName}
-              </h2>
-              <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                <span className="px-2 py-0.5 text-[11px] font-medium rounded bg-blue-50 text-brand border border-blue-200">
-                  {profile.role}
-                </span>
-                <span className="text-sm text-ink-secondary">{profile.department}</span>
-                <span className="text-ink-muted">·</span>
-                <span className="text-sm text-ink-tertiary">{profile.faculty}</span>
-              </div>
+          </div>
+          {/* Name & role — below the avatar, clear of the banner */}
+          <div className="mt-3 min-w-0">
+            <h2 className="text-lg font-bold text-ink tracking-tight">
+              {profile.firstName} {profile.lastName}
+            </h2>
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
+              <span className="px-2 py-0.5 text-[11px] font-medium rounded bg-blue-50 text-brand border border-blue-200">
+                {profile.role}
+              </span>
+              <span className="text-sm text-ink-secondary">{profile.department}</span>
+              <span className="text-ink-muted">·</span>
+              <span className="text-sm text-ink-tertiary">{profile.faculty}</span>
             </div>
           </div>
 

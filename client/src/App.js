@@ -9,12 +9,14 @@ function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
-        <DevNav />
-        <Routes>
-          {DEV_PAGES.map(({ path, element }) => (
-            <Route key={path} path={path} element={element} />
-          ))}
-        </Routes>
+        <div className="flex flex-col h-full overflow-hidden">
+          <DevNav />
+          <Routes>
+            {DEV_PAGES.map(({ path, element }) => (
+              <Route key={path} path={path} element={element} />
+            ))}
+          </Routes>
+        </div>
       </BrowserRouter>
     </ThemeProvider>
   );

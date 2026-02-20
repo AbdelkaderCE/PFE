@@ -40,7 +40,7 @@ const DashboardLayout = ({ children }) => {
   const visibleModules = ALL_MODULES.filter((m) => m.roles.includes(role));
 
   return (
-    <div className="flex h-screen w-screen bg-canvas">
+    <div className="flex flex-1 w-full min-h-0 bg-canvas overflow-hidden">
       {/* Sidebar — same canvas bg, separated by border only */}
       <Sidebar
         modules={visibleModules}
@@ -52,7 +52,7 @@ const DashboardLayout = ({ children }) => {
       />
 
       {/* Right column: topbar + content */}
-      <div className="flex flex-col flex-1 min-w-0">
+      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <Topbar
           role={role}
           onRoleChange={setRole}

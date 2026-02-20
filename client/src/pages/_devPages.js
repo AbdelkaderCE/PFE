@@ -16,7 +16,7 @@ export const DEV_PAGES = [
   { path: '/actualites', label: 'Actualités', element: <DashboardLayout><ActualitesPage /></DashboardLayout> },
   { path: '/settings', label: 'Settings', element: <DashboardLayout><SettingsPage /></DashboardLayout> },
   { path: '/profile', label: 'Profile', element: <DashboardLayout><ProfilePage /></DashboardLayout> },
-  { path: '/login', label: 'Login', element: <LoginPage /> },
-  { path: '/forgot-password', label: 'Forgot Password', element: <ForgotPasswordPage /> },
-  { path: '/theme', label: 'Theme Preview', element: <ThemePreviewPage /> },
+  { path: '/login', label: 'Login', element: <div className="flex-1 overflow-y-auto"><LoginPage /></div> },
+  { path: '/forgot-password', label: 'Forgot Password', element: <div className="flex-1 overflow-y-auto"><ForgotPasswordPage /></div> },
+  { path: '/theme', label: 'Theme Preview', element: <div className="flex-1 overflow-y-auto"><ThemePreviewPage /></div> },
 ];
