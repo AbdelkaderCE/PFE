@@ -18,6 +18,7 @@ import StudentDashboard from '../../pages/StudentDashboard';
 /* ── 11 Modules ─────────────────────────────────────────────── */
 const ALL_MODULES = [
   { name: 'Dashboard',     path: '/dashboard',     roles: ['student', 'teacher'] },
+  { name: 'Actualités',    path: '/actualites',    roles: ['student', 'teacher'] },
   { name: 'Projects',      path: '/projects',      roles: ['student', 'teacher'] },
   { name: 'Grades',        path: '/grades',        roles: ['student', 'teacher'] },
   { name: 'AI Assistant',  path: '/ai',            roles: ['student', 'teacher'] },
@@ -56,6 +57,7 @@ const DashboardLayout = ({ children }) => {
           role={role}
           onRoleChange={setRole}
           onHamburger={() => setSidebarOpen(true)}
+          onNavigate={(path) => { setActiveKey(path); setSidebarOpen(false); }}
           activeKey={activeKey}
         />
 

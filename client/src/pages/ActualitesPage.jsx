@@ -1,0 +1,522 @@
+/*
+  Intent: University news board — the digital equivalent of the paper announcements
+          pinned behind glass on the corridor wall. Students glance between lectures,
+          teachers check for administrative updates over coffee.
+          Three concerns surface:
+          1. What's happening right now? (pinned/featured announcements — urgent, unmissable)
+          2. What's new this week? (chronological feed — scannable, filterable by category)
+          3. What events are coming up? (upcoming events sidebar — calendar-adjacent)
+  Palette: canvas base, surface cards. Brand for institutional, semantic for urgency.
+  Depth: shadow-card + border-edge on all cards. No stacked shadows.
+  Surfaces: canvas (page bg via layout), surface (card), surface-200 (badge wells, filter pills).
+  Typography: Inter. Section headings = text-base font-semibold. Body = text-sm.
+  Spacing: 4px base. Cards p-5/p-6. Grid gap-4 on stats, gap-6 between sections.
+*/
+
+import React, { useState } from 'react';
+
+/* ── Mock Data ──────────────────────────────────────────────── */
+
+const CATEGORIES = [
+  { key: 'all',           label: 'All' },
+  { key: 'academic',      label: 'Academic' },
+  { key: 'administrative', label: 'Administrative' },
+  { key: 'events',        label: 'Events' },
+  { key: 'research',      label: 'Research' },
+  { key: 'student-life',  label: 'Student Life' },
+];
+
+const CATEGORY_STYLES = {
+  academic:       'bg-blue-50 text-brand border border-blue-200',
+  administrative: 'bg-amber-50 text-warning border border-amber-200',
+  events:         'bg-green-50 text-success border border-green-200',
+  research:       'bg-violet-50 text-violet-700 border border-violet-200',
+  'student-life': 'bg-rose-50 text-rose-700 border border-rose-200',
+};
+
+const PINNED_ANNOUNCEMENTS = [
+  {
+    id: 'p1',
+    title: 'Examens de rattrapage — Calendrier S1 2025/2026',
+    excerpt: 'Le calendrier des examens de rattrapage du premier semestre est disponible. Les étudiants sont priés de consulter les dates et les salles affectées à chaque module.',
+    category: 'academic',
+    date: '2026-02-19',
+    author: 'Vice-Doyen Pédagogique',
+    pinned: true,
+    urgent: true,
+  },
+  {
+    id: 'p2',
+    title: 'Inscription aux PFE — Date limite prolongée',
+    excerpt: 'La date limite pour le dépôt des fiches de vœux PFE est prolongée au 28 février 2026. Les étudiants de M2 doivent soumettre leur fiche signée au secrétariat du département.',
+    category: 'academic',
+    date: '2026-02-18',
+    author: 'Chef de Département Informatique',
+    pinned: true,
+    urgent: false,
+  },
+];
+
+const NEWS_FEED = [
+  {
+    id: 1,
+    title: 'Journée portes ouvertes — Faculté des Sciences',
+    excerpt: 'La faculté organise une journée portes ouvertes le 5 mars 2026 destinée aux lycéens et à leurs parents. Les enseignants et étudiants volontaires sont invités à participer à l\'encadrement.',
+    category: 'events',
+    date: '2026-02-19',
+    author: 'Service Communication',
+    comments: 12,
+    views: 234,
+  },
+  {
+    id: 2,
+    title: 'Mise à jour du règlement intérieur — Absences et justificatifs',
+    excerpt: 'Le conseil de faculté a approuvé les nouvelles dispositions concernant la gestion des absences. Les justificatifs doivent désormais être déposés dans un délai de 48h.',
+    category: 'administrative',
+    date: '2026-02-18',
+    author: 'Secrétariat Général',
+    comments: 8,
+    views: 456,
+  },
+  {
+    id: 3,
+    title: 'Appel à candidatures — Bourse de recherche DGRSDT',
+    excerpt: 'La Direction Générale de la Recherche Scientifique lance un appel pour les bourses de recherche 2026. Les doctorants et enseignants-chercheurs sont éligibles. Dossiers à déposer avant le 15 mars.',
+    category: 'research',
+    date: '2026-02-17',
+    author: 'Vice-Rectorat Recherche',
+    comments: 5,
+    views: 189,
+  },
+  {
+    id: 4,
+    title: 'Club Scientifique — Hackathon Intelligence Artificielle',
+    excerpt: 'Le club scientifique "ByteForge" organise un hackathon de 48h sur le thème de l\'IA appliquée à l\'éducation. Inscription ouverte aux étudiants de L3 et Master.',
+    category: 'student-life',
+    date: '2026-02-16',
+    author: 'Club ByteForge',
+    comments: 23,
+    views: 567,
+  },
+  {
+    id: 5,
+    title: 'Planning des soutenances de Master — Session février',
+    excerpt: 'Le planning des soutenances de mémoire de Master pour la session de février 2026 est affiché. Les étudiants concernés doivent confirmer leur présence auprès du secrétariat.',
+    category: 'academic',
+    date: '2026-02-15',
+    author: 'Chef de Département Informatique',
+    comments: 15,
+    views: 892,
+  },
+  {
+    id: 6,
+    title: 'Maintenance programmée — Plateforme Moodle',
+    excerpt: 'Une maintenance technique est prévue le samedi 22 février de 22h à 6h. La plateforme Moodle sera temporairement inaccessible pendant cette période.',
+    category: 'administrative',
+    date: '2026-02-14',
+    author: 'Direction des Systèmes d\'Information',
+    comments: 3,
+    views: 312,
+  },
+  {
+    id: 7,
+    title: 'Conférence — Cybersécurité et Systèmes Distribués',
+    excerpt: 'Le Pr. Ahmed Benali de l\'Université de Tlemcen donnera une conférence sur les défis de la cybersécurité dans les systèmes distribués. Amphi A, 10h-12h.',
+    category: 'research',
+    date: '2026-02-13',
+    author: 'Laboratoire LRIA',
+    comments: 7,
+    views: 145,
+  },
+];
+
+const UPCOMING_EVENTS = [
+  { id: 'e1', title: 'Hackathon IA — Club ByteForge',           date: '2026-02-22', time: '09:00', location: 'Salle TP4' },
+  { id: 'e2', title: 'Conférence Cybersécurité',                date: '2026-02-25', time: '10:00', location: 'Amphi A' },
+  { id: 'e3', title: 'Journée portes ouvertes',                  date: '2026-03-05', time: '08:30', location: 'Hall Faculté' },
+  { id: 'e4', title: 'Date limite dépôt PFE',                    date: '2026-02-28', time: '16:00', location: 'Secrétariat' },
+  { id: 'e5', title: 'Conseil de département',                   date: '2026-03-10', time: '14:00', location: 'Salle Réunion' },
+];
+
+const QUICK_STATS = [
+  {
+    label: 'Announcements',
+    value: String(NEWS_FEED.length + PINNED_ANNOUNCEMENTS.length),
+    sub: 'This month',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46" />
+      </svg>
+    ),
+    color: 'brand',
+  },
+  {
+    label: 'Upcoming Events',
+    value: String(UPCOMING_EVENTS.length),
+    sub: 'Next 30 days',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+      </svg>
+    ),
+    color: 'brand',
+  },
+  {
+    label: 'Pinned',
+    value: String(PINNED_ANNOUNCEMENTS.length),
+    sub: 'Important notices',
+    icon: (
+      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+      </svg>
+    ),
+    color: 'warning',
+  },
+];
+
+/* ── Helpers ────────────────────────────────────────────────── */
+
+const STAT_COLORS = {
+  brand:   { bg: 'bg-blue-50',  text: 'text-brand',  icon: 'text-brand' },
+  warning: { bg: 'bg-amber-50', text: 'text-warning', icon: 'text-warning' },
+};
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+}
+
+function formatDateFull(dateStr) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
+}
+
+function daysUntil(dateStr) {
+  const now = new Date('2026-02-20');
+  const target = new Date(dateStr);
+  const diff = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+  if (diff === 0) return 'Today';
+  if (diff === 1) return 'Tomorrow';
+  if (diff < 0) return `${Math.abs(diff)}d ago`;
+  return `In ${diff} days`;
+}
+
+function daysUntilStyle(dateStr) {
+  const now = new Date('2026-02-20');
+  const target = new Date(dateStr);
+  const diff = Math.ceil((target - now) / (1000 * 60 * 60 * 24));
+  if (diff <= 2) return 'text-danger';
+  if (diff <= 7) return 'text-warning';
+  return 'text-ink-tertiary';
+}
+
+/* ── Component ──────────────────────────────────────────────── */
+export default function ActualitesPage() {
+  const [activeFilter, setActiveFilter] = useState('all');
+
+  const filteredNews = activeFilter === 'all'
+    ? NEWS_FEED
+    : NEWS_FEED.filter((n) => n.category === activeFilter);
+
+  return (
+    <div className="space-y-6">
+
+      {/* ── Page Header ────────────────────────────────────── */}
+      <div>
+        <h1 className="text-xl font-bold text-ink tracking-tight">Actualités</h1>
+        <p className="mt-1 text-sm text-ink-tertiary">
+          News, announcements, and upcoming events — {new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}.
+        </p>
+      </div>
+
+      {/* ── Quick Stats ────────────────────────────────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {QUICK_STATS.map((stat) => {
+          const c = STAT_COLORS[stat.color];
+          return (
+            <div
+              key={stat.label}
+              className="bg-surface rounded-lg border border-edge shadow-card p-5 flex items-start gap-4"
+            >
+              <div className={`shrink-0 w-10 h-10 rounded-lg ${c.bg} flex items-center justify-center ${c.icon}`}>
+                {stat.icon}
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-ink-secondary">{stat.label}</p>
+                <p className={`text-2xl font-bold tracking-tight ${c.text} mt-0.5`}>{stat.value}</p>
+                <p className="text-xs text-ink-muted mt-1">{stat.sub}</p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ── Pinned Announcements ───────────────────────────── */}
+      <div className="space-y-3">
+        {PINNED_ANNOUNCEMENTS.map((item) => (
+          <div
+            key={item.id}
+            className={`
+              bg-surface rounded-lg border shadow-card p-5
+              ${item.urgent ? 'border-amber-300 ring-1 ring-amber-100' : 'border-edge'}
+            `}
+          >
+            <div className="flex items-start gap-4">
+              {/* Pin icon */}
+              <div className="shrink-0 mt-0.5">
+                <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-warning">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                  </svg>
+                </div>
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                  <span className="px-2 py-0.5 text-[11px] font-medium rounded bg-amber-50 text-warning border border-amber-200">
+                    Pinned
+                  </span>
+                  {item.urgent && (
+                    <span className="px-2 py-0.5 text-[11px] font-medium rounded bg-red-50 text-danger border border-red-200">
+                      Urgent
+                    </span>
+                  )}
+                  <span className={`px-2 py-0.5 text-[11px] font-medium rounded ${CATEGORY_STYLES[item.category]}`}>
+                    {CATEGORIES.find((c) => c.key === item.category)?.label}
+                  </span>
+                </div>
+
+                <h3 className="text-base font-semibold text-ink leading-snug">{item.title}</h3>
+                <p className="mt-1.5 text-sm text-ink-secondary leading-relaxed">{item.excerpt}</p>
+
+                <div className="mt-3 flex items-center gap-3 text-xs text-ink-muted">
+                  <span className="flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                    {item.author}
+                  </span>
+                  <span>·</span>
+                  <span>{formatDate(item.date)}</span>
+                </div>
+              </div>
+
+              {/* Read more */}
+              <button className="shrink-0 mt-1 px-3 py-1.5 text-xs font-medium text-brand bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors duration-150">
+                Read more
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Two-Column: News Feed + Events ─────────────────── */}
+      <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
+
+        {/* ── News Feed (Main Column) ──────────────────────── */}
+        <div className="xl:col-span-3 bg-surface rounded-lg border border-edge shadow-card">
+          {/* Card header with filter pills */}
+          <div className="px-5 py-4 border-b border-edge-subtle">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-ink-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
+                </svg>
+                <h2 className="text-base font-semibold text-ink">Latest News</h2>
+                <span className="ml-1 px-2 py-0.5 text-xs font-medium rounded-full bg-blue-50 text-brand border border-blue-200">
+                  {filteredNews.length}
+                </span>
+              </div>
+            </div>
+
+            {/* Category filter pills */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {CATEGORIES.map((cat) => (
+                <button
+                  key={cat.key}
+                  onClick={() => setActiveFilter(cat.key)}
+                  className={`
+                    px-3 py-1.5 rounded-md text-xs font-medium
+                    transition-colors duration-150
+                    ${activeFilter === cat.key
+                      ? 'bg-brand text-white shadow-sm'
+                      : 'bg-surface-200 text-ink-secondary hover:bg-surface-300 hover:text-ink'
+                    }
+                  `}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* News items */}
+          <ul className="divide-y divide-edge-subtle">
+            {filteredNews.length === 0 && (
+              <li className="px-5 py-12 text-center">
+                <svg className="w-10 h-10 mx-auto text-ink-muted mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
+                </svg>
+                <p className="text-sm font-medium text-ink-secondary">No news in this category</p>
+                <p className="text-xs text-ink-muted mt-1">Try selecting a different filter above.</p>
+              </li>
+            )}
+            {filteredNews.map((item) => (
+              <li key={item.id} className="px-5 py-4 hover:bg-surface-200/50 transition-colors duration-100 cursor-pointer group">
+                <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                  <span className={`px-2 py-0.5 text-[11px] font-medium rounded ${CATEGORY_STYLES[item.category]}`}>
+                    {CATEGORIES.find((c) => c.key === item.category)?.label}
+                  </span>
+                  <span className="text-xs text-ink-muted">{formatDate(item.date)}</span>
+                </div>
+
+                <h3 className="text-sm font-semibold text-ink leading-snug group-hover:text-brand transition-colors duration-150">
+                  {item.title}
+                </h3>
+                <p className="mt-1 text-sm text-ink-secondary leading-relaxed line-clamp-2">{item.excerpt}</p>
+
+                <div className="mt-2.5 flex items-center gap-4 text-xs text-ink-muted">
+                  {/* Author */}
+                  <span className="flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                    {item.author}
+                  </span>
+
+                  {/* Views */}
+                  <span className="flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    {item.views}
+                  </span>
+
+                  {/* Comments */}
+                  <span className="flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z" />
+                    </svg>
+                    {item.comments}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          {/* Footer */}
+          <div className="px-5 py-3 border-t border-edge-subtle">
+            <button className="w-full text-center text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150">
+              Load more articles →
+            </button>
+          </div>
+        </div>
+
+        {/* ── Upcoming Events (Sidebar Column) ─────────────── */}
+        <div className="xl:col-span-2 space-y-6">
+
+          {/* Events Card */}
+          <div className="bg-surface rounded-lg border border-edge shadow-card">
+            <div className="px-5 py-4 border-b border-edge-subtle flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-ink-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+                </svg>
+                <h2 className="text-base font-semibold text-ink">Upcoming Events</h2>
+              </div>
+              <button className="text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150">
+                Calendar
+              </button>
+            </div>
+
+            <ul className="divide-y divide-edge-subtle">
+              {UPCOMING_EVENTS.map((event) => (
+                <li key={event.id} className="px-5 py-3.5 hover:bg-surface-200/50 transition-colors duration-100">
+                  <div className="flex items-start gap-3">
+                    {/* Date block */}
+                    <div className="shrink-0 w-11 h-11 rounded-lg bg-surface-200 flex flex-col items-center justify-center">
+                      <span className="text-[10px] font-semibold text-ink-muted uppercase leading-none">
+                        {new Date(event.date).toLocaleDateString('en-GB', { month: 'short' })}
+                      </span>
+                      <span className="text-base font-bold text-ink leading-tight">
+                        {new Date(event.date).getDate()}
+                      </span>
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-ink leading-snug truncate">{event.title}</p>
+                      <div className="mt-1 flex items-center gap-2 text-xs text-ink-muted">
+                        {/* Time */}
+                        <span className="flex items-center gap-1">
+                          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          {event.time}
+                        </span>
+                        <span>·</span>
+                        {/* Location */}
+                        <span className="flex items-center gap-1 truncate">
+                          <svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                          </svg>
+                          {event.location}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Countdown */}
+                    <span className={`shrink-0 text-[11px] font-medium mt-0.5 ${daysUntilStyle(event.date)}`}>
+                      {daysUntil(event.date)}
+                    </span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <div className="px-5 py-3 border-t border-edge-subtle">
+              <button className="w-full text-center text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150">
+                View full calendar →
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Links Card */}
+          <div className="bg-surface rounded-lg border border-edge shadow-card">
+            <div className="px-5 py-4 border-b border-edge-subtle">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-ink-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.678-5.504a4.5 4.5 0 00-6.364-6.364L4.5 8.737" />
+                </svg>
+                <h2 className="text-base font-semibold text-ink">Quick Links</h2>
+              </div>
+            </div>
+
+            <div className="p-4 space-y-1.5">
+              {[
+                { label: 'University Website', icon: 'globe' },
+                { label: 'Moodle Platform', icon: 'book' },
+                { label: 'Digital Library', icon: 'library' },
+                { label: 'Email Portal', icon: 'mail' },
+              ].map((link) => (
+                <button
+                  key={link.label}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-ink-secondary hover:bg-surface-200 hover:text-ink transition-colors duration-100"
+                >
+                  <svg className="w-4 h-4 shrink-0 text-ink-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                  </svg>
+                  {link.label}
+                  <svg className="w-3.5 h-3.5 ml-auto text-ink-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                  </svg>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
