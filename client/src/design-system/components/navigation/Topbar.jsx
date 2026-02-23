@@ -22,6 +22,7 @@ const PAGE_TITLES = {
   '/documents':     'Documents',
   '/calendar':      'Calendar',
   '/attendance':    'Attendance',
+  '/disciplinary':  'Disciplinary Cases',
   '/messages':      'Messages',
   '/notifications': 'Notifications',
   '/settings':      'Settings',

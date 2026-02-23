@@ -25,6 +25,7 @@ const ALL_MODULES = [
   { name: 'Documents',     path: '/documents',     roles: ['student', 'teacher'] },
   { name: 'Calendar',      path: '/calendar',      roles: ['student', 'teacher'] },
   { name: 'Attendance',    path: '/attendance',     roles: ['teacher'] },
+  { name: 'Disciplinary',  path: '/disciplinary',  roles: ['teacher'] },
   { name: 'Messages',      path: '/messages',      roles: ['student', 'teacher'] },
   { name: 'Notifications', path: '/notifications', roles: ['student', 'teacher'] },
   { name: 'Settings',      path: '/settings',      roles: ['student', 'teacher'] },
