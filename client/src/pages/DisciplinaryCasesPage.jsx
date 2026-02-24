@@ -11,6 +11,7 @@
 
 import React, { useState } from 'react';
 import CaseDetailPage from './CaseDetailPage';
+import StudentDisciplinaryView from './StudentDisciplinaryView';
 
 /* ── Mock Data ──────────────────────────────────────────────── */
 
@@ -143,30 +144,30 @@ const MOCK_CASES = [
 const STATUS_CONFIG = {
   pending: {
     label: 'Pending Investigation',
-    bg: 'bg-amber-50',
+    bg: 'bg-amber-50 dark:bg-amber-950/40',
     text: 'text-warning',
-    border: 'border-amber-200',
+    border: 'border-amber-200 dark:border-amber-800/50',
     dot: 'bg-warning',
   },
   hearing: {
     label: 'Hearing Scheduled',
-    bg: 'bg-blue-50',
+    bg: 'bg-blue-50 dark:bg-blue-950/40',
     text: 'text-brand',
-    border: 'border-blue-200',
+    border: 'border-blue-200 dark:border-blue-800/50',
     dot: 'bg-brand',
   },
   sanctioned: {
     label: 'Sanction Applied',
-    bg: 'bg-red-50',
+    bg: 'bg-red-50 dark:bg-red-950/40',
     text: 'text-danger',
-    border: 'border-red-200',
+    border: 'border-red-200 dark:border-red-800/50',
     dot: 'bg-danger',
   },
   closed: {
     label: 'Case Closed',
-    bg: 'bg-green-50',
+    bg: 'bg-green-50 dark:bg-green-950/40',
     text: 'text-success',
-    border: 'border-green-200',
+    border: 'border-green-200 dark:border-green-800/50',
     dot: 'bg-success',
   },
 };
@@ -201,10 +202,10 @@ function StatusBadge({ status }) {
 
 function StatCard({ label, value, icon, accent = 'brand' }) {
   const accents = {
-    brand:   'bg-blue-50 text-brand',
-    warning: 'bg-amber-50 text-warning',
-    danger:  'bg-red-50 text-danger',
-    success: 'bg-green-50 text-success',
+    brand:   'bg-blue-50 dark:bg-blue-950/40 text-brand',
+    warning: 'bg-amber-50 dark:bg-amber-950/40 text-warning',
+    danger:  'bg-red-50 dark:bg-red-950/40 text-danger',
+    success: 'bg-green-50 dark:bg-green-950/40 text-success',
   };
   return (
     <div className="bg-surface rounded-lg border border-edge shadow-card p-5 flex items-center gap-4">
@@ -221,12 +222,15 @@ function StatCard({ label, value, icon, accent = 'brand' }) {
 
 /* ── Main Component ─────────────────────────────────────────── */
 
-export default function DisciplinaryCasesPage() {
+export default function DisciplinaryCasesPage({ role }) {
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterType, setFilterType] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCase, setSelectedCase] = useState(null);
   const [confirmModal, setConfirmModal] = useState(null);
+
+  // Students see their own disciplinary notifications instead
+  if (role === 'student') return <StudentDisciplinaryView />;
 
   /* Derived data */
   const filtered = MOCK_CASES.filter((c) => {
@@ -265,13 +269,13 @@ export default function DisciplinaryCasesPage() {
     <div className="space-y-6">
 
       {/* ── Restricted Access Banner ─────────────────────────── */}
-      <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 flex items-center gap-3">
+      <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 rounded-lg px-4 py-3 flex items-center gap-3">
         <svg className="w-5 h-5 text-warning shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
         </svg>
         <div>
           <p className="text-sm font-medium text-warning">Restricted Access — Confidential Records</p>
-          <p className="text-xs text-amber-700 mt-0.5">This module contains sensitive disciplinary data. Access is logged and limited to authorized personnel only.</p>
+          <p className="text-xs text-amber-700 dark:text-amber-400 mt-0.5">This module contains sensitive disciplinary data. Access is logged and limited to authorized personnel only.</p>
         </div>
       </div>
 
@@ -405,7 +409,7 @@ export default function DisciplinaryCasesPage() {
                   return (
                     <tr
                       key={c.id}
-                      className={`hover:bg-surface-200/50 transition-colors duration-100 cursor-pointer ${overdue ? 'bg-amber-50/40' : ''}`}
+                      className={`hover:bg-surface-200/50 transition-colors duration-100 cursor-pointer ${overdue ? 'bg-amber-50/40 dark:bg-amber-950/20' : ''}`}
                       onClick={() => setSelectedCase(c)}
                     >
                       {/* Case ID */}
@@ -446,7 +450,7 @@ export default function DisciplinaryCasesPage() {
                       <td className="px-6 py-3.5 text-right">
                         <button
                           onClick={(e) => { e.stopPropagation(); setSelectedCase(c); }}
-                          className="px-3 py-1.5 text-xs font-medium text-brand bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors duration-100"
+                          className="px-3 py-1.5 text-xs font-medium text-brand bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors duration-100"
                         >
                           View
                         </button>
@@ -479,7 +483,7 @@ export default function DisciplinaryCasesPage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="bg-surface rounded-xl shadow-card border border-edge w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-lg bg-red-50 dark:bg-red-950/40 flex items-center justify-center">
                   <svg className="w-5 h-5 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
                   </svg>

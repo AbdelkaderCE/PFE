@@ -27,11 +27,11 @@ const CATEGORIES = [
 ];
 
 const CATEGORY_STYLES = {
-  academic:       'bg-blue-50 text-brand border border-blue-200',
-  administrative: 'bg-amber-50 text-warning border border-amber-200',
-  events:         'bg-green-50 text-success border border-green-200',
-  research:       'bg-violet-50 text-violet-700 border border-violet-200',
-  'student-life': 'bg-rose-50 text-rose-700 border border-rose-200',
+  academic:       'bg-blue-50 dark:bg-blue-950/40 text-brand border border-blue-200 dark:border-blue-800/50',
+  administrative: 'bg-amber-50 dark:bg-amber-950/40 text-warning border border-amber-200 dark:border-amber-800/50',
+  events:         'bg-green-50 dark:bg-green-950/40 text-success border border-green-200 dark:border-green-800/50',
+  research:       'bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-400 border border-violet-200 dark:border-violet-800/50',
+  'student-life': 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/50',
 };
 
 const PINNED_ANNOUNCEMENTS = [
@@ -177,8 +177,8 @@ const QUICK_STATS = [
 /* ── Helpers ────────────────────────────────────────────────── */
 
 const STAT_COLORS = {
-  brand:   { bg: 'bg-blue-50',  text: 'text-brand',  icon: 'text-brand' },
-  warning: { bg: 'bg-amber-50', text: 'text-warning', icon: 'text-warning' },
+  brand:   { bg: 'bg-blue-50 dark:bg-blue-950/40',  text: 'text-brand',  icon: 'text-brand' },
+  warning: { bg: 'bg-amber-50 dark:bg-amber-950/40', text: 'text-warning', icon: 'text-warning' },
 };
 
 function formatDate(dateStr) {
@@ -258,13 +258,13 @@ export default function ActualitesPage() {
             key={item.id}
             className={`
               bg-surface rounded-lg border shadow-card p-5
-              ${item.urgent ? 'border-amber-300 ring-1 ring-amber-100' : 'border-edge'}
+              ${item.urgent ? 'border-amber-300 dark:border-amber-700/50 ring-1 ring-amber-100 dark:ring-amber-900/30' : 'border-edge'}
             `}
           >
             <div className="flex items-start gap-4">
               {/* Pin icon */}
               <div className="shrink-0 mt-0.5">
-                <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-warning">
+                <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/40 flex items-center justify-center text-warning">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
                   </svg>
@@ -273,11 +273,11 @@ export default function ActualitesPage() {
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap mb-1.5">
-                  <span className="px-2 py-0.5 text-[11px] font-medium rounded bg-amber-50 text-warning border border-amber-200">
+                  <span className="px-2 py-0.5 text-[11px] font-medium rounded bg-amber-50 dark:bg-amber-950/40 text-warning border border-amber-200 dark:border-amber-800/50">
                     Pinned
                   </span>
                   {item.urgent && (
-                    <span className="px-2 py-0.5 text-[11px] font-medium rounded bg-red-50 text-danger border border-red-200">
+                    <span className="px-2 py-0.5 text-[11px] font-medium rounded bg-red-50 dark:bg-red-950/40 text-danger border border-red-200 dark:border-red-800/50">
                       Urgent
                     </span>
                   )}
@@ -302,7 +302,7 @@ export default function ActualitesPage() {
               </div>
 
               {/* Read more */}
-              <button className="shrink-0 mt-1 px-3 py-1.5 text-xs font-medium text-brand bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors duration-150">
+              <button className="shrink-0 mt-1 px-3 py-1.5 text-xs font-medium text-brand bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors duration-150">
                 Read more
               </button>
             </div>
@@ -323,7 +323,7 @@ export default function ActualitesPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
                 </svg>
                 <h2 className="text-base font-semibold text-ink">Latest News</h2>
-                <span className="ml-1 px-2 py-0.5 text-xs font-medium rounded-full bg-blue-50 text-brand border border-blue-200">
+                <span className="ml-1 px-2 py-0.5 text-xs font-medium rounded-full bg-blue-50 dark:bg-blue-950/40 text-brand border border-blue-200 dark:border-blue-800/50">
                   {filteredNews.length}
                 </span>
               </div>

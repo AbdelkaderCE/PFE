@@ -156,7 +156,7 @@ export default function ProfilePage() {
               {profile.firstName} {profile.lastName}
             </h2>
             <div className="flex items-center gap-2 mt-1 flex-wrap">
-              <span className="px-2 py-0.5 text-[11px] font-medium rounded bg-blue-50 text-brand border border-blue-200">
+              <span className="px-2 py-0.5 text-[11px] font-medium rounded bg-blue-50 dark:bg-blue-950/40 text-brand border border-blue-200 dark:border-blue-800/50">
                 {profile.role}
               </span>
               <span className="text-sm text-ink-secondary">{profile.department}</span>
@@ -174,7 +174,7 @@ export default function ProfilePage() {
 
           {/* Status badge */}
           <div className="mt-4 flex items-center gap-2">
-            <span className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-green-50 text-success border border-green-200">
+            <span className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-green-50 dark:bg-green-950/40 text-success border border-green-200 dark:border-green-800/50">
               <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
               Active
             </span>
@@ -298,7 +298,7 @@ export default function ProfilePage() {
                       {formatDate(doc.date)} · {doc.format}
                     </p>
                   </div>
-                  <button className="shrink-0 p-2 rounded-md text-ink-tertiary hover:text-brand hover:bg-blue-50 transition-colors duration-150" title="Download">
+                  <button className="shrink-0 p-2 rounded-md text-ink-tertiary hover:text-brand hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors duration-150" title="Download">
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                     </svg>

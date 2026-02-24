@@ -157,7 +157,7 @@ export default function SettingsPage() {
               {mode === 'dark' ? 'Dark' : 'Light'} mode · {accent.charAt(0).toUpperCase() + accent.slice(1)} accent
             </p>
           </div>
-          <span className="px-2.5 py-1 text-xs font-medium rounded-md bg-blue-50 text-brand border border-blue-200">
+          <span className="px-2.5 py-1 text-xs font-medium rounded-md bg-blue-50 dark:bg-blue-950/40 text-brand border border-blue-200 dark:border-blue-800/50">
             Active
           </span>
         </div>
@@ -393,7 +393,7 @@ export default function SettingsPage() {
             <p className="text-sm font-medium text-danger">Delete account</p>
             <p className="text-xs text-ink-tertiary mt-0.5">Permanently delete your account and all data</p>
           </div>
-          <button className="px-4 py-2 text-sm font-medium text-danger bg-red-50 border border-red-200 rounded-md hover:bg-red-100 transition-colors duration-150">
+          <button className="px-4 py-2 text-sm font-medium text-danger bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-800/50 rounded-md hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors duration-150">
             Delete
           </button>
         </div>

@@ -26,6 +26,7 @@ const ALL_MODULES = [
   { name: 'Calendar',      path: '/calendar',      roles: ['student', 'teacher'] },
   { name: 'Attendance',    path: '/attendance',     roles: ['teacher'] },
   { name: 'Disciplinary',  path: '/disciplinary',  roles: ['teacher'] },
+  { name: 'Requests',      path: '/requests',      roles: ['student', 'teacher'] },
   { name: 'Messages',      path: '/messages',      roles: ['student', 'teacher'] },
   { name: 'Notifications', path: '/notifications', roles: ['student', 'teacher'] },
   { name: 'Settings',      path: '/settings',      roles: ['student', 'teacher'] },
@@ -64,7 +65,12 @@ const DashboardLayout = ({ children }) => {
 
         {/* Scrollable content area */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">
-          {children || (role === 'teacher' ? <TeacherDashboard /> : <StudentDashboard />)}
+          {children
+            ? React.Children.map(children, (child) =>
+                React.isValidElement(child) ? React.cloneElement(child, { role }) : child
+              )
+            : (role === 'teacher' ? <TeacherDashboard /> : <StudentDashboard />)
+          }
         </main>
       </div>
     </div>

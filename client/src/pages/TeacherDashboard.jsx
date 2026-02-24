@@ -82,19 +82,19 @@ const RECENT_CLAIMS = [
 
 /* ── Helpers ────────────────────────────────────────────────── */
 const STAT_COLORS = {
-  brand:   { bg: 'bg-blue-50',   text: 'text-brand',  icon: 'text-brand' },
-  warning: { bg: 'bg-amber-50',  text: 'text-warning', icon: 'text-warning' },
-  danger:  { bg: 'bg-red-50',    text: 'text-danger',  icon: 'text-danger' },
+  brand:   { bg: 'bg-blue-50 dark:bg-blue-950/40',   text: 'text-brand',  icon: 'text-brand' },
+  warning: { bg: 'bg-amber-50 dark:bg-amber-950/40',  text: 'text-warning', icon: 'text-warning' },
+  danger:  { bg: 'bg-red-50 dark:bg-red-950/40',    text: 'text-danger',  icon: 'text-danger' },
 };
 
 const STATUS_STYLES = {
-  'new':         'bg-blue-50 text-brand border border-blue-200',
-  'in-progress': 'bg-amber-50 text-warning border border-amber-200',
-  'resolved':    'bg-green-50 text-success border border-green-200',
+  'new':         'bg-blue-50 dark:bg-blue-950/40 text-brand border border-blue-200 dark:border-blue-800/50',
+  'in-progress': 'bg-amber-50 dark:bg-amber-950/40 text-warning border border-amber-200 dark:border-amber-800/50',
+  'resolved':    'bg-green-50 dark:bg-green-950/40 text-success border border-green-200 dark:border-green-800/50',
 };
 
 const PRIORITY_STYLES = {
-  urgent: 'bg-red-50 text-danger border border-red-200',
+  urgent: 'bg-red-50 dark:bg-red-950/40 text-danger border border-red-200 dark:border-red-800/50',
   normal: 'bg-surface-200 text-ink-tertiary border border-edge',
 };
 
@@ -150,7 +150,7 @@ export default function TeacherDashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
               </svg>
               <h2 className="text-base font-semibold text-ink">Pending Validations</h2>
-              <span className="ml-1 px-2 py-0.5 text-xs font-medium rounded-full bg-amber-50 text-warning border border-amber-200">
+              <span className="ml-1 px-2 py-0.5 text-xs font-medium rounded-full bg-amber-50 dark:bg-amber-950/40 text-warning border border-amber-200 dark:border-amber-800/50">
                 {PENDING_PROJECTS.length}
               </span>
             </div>
@@ -192,7 +192,7 @@ export default function TeacherDashboard() {
                       </span>
                     </td>
                     <td className="px-5 py-3 text-right">
-                      <button className="px-3 py-1.5 text-xs font-medium text-brand bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 transition-colors duration-150">
+                      <button className="px-3 py-1.5 text-xs font-medium text-brand bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors duration-150">
                         Review
                       </button>
                     </td>
@@ -212,7 +212,7 @@ export default function TeacherDashboard() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
               </svg>
               <h2 className="text-base font-semibold text-ink">Recent Claims</h2>
-              <span className="ml-1 px-2 py-0.5 text-xs font-medium rounded-full bg-red-50 text-danger border border-red-200">
+              <span className="ml-1 px-2 py-0.5 text-xs font-medium rounded-full bg-red-50 dark:bg-red-950/40 text-danger border border-red-200 dark:border-red-800/50">
                 {RECENT_CLAIMS.filter((c) => c.status === 'new').length} new
               </span>
             </div>

@@ -60,9 +60,9 @@ function daysUntil(dateStr) {
 
 const TYPE_CONFIG = {
   hearing: {
-    bg: 'bg-blue-50',
-    border: 'border-blue-200',
-    iconBg: 'bg-blue-100 text-brand',
+    bg: 'bg-blue-50 dark:bg-blue-950/40',
+    border: 'border-blue-200 dark:border-blue-800/50',
+    iconBg: 'bg-blue-100 dark:bg-blue-950/40 text-brand',
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
@@ -70,9 +70,9 @@ const TYPE_CONFIG = {
     ),
   },
   decision: {
-    bg: 'bg-amber-50',
-    border: 'border-amber-200',
-    iconBg: 'bg-amber-100 text-warning',
+    bg: 'bg-amber-50 dark:bg-amber-950/40',
+    border: 'border-amber-200 dark:border-amber-800/50',
+    iconBg: 'bg-amber-100 dark:bg-amber-950/40 text-warning',
     icon: (
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0012 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 01-2.031.352 5.988 5.988 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.97zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0l2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 01-2.031.352 5.989 5.989 0 01-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.97z" />
@@ -108,7 +108,7 @@ export default function StudentDisciplinaryView() {
       </div>
 
       {/* ── Info Banner ─────────────────────────────────────── */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex gap-3">
+      <div className="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 rounded-lg p-4 flex gap-3">
         <div className="shrink-0 mt-0.5">
           <svg className="w-5 h-5 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
@@ -167,7 +167,7 @@ export default function StudentDisciplinaryView() {
 
                     {/* ── Hearing Details ──────────────────── */}
                     {notif.type === 'hearing' && notif.hearingDate && (
-                      <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <div className="mt-3 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 rounded-lg p-3">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                           <div>
                             <p className="text-xs text-ink-muted">Hearing Date</p>
@@ -189,7 +189,7 @@ export default function StudentDisciplinaryView() {
 
                     {/* ── Decision Details ─────────────────── */}
                     {notif.type === 'decision' && (
-                      <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3">
+                      <div className="mt-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 rounded-lg p-3">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <div>
                             <p className="text-xs text-ink-muted">Decision</p>
@@ -205,7 +205,7 @@ export default function StudentDisciplinaryView() {
                             </p>
                           </div>
                         </div>
-                        <button className="mt-3 px-4 py-2 text-sm font-medium text-brand bg-white border border-blue-200 rounded-md hover:bg-blue-50 transition-colors duration-150 flex items-center gap-2">
+                        <button className="mt-3 px-4 py-2 text-sm font-medium text-brand bg-surface border border-blue-200 dark:border-blue-800/50 rounded-md hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors duration-150 flex items-center gap-2">
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                           </svg>
