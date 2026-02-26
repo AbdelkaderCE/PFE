@@ -53,9 +53,11 @@ export default function LoginPage({ onForgotPassword }) {
 
         {/* ── Header band ─────────────────────────────────────── */}
         <div className="px-8 pt-8 pb-6 text-center border-b border-edge-subtle">
-          <div className="mx-auto mb-4 w-14 h-14 rounded-lg bg-brand flex items-center justify-center">
-            <span className="text-white font-bold text-lg tracking-tight">IK</span>
-          </div>
+          <img
+            src="/Logo.png"
+            alt="Ibn Khaldoun University"
+            className="mx-auto mb-4 w-14 h-14 rounded-lg object-cover"
+          />
           <h1 className="text-xl font-bold text-ink tracking-tight">Welcome back</h1>
           <p className="mt-1 text-sm text-ink-tertiary">
             Digital Platform for Pedagogical Activities

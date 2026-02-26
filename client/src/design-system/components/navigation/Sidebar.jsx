@@ -141,9 +141,11 @@ export default function Sidebar({ modules = [], open = false, onClose, onNavigat
         {/* ── Brand header — aligns with topbar h-16 ─────────── */}
         <div className="h-16 px-4 flex items-center border-b border-edge-subtle shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-brand flex items-center justify-center">
-              <span className="text-white font-bold text-xs tracking-tight">IK</span>
-            </div>
+            <img
+              src="/Logo.png"
+              alt="Ibn Khaldoun University"
+              className="w-8 h-8 rounded-lg object-cover"
+            />
             <div>
               <p className="text-sm font-semibold text-ink leading-tight">Ibn Khaldoun</p>
               <p className="text-xs text-ink-muted leading-tight">Pedagogical Platform</p>
