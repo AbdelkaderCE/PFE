@@ -10,6 +10,7 @@
 */
 
 import React, { useState } from 'react';
+import { authAPI } from '../api';
 
 export default function LoginPage({ onForgotPassword }) {
   const [identifier, setIdentifier] = useState('');
@@ -33,9 +34,17 @@ export default function LoginPage({ onForgotPassword }) {
     }
 
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    setError('Invalid credentials. Please check your email and password.');
+    try {
+      const data = await authAPI.login(identifier.trim(), password);
+      console.log('✅ Login successful:', data.data.user);
+      // TODO: redirect to dashboard or store user in context
+      setError('');
+      alert(`Welcome, ${data.data.user.firstName} ${data.data.user.lastName}! (${data.data.user.role})`);
+    } catch (err) {
+      setError(err.message || 'Invalid credentials. Please check your email and password.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
