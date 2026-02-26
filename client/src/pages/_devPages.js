@@ -9,9 +9,16 @@ import ProfilePage from './ProfilePage';
 import ThemePreviewPage from './ThemePreviewPage';
 import DisciplinaryCasesPage from './DisciplinaryCasesPage';
 import RequestsPage from './RequestsPage';
+import HomePage from './HomePage';
+import AboutPage from './AboutPage';
+import ContactPage from './ContactPage';
+import NotFoundPage from './NotFoundPage';
 import DashboardLayout from '../design-system/components/DashboardLayout';
 
 export const DEV_PAGES = [
+  { path: '/home', label: 'Home', element: <div className="flex-1 overflow-y-auto"><HomePage /></div> },
+  { path: '/about', label: 'About', element: <div className="flex-1 overflow-y-auto"><AboutPage /></div> },
+  { path: '/contact', label: 'Contact', element: <div className="flex-1 overflow-y-auto"><ContactPage /></div> },
   { path: '/', label: 'Dashboard (Shell)', element: <DashboardLayout /> },
   { path: '/teacher-dashboard', label: 'Teacher Dashboard', element: <DashboardLayout><TeacherDashboard /></DashboardLayout> },
   { path: '/student-dashboard', label: 'Student Dashboard', element: <DashboardLayout><StudentDashboard /></DashboardLayout> },
@@ -23,4 +30,5 @@ export const DEV_PAGES = [
   { path: '/login', label: 'Login', element: <div className="flex-1 overflow-y-auto"><LoginPage /></div> },
   { path: '/forgot-password', label: 'Forgot Password', element: <div className="flex-1 overflow-y-auto"><ForgotPasswordPage /></div> },
   { path: '/theme', label: 'Theme Preview', element: <div className="flex-1 overflow-y-auto"><ThemePreviewPage /></div> },
+  { path: '/404', label: '404 Page', element: <div className="flex-1 overflow-y-auto"><NotFoundPage /></div> },
 ];
