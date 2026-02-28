@@ -36,6 +36,7 @@ const ALL_MODULES = [
 const DashboardLayout = ({ children }) => {
   const [role, setRole] = useState('student');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [activeKey, setActiveKey] = useState('/dashboard');
 
   /* Filter modules by active role */
@@ -51,6 +52,8 @@ const DashboardLayout = ({ children }) => {
         onClose={() => setSidebarOpen(false)}
         onNavigate={(path) => { setActiveKey(path); setSidebarOpen(false); }}
         activeKey={activeKey}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={() => setSidebarCollapsed(v => !v)}
       />
 
       {/* Right column: topbar + content */}
@@ -61,6 +64,8 @@ const DashboardLayout = ({ children }) => {
           onHamburger={() => setSidebarOpen(true)}
           onNavigate={(path) => { setActiveKey(path); setSidebarOpen(false); }}
           activeKey={activeKey}
+          sidebarCollapsed={sidebarCollapsed}
+          onToggleSidebar={() => setSidebarCollapsed(v => !v)}
         />
 
         {/* Scrollable content area */}

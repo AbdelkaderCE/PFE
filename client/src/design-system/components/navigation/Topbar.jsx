@@ -31,7 +31,7 @@ const PAGE_TITLES = {
   '/profile':       'Profile',
 };
 
-export default function Topbar({ role = 'student', onRoleChange, onHamburger, onNavigate, activeKey = '/dashboard' }) {
+export default function Topbar({ role = 'student', onRoleChange, onHamburger, onNavigate, activeKey = '/dashboard', sidebarCollapsed = false, onToggleSidebar }) {
   const { toggleMode, isDark } = useTheme();
   const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -53,8 +53,9 @@ export default function Topbar({ role = 'student', onRoleChange, onHamburger, on
   return (
     <header className="h-16 bg-canvas border-b border-edge flex items-center justify-between px-4 lg:px-6 shrink-0">
 
-      {/* ── Left: hamburger + page title ────────────────────── */}
+      {/* ── Left: hamburger / sidebar toggle + page title ──── */}
       <div className="flex items-center gap-3">
+        {/* Mobile hamburger */}
         <button
           onClick={onHamburger}
           className="lg:hidden p-2 -ml-2 rounded-md text-ink-tertiary hover:text-ink-secondary hover:bg-surface-200 transition-colors duration-150"
@@ -64,6 +65,19 @@ export default function Topbar({ role = 'student', onRoleChange, onHamburger, on
             <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
           </svg>
         </button>
+
+        {/* Desktop sidebar toggle */}
+        <button
+          onClick={onToggleSidebar}
+          className="hidden lg:flex p-2 -ml-2 rounded-md text-ink-tertiary hover:text-ink-secondary hover:bg-surface-200 transition-colors duration-150"
+          aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          <svg className={`w-5 h-5 transition-transform duration-200 ${sidebarCollapsed ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+          </svg>
+        </button>
+
         <h1 className="text-base font-semibold text-ink tracking-tight">{title}</h1>
       </div>
 

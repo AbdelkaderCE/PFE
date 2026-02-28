@@ -104,7 +104,7 @@ const SECTIONS = {
   '/support':       null,
 };
 
-export default function Sidebar({ modules = [], open = false, onClose, onNavigate, activeKey }) {
+export default function Sidebar({ modules = [], open = false, onClose, onNavigate, activeKey, collapsed = false, onToggleCollapse }) {
   let lastSection = null;
 
   /* Lock body scroll when mobile sidebar is open */
@@ -130,23 +130,24 @@ export default function Sidebar({ modules = [], open = false, onClose, onNavigat
 
       <aside
         className={`
-          fixed top-0 left-0 z-40 h-full w-64
+          fixed top-0 left-0 z-40 h-full
           bg-canvas border-r border-edge
           flex flex-col
-          transition-transform duration-200 ease-out
+          transition-all duration-200 ease-out
           lg:translate-x-0 lg:static lg:z-auto
-          ${open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          ${open ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'}
+          ${collapsed ? 'lg:w-[68px]' : 'lg:w-64'}
         `}
       >
         {/* ── Brand header — aligns with topbar h-16 ─────────── */}
         <div className="h-16 px-4 flex items-center border-b border-edge-subtle shrink-0">
-          <div className="flex items-center gap-3">
+          <div className={`flex items-center ${collapsed ? 'lg:justify-center lg:w-full' : 'gap-3'}`}>
             <img
               src="/Logo.png"
               alt="Ibn Khaldoun University"
-              className="w-8 h-8 rounded-lg object-cover"
+              className="w-8 h-8 rounded-lg object-cover shrink-0"
             />
-            <div>
+            <div className={`${collapsed ? 'lg:hidden' : ''}`}>
               <p className="text-sm font-semibold text-ink leading-tight">Ibn Khaldoun</p>
               <p className="text-xs text-ink-muted leading-tight">Pedagogical Platform</p>
             </div>
@@ -175,16 +176,24 @@ export default function Sidebar({ modules = [], open = false, onClose, onNavigat
 
               return (
                 <li key={item.path}>
-                  {showSection && (
+                  {showSection && !collapsed && (
                     <p className="px-3 pt-5 pb-1.5 text-[11px] font-semibold text-ink-muted uppercase tracking-wider">
                       {section}
                     </p>
                   )}
+                  {/* Separator dot when collapsed instead of section label */}
+                  {showSection && collapsed && (
+                    <div className="hidden lg:flex justify-center py-3">
+                      <span className="w-1 h-1 rounded-full bg-edge-strong" />
+                    </div>
+                  )}
                   <button
                     onClick={() => onNavigate?.(item.path)}
+                    title={collapsed ? item.name : undefined}
                     className={`
                       w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium
                       transition-colors duration-100
+                      ${collapsed ? 'lg:justify-center lg:px-0' : ''}
                       ${isActive
                         ? 'bg-brand-light text-brand'
                         : 'text-ink-secondary hover:bg-surface-200 hover:text-ink'
@@ -192,7 +201,7 @@ export default function Sidebar({ modules = [], open = false, onClose, onNavigat
                     `}
                   >
                     <span className="w-5 h-5 shrink-0">{icons[item.path]}</span>
-                    <span className="truncate">{item.name}</span>
+                    <span className={`truncate ${collapsed ? 'lg:hidden' : ''}`}>{item.name}</span>
                   </button>
                 </li>
               );
@@ -200,9 +209,32 @@ export default function Sidebar({ modules = [], open = false, onClose, onNavigat
           </ul>
         </nav>
 
+        {/* ── Collapse toggle — desktop only ─────────────────── */}
+        <div className="hidden lg:flex px-3 py-2 border-t border-edge-subtle shrink-0">
+          <button
+            onClick={onToggleCollapse}
+            className={`
+              w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium
+              text-ink-tertiary hover:text-ink-secondary hover:bg-surface-200
+              transition-colors duration-150
+              ${collapsed ? 'justify-center px-0' : ''}
+            `}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            <svg className={`w-5 h-5 shrink-0 transition-transform duration-200 ${collapsed ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M18.75 19.5l-7.5-7.5 7.5-7.5m-6 15L5.25 12l7.5-7.5" />
+            </svg>
+            <span className={`truncate ${collapsed ? 'lg:hidden' : ''}`}>Collapse</span>
+          </button>
+        </div>
+
         {/* ── Footer ─────────────────────────────────────────── */}
         <div className="px-4 py-3 border-t border-edge-subtle shrink-0">
-          <p className="text-[11px] text-ink-muted">© 2026 Ibn Khaldoun University</p>
+          <p className={`text-[11px] text-ink-muted ${collapsed ? 'lg:hidden' : ''}`}>© 2026 Ibn Khaldoun University</p>
+          {collapsed && (
+            <p className="hidden lg:block text-[10px] text-ink-muted text-center">© 2026</p>
+          )}
         </div>
       </aside>
     </>
