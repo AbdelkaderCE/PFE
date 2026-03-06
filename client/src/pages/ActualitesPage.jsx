@@ -15,17 +15,18 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import request from '../api';
 
 /* ── Mock Data ──────────────────────────────────────────────── */
 
 const CATEGORIES = [
-  { key: 'all',           label: 'All' },
-  { key: 'academic',      label: 'Academic' },
-  { key: 'administrative', label: 'Administrative' },
-  { key: 'events',        label: 'Events' },
-  { key: 'research',      label: 'Research' },
-  { key: 'student-life',  label: 'Student Life' },
+  { key: 'all',           labelKey: 'actualites.filterAll' },
+  { key: 'academic',      labelKey: 'actualites.filterAcademic' },
+  { key: 'administrative', labelKey: 'actualites.filterAdministrative' },
+  { key: 'events',        labelKey: 'actualites.filterEvents' },
+  { key: 'research',      labelKey: 'actualites.filterResearch' },
+  { key: 'student-life',  labelKey: 'actualites.filterStudentLife' },
 ];
 
 const CATEGORY_STYLES = {
@@ -60,9 +61,9 @@ const STAT_COLORS = {
   warning: { bg: 'bg-amber-50 dark:bg-amber-950/40', text: 'text-warning', icon: 'text-warning' },
 };
 
-function formatDate(dateStr) {
+function formatDate(dateStr, locale = 'en-GB') {
   const d = new Date(dateStr);
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  return d.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
 }
 
 function daysUntil(dateStr) {
@@ -88,6 +89,8 @@ function daysUntilStyle(dateStr) {
 export default function ActualitesPage({ role }) {
   const isGuest = !role || role === 'guest';
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language === 'ar' ? 'ar-DZ' : i18n.language === 'fr' ? 'fr-FR' : 'en-GB';
   const [activeFilter, setActiveFilter] = useState('all');
   const [pinnedAnnouncements, setPinnedAnnouncements] = useState([]);
   const [newsFeed, setNewsFeed] = useState([]);
@@ -118,9 +121,9 @@ export default function ActualitesPage({ role }) {
     : newsFeed.filter((n) => n.category === activeFilter);
 
   const QUICK_STATS = [
-    { label: 'Announcements', value: String(newsFeed.length + pinnedAnnouncements.length), sub: 'This month', icon: STAT_ICON_ANNOUNCE, color: 'brand' },
-    { label: 'Upcoming Events', value: String(upcomingEvents.length), sub: 'Next 30 days', icon: STAT_ICON_CALENDAR, color: 'brand' },
-    { label: 'Pinned', value: String(pinnedAnnouncements.length), sub: 'Important notices', icon: STAT_ICON_STAR, color: 'warning' },
+    { label: t('actualites.announcements'), value: String(newsFeed.length + pinnedAnnouncements.length), sub: t('actualites.thisMonth'), icon: STAT_ICON_ANNOUNCE, color: 'brand' },
+    { label: t('actualites.upcomingEvents'), value: String(upcomingEvents.length), sub: t('actualites.next30days'), icon: STAT_ICON_CALENDAR, color: 'brand' },
+    { label: t('common.pinned'), value: String(pinnedAnnouncements.length), sub: t('actualites.importantNotices'), icon: STAT_ICON_STAR, color: 'warning' },
   ];
 
   if (loading) {
@@ -136,9 +139,9 @@ export default function ActualitesPage({ role }) {
 
       {/* ── Page Header ────────────────────────────────────── */}
       <div>
-        <h1 className="text-xl font-bold text-ink tracking-tight">Actualités</h1>
+        <h1 className="text-xl font-bold text-ink tracking-tight">{t('actualites.title')}</h1>
         <p className="mt-1 text-sm text-ink-tertiary">
-          News, announcements, and upcoming events — {new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}.
+          {t('actualites.subtitle')} — {new Date().toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}.
         </p>
       </div>
 
@@ -152,12 +155,12 @@ export default function ActualitesPage({ role }) {
               </svg>
             </div>
             <div>
-              <p className="text-sm font-medium text-ink">Sign in to personalize your feed</p>
-              <p className="text-xs text-ink-tertiary">Get notifications, save articles, and access your dashboard.</p>
+              <p className="text-sm font-medium text-ink">{t('actualites.signInBanner')}</p>
+              <p className="text-xs text-ink-tertiary">{t('actualites.signInBannerSub')}</p>
             </div>
           </div>
           <a href="/login" className="px-4 py-2 text-sm font-medium text-white bg-brand rounded-md hover:bg-brand-hover transition-colors duration-150 shadow-sm whitespace-nowrap">
-            Sign In
+            {t('common.signIn')}
           </a>
         </div>
       )}
@@ -209,15 +212,15 @@ export default function ActualitesPage({ role }) {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap mb-1.5">
                   <span className="px-2 py-0.5 text-[11px] font-medium rounded bg-amber-50 dark:bg-amber-950/40 text-warning border border-amber-200 dark:border-amber-800/50">
-                    Pinned
+                    {t('common.pinned')}
                   </span>
                   {item.urgent && (
                     <span className="px-2 py-0.5 text-[11px] font-medium rounded bg-red-50 dark:bg-red-950/40 text-danger border border-red-200 dark:border-red-800/50">
-                      Urgent
+                      {t('common.urgent')}
                     </span>
                   )}
                   <span className={`px-2 py-0.5 text-[11px] font-medium rounded ${CATEGORY_STYLES[item.category]}`}>
-                    {CATEGORIES.find((c) => c.key === item.category)?.label}
+                    {t(CATEGORIES.find((c) => c.key === item.category)?.labelKey || '')}
                   </span>
                 </div>
 
@@ -232,13 +235,13 @@ export default function ActualitesPage({ role }) {
                     {item.author}
                   </span>
                   <span>·</span>
-                  <span>{formatDate(item.date)}</span>
+                  <span>{formatDate(item.date, locale)}</span>
                 </div>
               </div>
 
               {/* Read more */}
               <button className="shrink-0 mt-1 px-3 py-1.5 text-xs font-medium text-brand bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors duration-150">
-                Read more
+                {t('common.readMore')}
               </button>
             </div>
           </div>
@@ -257,7 +260,7 @@ export default function ActualitesPage({ role }) {
                 <svg className="w-5 h-5 text-ink-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
                 </svg>
-                <h2 className="text-base font-semibold text-ink">Latest News</h2>
+                <h2 className="text-base font-semibold text-ink">{t('actualites.latestNews')}</h2>
                 <span className="ml-1 px-2 py-0.5 text-xs font-medium rounded-full bg-blue-50 dark:bg-blue-950/40 text-brand border border-blue-200 dark:border-blue-800/50">
                   {filteredNews.length}
                 </span>
@@ -279,7 +282,7 @@ export default function ActualitesPage({ role }) {
                     }
                   `}
                 >
-                  {cat.label}
+                  {t(cat.labelKey)}
                 </button>
               ))}
             </div>
@@ -292,17 +295,17 @@ export default function ActualitesPage({ role }) {
                 <svg className="w-10 h-10 mx-auto text-ink-muted mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z" />
                 </svg>
-                <p className="text-sm font-medium text-ink-secondary">No news in this category</p>
-                <p className="text-xs text-ink-muted mt-1">Try selecting a different filter above.</p>
+                <p className="text-sm font-medium text-ink-secondary">{t('common.noNews')}</p>
+                <p className="text-xs text-ink-muted mt-1">{t('actualites.tryDifferentFilter')}</p>
               </li>
             )}
             {filteredNews.map((item) => (
               <li key={item.id} className="px-5 py-4 hover:bg-surface-200/50 transition-colors duration-100 cursor-pointer group">
                 <div className="flex items-center gap-2 flex-wrap mb-1.5">
                   <span className={`px-2 py-0.5 text-[11px] font-medium rounded ${CATEGORY_STYLES[item.category]}`}>
-                    {CATEGORIES.find((c) => c.key === item.category)?.label}
+                    {t(CATEGORIES.find((c) => c.key === item.category)?.labelKey || '')}
                   </span>
-                  <span className="text-xs text-ink-muted">{formatDate(item.date)}</span>
+                  <span className="text-xs text-ink-muted">{formatDate(item.date, locale)}</span>
                 </div>
 
                 <h3 className="text-sm font-semibold text-ink leading-snug group-hover:text-brand transition-colors duration-150">
@@ -343,7 +346,7 @@ export default function ActualitesPage({ role }) {
           {/* Footer */}
           <div className="px-5 py-3 border-t border-edge-subtle">
             <button className="w-full text-center text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150">
-              Load more articles →
+              {t('common.loadMore')}
             </button>
           </div>
         </div>
@@ -358,13 +361,13 @@ export default function ActualitesPage({ role }) {
                 <svg className="w-5 h-5 text-ink-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                 </svg>
-                <h2 className="text-base font-semibold text-ink">Upcoming Events</h2>
+                <h2 className="text-base font-semibold text-ink">{t('actualites.upcomingEvents')}</h2>
               </div>
               <button
                 onClick={() => navigate('/dashboard/calendar')}
                 className="text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150"
               >
-                Calendar
+                {t('calendar.title')}
               </button>
             </div>
 
@@ -375,7 +378,7 @@ export default function ActualitesPage({ role }) {
                     {/* Date block */}
                     <div className="shrink-0 w-11 h-11 rounded-lg bg-surface-200 flex flex-col items-center justify-center">
                       <span className="text-[10px] font-semibold text-ink-muted uppercase leading-none">
-                        {new Date(event.date).toLocaleDateString('en-GB', { month: 'short' })}
+                        {new Date(event.date).toLocaleDateString(locale, { month: 'short' })}
                       </span>
                       <span className="text-base font-bold text-ink leading-tight">
                         {new Date(event.date).getDate()}
@@ -418,7 +421,7 @@ export default function ActualitesPage({ role }) {
                 onClick={() => navigate('/dashboard/calendar')}
                 className="w-full text-center text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150"
               >
-                View full calendar →
+                {t('common.viewCalendar')}
               </button>
             </div>
           </div>
@@ -430,25 +433,25 @@ export default function ActualitesPage({ role }) {
                 <svg className="w-5 h-5 text-ink-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.678-5.504a4.5 4.5 0 00-6.364-6.364L4.5 8.737" />
                 </svg>
-                <h2 className="text-base font-semibold text-ink">Quick Links</h2>
+                <h2 className="text-base font-semibold text-ink">{t('actualites.quickLinks')}</h2>
               </div>
             </div>
 
             <div className="p-4 space-y-1.5">
               {[
-                { label: 'University Website', icon: 'globe' },
-                { label: 'Moodle Platform', icon: 'book' },
-                { label: 'Digital Library', icon: 'library' },
-                { label: 'Email Portal', icon: 'mail' },
+                { labelKey: 'actualites.universityWebsite', icon: 'globe' },
+                { labelKey: 'actualites.moodlePlatform', icon: 'book' },
+                { labelKey: 'actualites.digitalLibrary', icon: 'library' },
+                { labelKey: 'actualites.emailPortal', icon: 'mail' },
               ].map((link) => (
                 <button
-                  key={link.label}
+                  key={link.labelKey}
                   className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-ink-secondary hover:bg-surface-200 hover:text-ink transition-colors duration-100"
                 >
                   <svg className="w-4 h-4 shrink-0 text-ink-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                   </svg>
-                  {link.label}
+                  {t(link.labelKey)}
                   <svg className="w-3.5 h-3.5 ml-auto text-ink-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                   </svg>

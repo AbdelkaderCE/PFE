@@ -10,10 +10,11 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import request from '../api';
 
 /* ── Constants ──────────────────────────────────────────────── */
-const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+/* Weekday headers are derived from the locale in the component */
 
 const EVENT_COLORS = {
   academic:       'bg-brand',
@@ -67,13 +68,26 @@ function isSameDay(a, b) {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 }
 
-function formatMonthYear(year, month) {
-  return new Date(year, month, 1).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+function formatMonthYear(year, month, locale = 'en-GB') {
+  return new Date(year, month, 1).toLocaleDateString(locale, { month: 'long', year: 'numeric' });
 }
 
 /* ── Component ──────────────────────────────────────────────── */
 export default function CalendarPage({ role }) {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language === 'ar' ? 'ar-DZ' : i18n.language === 'fr' ? 'fr-FR' : 'en-GB';
+
+  /* Derive localized weekday headers (Mon–Sun) */
+  const WEEKDAYS = useMemo(() => {
+    const base = new Date(2024, 0, 1); // Monday
+    return Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(base);
+      d.setDate(base.getDate() + i);
+      return d.toLocaleDateString(locale, { weekday: 'short' });
+    });
+  }, [locale]);
+
   const today = useMemo(() => new Date(), []);
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
@@ -132,9 +146,9 @@ export default function CalendarPage({ role }) {
       {/* ── Page Header ────────────────────────────────────── */}
       <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-xl font-bold text-ink tracking-tight">Calendar</h1>
+          <h1 className="text-xl font-bold text-ink tracking-tight">{t('calendar.title')}</h1>
           <p className="mt-1 text-sm text-ink-tertiary">
-            Academic events and important dates.
+            {t('calendar.subtitle')}
           </p>
         </div>
         <button
@@ -144,7 +158,7 @@ export default function CalendarPage({ role }) {
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59" />
           </svg>
-          View Actualités
+          {t('calendar.viewActualites')}
         </button>
       </div>
 
@@ -159,19 +173,19 @@ export default function CalendarPage({ role }) {
               <button
                 onClick={goPrev}
                 className="p-1.5 rounded-md text-ink-tertiary hover:text-ink-secondary hover:bg-surface-200 transition-colors duration-150"
-                aria-label="Previous month"
+                aria-label={t('calendar.previousMonth')}
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
                 </svg>
               </button>
               <h2 className="text-base font-semibold text-ink min-w-[160px] text-center">
-                {formatMonthYear(currentYear, currentMonth)}
+                {formatMonthYear(currentYear, currentMonth, locale)}
               </h2>
               <button
                 onClick={goNext}
                 className="p-1.5 rounded-md text-ink-tertiary hover:text-ink-secondary hover:bg-surface-200 transition-colors duration-150"
-                aria-label="Next month"
+                aria-label={t('calendar.nextMonth')}
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -182,7 +196,7 @@ export default function CalendarPage({ role }) {
               onClick={goToday}
               className="px-3 py-1.5 text-xs font-medium text-brand bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors duration-150"
             >
-              Today
+              {t('common.today')}
             </button>
           </div>
 
@@ -272,7 +286,7 @@ export default function CalendarPage({ role }) {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
                 </svg>
                 <h2 className="text-base font-semibold text-ink">
-                  {selectedDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
+                  {selectedDate.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' })}
                 </h2>
               </div>
             </div>
@@ -282,8 +296,8 @@ export default function CalendarPage({ role }) {
                 <svg className="w-10 h-10 mx-auto text-ink-muted/50 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" />
                 </svg>
-                <p className="text-sm font-medium text-ink-secondary">No events on this day</p>
-                <p className="text-xs text-ink-muted mt-1">Select another date or check the Actualités feed.</p>
+                <p className="text-sm font-medium text-ink-secondary">{t('common.noEvents')}</p>
+                <p className="text-xs text-ink-muted mt-1">{t('calendar.selectAnother')}</p>
               </div>
             ) : (
               <ul className="divide-y divide-edge-subtle">
@@ -320,11 +334,11 @@ export default function CalendarPage({ role }) {
           {/* All upcoming events summary */}
           <div className="bg-surface rounded-lg border border-edge shadow-card">
             <div className="px-5 py-4 border-b border-edge-subtle">
-              <h2 className="text-base font-semibold text-ink">All Upcoming</h2>
+              <h2 className="text-base font-semibold text-ink">{t('common.allUpcoming')}</h2>
             </div>
             <ul className="divide-y divide-edge-subtle max-h-64 overflow-y-auto">
               {events.length === 0 && (
-                <li className="px-5 py-8 text-center text-sm text-ink-muted">No upcoming events.</li>
+                <li className="px-5 py-8 text-center text-sm text-ink-muted">{t('common.noUpcoming')}</li>
               )}
               {events.map((event) => (
                 <li
@@ -339,7 +353,7 @@ export default function CalendarPage({ role }) {
                   <div className="flex items-center gap-3">
                     <div className="shrink-0 w-10 h-10 rounded-lg bg-surface-200 flex flex-col items-center justify-center">
                       <span className="text-[9px] font-semibold text-ink-muted uppercase leading-none">
-                        {new Date(event.date).toLocaleDateString('en-GB', { month: 'short' })}
+                        {new Date(event.date).toLocaleDateString(locale, { month: 'short' })}
                       </span>
                       <span className="text-sm font-bold text-ink leading-tight">
                         {new Date(event.date).getDate()}

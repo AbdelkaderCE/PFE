@@ -12,6 +12,7 @@
 */
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import request from '../api';
 
@@ -57,14 +58,15 @@ const PRIORITY_STYLES = {
   normal: 'bg-surface-200 text-ink-tertiary border border-edge',
 };
 
-function formatDate(dateStr) {
+function formatDate(dateStr, locale = 'en-GB') {
   const d = new Date(dateStr);
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  return d.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
 }
 
 /* ── Component ──────────────────────────────────────────────── */
 export default function TeacherDashboard() {
   const { user } = useAuth();
+  const { t, i18n } = useTranslation();
   const [stats, setStats] = useState([]);
   const [projects, setProjects] = useState([]);
   const [claims, setClaims] = useState([]);
@@ -108,10 +110,10 @@ export default function TeacherDashboard() {
       {/* ── Page Header ────────────────────────────────────── */}
       <div>
         <h1 className="text-xl font-bold text-ink tracking-tight">
-          Good morning{user?.firstName ? `, ${user.firstName}` : ''}
+          {t('teacherDashboard.goodMorning', { name: user?.firstName ? `, ${user.firstName}` : '' })}
         </h1>
         <p className="mt-1 text-sm text-ink-tertiary">
-          Here's what needs your attention today — {new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}.
+          {t('teacherDashboard.attentionToday', { date: new Date().toLocaleDateString(i18n.language === 'ar' ? 'ar-DZ' : i18n.language === 'fr' ? 'fr-FR' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) })}
         </p>
       </div>
 
@@ -150,7 +152,7 @@ export default function TeacherDashboard() {
               <svg className="w-5 h-5 text-ink-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12.75V12A2.25 2.25 0 014.5 9.75h15A2.25 2.25 0 0121.75 12v.75m-8.69-6.44l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
               </svg>
-              <h2 className="text-base font-semibold text-ink">Pending Validations</h2>
+              <h2 className="text-base font-semibold text-ink">{t('teacherDashboard.pendingValidations')}</h2>
               {projects.length > 0 && (
                 <span className="ml-1 px-2 py-0.5 text-xs font-medium rounded-full bg-amber-50 dark:bg-amber-950/40 text-warning border border-amber-200 dark:border-amber-800/50">
                   {projects.length}
@@ -158,23 +160,23 @@ export default function TeacherDashboard() {
               )}
             </div>
             <button className="text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150">
-              View all
+              {t('teacherDashboard.viewAll')}
             </button>
           </div>
 
           {projects.length === 0 ? (
-            <div className="px-5 py-12 text-center text-sm text-ink-muted">No pending validations.</div>
+            <div className="px-5 py-12 text-center text-sm text-ink-muted">{t('teacherDashboard.noPending')}</div>
           ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-edge-subtle">
-                  <th className="px-5 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider">Project</th>
-                  <th className="px-5 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider hidden sm:table-cell">Student</th>
-                  <th className="px-5 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider hidden md:table-cell">Group</th>
-                  <th className="px-5 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider hidden lg:table-cell">Submitted</th>
-                  <th className="px-5 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider">Priority</th>
-                  <th className="px-5 py-3 text-right text-xs font-medium text-ink-muted uppercase tracking-wider">Action</th>
+                  <th className="px-5 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider">{t('teacherDashboard.thProject')}</th>
+                  <th className="px-5 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider hidden sm:table-cell">{t('teacherDashboard.thStudent')}</th>
+                  <th className="px-5 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider hidden md:table-cell">{t('teacherDashboard.thGroup')}</th>
+                  <th className="px-5 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider hidden lg:table-cell">{t('teacherDashboard.thSubmitted')}</th>
+                  <th className="px-5 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider">{t('teacherDashboard.thPriority')}</th>
+                  <th className="px-5 py-3 text-right text-xs font-medium text-ink-muted uppercase tracking-wider">{t('teacherDashboard.thAction')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-edge-subtle">
@@ -190,7 +192,7 @@ export default function TeacherDashboard() {
                         {p.group}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-ink-tertiary hidden lg:table-cell">{formatDate(p.submitted)}</td>
+                    <td className="px-5 py-3 text-ink-tertiary hidden lg:table-cell">{formatDate(p.submitted, i18n.language === 'ar' ? 'ar-DZ' : i18n.language === 'fr' ? 'fr-FR' : 'en-GB')}</td>
                     <td className="px-5 py-3">
                       <span className={`px-2 py-0.5 text-xs font-medium rounded ${PRIORITY_STYLES[p.priority]}`}>
                         {p.priority}
@@ -198,7 +200,7 @@ export default function TeacherDashboard() {
                     </td>
                     <td className="px-5 py-3 text-right">
                       <button className="px-3 py-1.5 text-xs font-medium text-brand bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/50 rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors duration-150">
-                        Review
+                        {t('teacherDashboard.review')}
                       </button>
                     </td>
                   </tr>
@@ -217,21 +219,21 @@ export default function TeacherDashboard() {
               <svg className="w-5 h-5 text-ink-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
               </svg>
-              <h2 className="text-base font-semibold text-ink">Recent Claims</h2>
+              <h2 className="text-base font-semibold text-ink">{t('teacherDashboard.recentClaims')}</h2>
               {claims.filter((c) => c.status === 'new').length > 0 && (
                 <span className="ml-1 px-2 py-0.5 text-xs font-medium rounded-full bg-red-50 dark:bg-red-950/40 text-danger border border-red-200 dark:border-red-800/50">
-                  {claims.filter((c) => c.status === 'new').length} new
+                  {claims.filter((c) => c.status === 'new').length} {t('teacherDashboard.new')}
                 </span>
               )}
             </div>
             <button className="text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150">
-              View all
+              {t('teacherDashboard.viewAll')}
             </button>
           </div>
 
           {/* Feed list */}
           {claims.length === 0 ? (
-            <div className="px-5 py-12 text-center text-sm text-ink-muted">No recent claims.</div>
+            <div className="px-5 py-12 text-center text-sm text-ink-muted">{t('teacherDashboard.noClaims')}</div>
           ) : (
           <ul className="divide-y divide-edge-subtle">
             {claims.map((claim) => (
@@ -255,7 +257,7 @@ export default function TeacherDashboard() {
                     </div>
                   </div>
                   <span className={`shrink-0 mt-1 px-2 py-0.5 text-[11px] font-medium rounded ${STATUS_STYLES[claim.status]}`}>
-                    {claim.status === 'in-progress' ? 'In progress' : claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}
+                    {claim.status === 'in-progress' ? t('teacherDashboard.inProgress') : claim.status.charAt(0).toUpperCase() + claim.status.slice(1)}
                   </span>
                 </div>
               </li>
@@ -267,7 +269,7 @@ export default function TeacherDashboard() {
           {claims.length > 0 && (
           <div className="px-5 py-3 border-t border-edge-subtle">
             <button className="w-full text-center text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150">
-              View all claims →
+              {t('teacherDashboard.viewAllClaims')}
             </button>
           </div>
           )}

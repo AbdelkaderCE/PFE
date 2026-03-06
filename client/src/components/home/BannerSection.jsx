@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import bannerBg from '../../assets/images/computer.jpg';
 
 /* Inline SVG icons */
@@ -25,13 +26,15 @@ const AwardIcon = ({ className }) => (
 );
 
 const statCards = [
-  { Icon: GraduationCapIcon, value: '28K+', label: 'Students' },
-  { Icon: UsersIcon, value: '1.1K+', label: 'Teachers' },
-  { Icon: BookIcon, value: '8', label: 'Faculties' },
-  { Icon: AwardIcon, value: '15th', label: 'National Rank' },
+  { Icon: GraduationCapIcon, value: '28K+', labelKey: 'banner.students' },
+  { Icon: UsersIcon, value: '1.1K+', labelKey: 'banner.teachersStat' },
+  { Icon: BookIcon, value: '8', labelKey: 'banner.faculties' },
+  { Icon: AwardIcon, value: '15th', labelKey: 'banner.nationalRank' },
 ];
 
 export default function BannerSection() {
+  const { t } = useTranslation();
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
@@ -46,42 +49,40 @@ export default function BannerSection() {
           {/* Left — Text */}
           <div className="bg-black/10 backdrop-blur-[2px] p-8 rounded-2xl text-white">
             <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-              Welcome to{' '}
+              {t('banner.welcome')}{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">
-                Ibn Khaldoun University
+                {t('banner.universityName')}
               </span>
             </h2>
             <p className="text-xl mb-8 text-white/90 leading-relaxed">
-              Established in 1980, our university is dedicated to excellence in education,
-              research, and community service. Join over 28,000 students and 1,100 faculty
-              members in our journey of knowledge and discovery.
+              {t('banner.description')}
             </p>
             <div className="flex flex-wrap gap-4">
               <Link
                 to="/login"
                 className="bg-white text-ink px-6 py-2.5 rounded-md font-medium hover:shadow-card transition-all duration-150 focus:ring-2 focus:ring-brand/30 focus:ring-offset-2"
               >
-                Apply Now
+                {t('common.applyNow')}
               </Link>
               <a
                 href="#features"
                 className="border-2 border-white text-white px-6 py-2.5 rounded-md font-medium hover:bg-white hover:text-ink transition-all duration-150 focus:ring-2 focus:ring-white/30 focus:ring-offset-2"
               >
-                Learn More
+                {t('common.learnMore')}
               </a>
             </div>
           </div>
 
           {/* Right — Stats Cards */}
           <div className="grid grid-cols-2 gap-4">
-            {statCards.map(({ Icon, value, label }, i) => (
+            {statCards.map(({ Icon, value, labelKey: label }, i) => (
               <div
                 key={i}
                 className="bg-black/10 backdrop-blur-[2px] rounded-lg p-6 text-center border border-white/20 hover:bg-black/20 transition-all duration-200"
               >
                 <Icon className="w-12 h-12 mx-auto mb-3 text-yellow-300" />
                 <div className="text-3xl font-bold text-white">{value}</div>
-                <div className="text-sm text-white/80">{label}</div>
+                <div className="text-sm text-white/80">{t(label)}</div>
               </div>
             ))}
           </div>

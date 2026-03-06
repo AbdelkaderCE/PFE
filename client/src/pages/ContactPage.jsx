@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import PublicLayout from '../components/public/PublicLayout';
 
 /* ── Inline SVG icons ──────────────────────────────────────────── */
@@ -39,31 +40,32 @@ const CheckCircleIcon = (p) => (
 const contactCards = [
   {
     Icon: PhoneIcon,
-    title: 'Phone',
+    titleKey: 'contact.phone',
     lines: ['+213 555 55 55 55', '+213 46 00 00 00'],
     accent: 'from-blue-600 to-blue-400',
   },
   {
     Icon: MailIcon,
-    title: 'Email',
+    titleKey: 'contact.emailTitle',
     lines: ['info@univ-tiaret.dz', 'contact@univ-tiaret.dz'],
     accent: 'from-green-600 to-green-400',
   },
   {
     Icon: MapPinIcon,
-    title: 'Address',
+    titleKey: 'contact.addressTitle',
     lines: ['Ibn Khaldoun University', 'Tiaret 14000, Algeria'],
     accent: 'from-orange-600 to-orange-400',
   },
   {
     Icon: ClockIcon,
-    title: 'Office Hours',
+    titleKey: 'contact.officeHours',
     lines: ['Sun – Thu: 8:00 AM – 4:30 PM', 'Fri – Sat: Closed'],
     accent: 'from-purple-600 to-purple-400',
   },
 ];
 
 export default function ContactPage() {
+  const { t } = useTranslation();
   const [formState, setFormState] = useState({
     name: '',
     email: '',
@@ -100,19 +102,18 @@ export default function ContactPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <div className="inline-flex items-center bg-brand-light rounded-full px-4 py-2 mb-6">
             <span className="w-2 h-2 bg-brand rounded-full mr-2" />
-            <span className="text-sm font-semibold text-brand uppercase tracking-wider">Contact</span>
+            <span className="text-sm font-semibold text-brand uppercase tracking-wider">{t('contact.badge')}</span>
           </div>
 
           <h1 className="text-4xl md:text-5xl font-bold text-ink mb-6 leading-tight tracking-tight">
-            Get in{' '}
+            {t('contact.title')}{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-hover">
-              Touch
+              {t('contact.titleHighlight')}
             </span>
           </h1>
 
           <p className="text-lg text-ink-secondary max-w-2xl mx-auto leading-relaxed">
-            Have a question or want to learn more about our university? We are here to help.
-            Reach out and we will get back to you as soon as possible.
+            {t('contact.subtitle')}
           </p>
         </div>
       </section>
@@ -121,7 +122,7 @@ export default function ContactPage() {
       <section className="py-16 bg-canvas">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {contactCards.map(({ Icon, title, lines, accent }, i) => (
+            {contactCards.map(({ Icon, titleKey, lines, accent }, i) => (
               <div
                 key={i}
                 className="bg-surface rounded-lg border border-edge shadow-card p-6 text-center transition-all duration-200 hover:-translate-y-0.5"
@@ -129,7 +130,7 @@ export default function ContactPage() {
                 <div className={`w-12 h-12 mx-auto mb-4 rounded-lg bg-gradient-to-br ${accent} flex items-center justify-center shadow-soft`}>
                   <Icon className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-base font-semibold text-ink mb-2">{title}</h3>
+                <h3 className="text-base font-semibold text-ink mb-2">{t(titleKey)}</h3>
                 {lines.map((line, j) => (
                   <p key={j} className="text-sm text-ink-secondary">{line}</p>
                 ))}
@@ -145,23 +146,23 @@ export default function ContactPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Form */}
             <div className="bg-surface rounded-lg border border-edge shadow-card p-8">
-              <h2 className="text-xl font-bold text-ink mb-2 tracking-tight">Send Us a Message</h2>
+              <h2 className="text-xl font-bold text-ink mb-2 tracking-tight">{t('contact.formTitle')}</h2>
               <p className="text-sm text-ink-secondary mb-6">
-                Fill out the form below and we will respond within 1–2 business days.
+                {t('contact.formSubtitle')}
               </p>
 
               {submitted ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <CheckCircleIcon className="w-16 h-16 text-green-500 mb-4" />
-                  <h3 className="text-lg font-semibold text-ink mb-2">Message Sent</h3>
+                  <h3 className="text-lg font-semibold text-ink mb-2">{t('contact.messageSent')}</h3>
                   <p className="text-sm text-ink-secondary mb-6">
-                    Thank you for reaching out. We will get back to you shortly.
+                    {t('contact.thankYou')}
                   </p>
                   <button
                     onClick={() => setSubmitted(false)}
                     className="px-6 py-2.5 bg-brand text-white rounded-md font-medium text-sm hover:bg-brand-hover focus:ring-2 focus:ring-brand/30 focus:ring-offset-2 transition-all duration-150"
                   >
-                    Send Another Message
+                    {t('common.sendAnother')}
                   </button>
                 </div>
               ) : (
@@ -169,7 +170,7 @@ export default function ContactPage() {
                   {/* Name */}
                   <div>
                     <label htmlFor="contact-name" className="block text-sm font-medium text-ink-secondary mb-1">
-                      Full Name
+                      {t('contact.fullName')}
                     </label>
                     <input
                       id="contact-name"
@@ -178,7 +179,7 @@ export default function ContactPage() {
                       required
                       value={formState.name}
                       onChange={handleChange}
-                      placeholder="Your full name"
+                      placeholder={t('contact.fullNamePlaceholder')}
                       className="w-full bg-control-bg border border-control-border rounded-md py-2.5 px-3 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand transition-all duration-150"
                     />
                   </div>
@@ -186,7 +187,7 @@ export default function ContactPage() {
                   {/* Email */}
                   <div>
                     <label htmlFor="contact-email" className="block text-sm font-medium text-ink-secondary mb-1">
-                      Email Address
+                      {t('contact.emailAddress')}
                     </label>
                     <input
                       id="contact-email"
@@ -195,7 +196,7 @@ export default function ContactPage() {
                       required
                       value={formState.email}
                       onChange={handleChange}
-                      placeholder="you@example.com"
+                      placeholder={t('contact.emailPlaceholder')}
                       className="w-full bg-control-bg border border-control-border rounded-md py-2.5 px-3 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand transition-all duration-150"
                     />
                   </div>
@@ -203,7 +204,7 @@ export default function ContactPage() {
                   {/* Subject */}
                   <div>
                     <label htmlFor="contact-subject" className="block text-sm font-medium text-ink-secondary mb-1">
-                      Subject
+                      {t('contact.subject')}
                     </label>
                     <input
                       id="contact-subject"
@@ -212,7 +213,7 @@ export default function ContactPage() {
                       required
                       value={formState.subject}
                       onChange={handleChange}
-                      placeholder="What is this about?"
+                      placeholder={t('contact.subjectPlaceholder')}
                       className="w-full bg-control-bg border border-control-border rounded-md py-2.5 px-3 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand transition-all duration-150"
                     />
                   </div>
@@ -220,7 +221,7 @@ export default function ContactPage() {
                   {/* Message */}
                   <div>
                     <label htmlFor="contact-message" className="block text-sm font-medium text-ink-secondary mb-1">
-                      Message
+                      {t('contact.message')}
                     </label>
                     <textarea
                       id="contact-message"
@@ -229,7 +230,7 @@ export default function ContactPage() {
                       rows={5}
                       value={formState.message}
                       onChange={handleChange}
-                      placeholder="Write your message here..."
+                      placeholder={t('contact.messagePlaceholder')}
                       className="w-full bg-control-bg border border-control-border rounded-md py-2.5 px-3 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand transition-all duration-150 resize-none"
                     />
                   </div>
@@ -246,12 +247,12 @@ export default function ContactPage() {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                         </svg>
-                        Sending...
+                        {t('contact.sending')}
                       </>
                     ) : (
                       <>
                         <SendIcon className="w-4 h-4 mr-2" />
-                        Send Message
+                        {t('common.sendMessage')}
                       </>
                     )}
                   </button>
@@ -273,13 +274,13 @@ export default function ContactPage() {
 
               {/* Quick links */}
               <div className="bg-surface rounded-lg border border-edge shadow-card p-6">
-                <h3 className="text-base font-semibold text-ink mb-3">Quick Links</h3>
+                <h3 className="text-base font-semibold text-ink mb-3">{t('contact.quickLinksTitle')}</h3>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { label: 'About Us', to: '/about' },
-                    { label: 'Home', to: '/home' },
-                    { label: 'Student Portal', to: '/login' },
-                    { label: 'News & Events', to: '/actualites' },
+                    { label: t('contact.quickAboutUs'), to: '/about' },
+                    { label: t('contact.quickHome'), to: '/home' },
+                    { label: t('contact.quickStudentPortal'), to: '/login' },
+                    { label: t('contact.quickNewsEvents'), to: '/actualites' },
                   ].map((item) => (
                     <Link
                       key={item.to}
@@ -300,16 +301,16 @@ export default function ContactPage() {
       <section className="py-16 bg-surface-200 dark:bg-surface">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-ink mb-4 tracking-tight">
-            Looking for More Information?
+            {t('contact.ctaTitle')}
           </h2>
           <p className="text-ink-secondary mb-6">
-            Visit our About page to learn more about the university's history, mission, and programs.
+            {t('contact.ctaSubtitle')}
           </p>
           <Link
             to="/about"
             className="inline-flex items-center px-6 py-2.5 bg-brand text-white rounded-md font-medium text-sm shadow-soft hover:bg-brand-hover focus:ring-2 focus:ring-brand/30 focus:ring-offset-2 transition-all duration-150"
           >
-            Learn About Us
+            {t('contact.ctaButton')}
           </Link>
         </div>
       </section>

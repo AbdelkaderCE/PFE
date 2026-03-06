@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import heroBg from '../../assets/images/hero-bg.jpg';
 
 /* Inline SVG icons — replaces lucide-react dependency */
@@ -30,6 +31,8 @@ const PlayIcon = ({ className }) => (
 );
 
 export default function HeroSection() {
+  const { t } = useTranslation();
+
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image + Overlay */}
@@ -54,21 +57,20 @@ export default function HeroSection() {
         {/* Badge */}
         <div className="inline-flex items-center bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-8 border border-white/30">
           <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse mr-2" />
-          <span className="text-sm font-medium">Now Available — University Platform 2026</span>
+          <span className="text-sm font-medium">{t('hero.badge')}</span>
         </div>
 
         {/* Main Heading */}
         <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-          <span className="block">Ibn Khaldoun</span>
+          <span className="block">{t('hero.title1')}</span>
           <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">
-            University
+            {t('hero.title2')}
           </span>
         </h1>
 
         {/* Description */}
         <p className="text-xl md:text-2xl mb-12 max-w-3xl mx-auto text-white/90 leading-relaxed">
-          A digital platform for managing and coordinating pedagogical activities
-          at the Department of Computer Science
+          {t('hero.description')}
         </p>
 
         {/* CTA Buttons */}
@@ -78,7 +80,7 @@ export default function HeroSection() {
             className="group relative px-6 py-2.5 bg-white text-ink rounded-md font-medium text-sm hover:shadow-card focus:ring-2 focus:ring-brand/30 focus:ring-offset-2 transition-all duration-150 overflow-hidden"
           >
             <span className="relative z-10 flex items-center">
-              Get Started Now
+              {t('common.getStarted')}
               <ArrowRightIcon className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </span>
             <div className="absolute inset-0 bg-gradient-to-r from-yellow-300 to-orange-300 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -89,17 +91,17 @@ export default function HeroSection() {
             onClick={() => window.open('#', '_blank')}
           >
             <PlayIcon className="mr-2 w-5 h-5 group-hover:scale-110 transition-transform" />
-            Watch Demo
+            {t('common.watchDemo')}
           </button>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
           {[
-            { value: '2500+', label: 'Students' },
-            { value: '150+', label: 'Teachers' },
-            { value: '200+', label: 'Courses' },
-            { value: '98%', label: 'Satisfaction' },
+            { value: '2500+', label: t('hero.students') },
+            { value: '150+', label: t('hero.teachers') },
+            { value: '200+', label: t('hero.courses') },
+            { value: '98%', label: t('hero.satisfaction') },
           ].map((stat, i) => (
             <div key={i} className="text-center bg-black/20 backdrop-blur-sm rounded-xl p-4">
               <div className="text-3xl font-bold text-white mb-2">{stat.value}</div>

@@ -6,6 +6,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { authAPI } from '../api';
 import { getPasswordStrength } from '../utils/validators';
 
@@ -69,6 +70,7 @@ const FormInput = ({ label, error, ...props }) => (
 
 export default function RegisterPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     firstName: '', lastName: '', email: '', phone: '',
@@ -83,8 +85,8 @@ export default function RegisterPage() {
   const [serverError, setServerError] = useState('');
 
   useEffect(() => {
-    document.title = 'Register — Ibn Khaldoun University';
-  }, []);
+    document.title = t('register.pageTitle');
+  }, [t]);
 
   const handleChange = (field) => (e) => {
     const value = e?.target?.value ?? e;
@@ -95,31 +97,31 @@ export default function RegisterPage() {
   /* ── Step validators ──────────────────────────────────────── */
   const validateStep1 = () => {
     const e = {};
-    if (!formData.firstName) e.firstName = 'First name is required';
-    if (!formData.lastName) e.lastName = 'Last name is required';
-    if (!formData.email) e.email = 'Email is required';
-    else if (!/\S+@\S+\.\S+/.test(formData.email)) e.email = 'Please enter a valid email';
-    if (!formData.phone) e.phone = 'Phone number is required';
-    else if (!/^(\+213|0)[5-7]\d{8}$/.test(formData.phone)) e.phone = 'Enter a valid Algerian phone number';
+    if (!formData.firstName) e.firstName = t('register.errorFirstName');
+    if (!formData.lastName) e.lastName = t('register.errorLastName');
+    if (!formData.email) e.email = t('register.errorEmail');
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) e.email = t('register.errorEmailInvalid');
+    if (!formData.phone) e.phone = t('register.errorPhone');
+    else if (!/^(\+213|0)[5-7]\d{8}$/.test(formData.phone)) e.phone = t('register.errorPhoneInvalid');
     setErrors((prev) => ({ ...prev, ...e }));
     return Object.keys(e).length === 0;
   };
 
   const validateStep2 = () => {
     const e = {};
-    if (!formData.studentId) e.studentId = 'Student ID is required';
+    if (!formData.studentId) e.studentId = t('register.errorStudentId');
     setErrors((prev) => ({ ...prev, ...e }));
     return Object.keys(e).length === 0;
   };
 
   const validateStep3 = () => {
     const e = {};
-    if (!formData.password) e.password = 'Password is required';
-    else if (formData.password.length < 8) e.password = 'Password must be at least 8 characters';
+    if (!formData.password) e.password = t('register.errorPassword');
+    else if (formData.password.length < 8) e.password = t('register.errorPasswordLength');
     else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password))
-      e.password = 'Must contain uppercase, lowercase and number';
-    if (formData.password !== formData.confirmPassword) e.confirmPassword = 'Passwords do not match';
-    if (!acceptedTerms) e.terms = 'Please accept the terms';
+      e.password = t('register.errorPasswordComplexity');
+    if (formData.password !== formData.confirmPassword) e.confirmPassword = t('register.errorPasswordMatch');
+    if (!acceptedTerms) e.terms = t('register.errorTerms');
     setErrors((prev) => ({ ...prev, ...e }));
     return Object.keys(e).length === 0;
   };
@@ -166,17 +168,17 @@ export default function RegisterPage() {
         <div className="absolute inset-0 flex flex-col justify-between p-10">
           <div className="text-white">
             <div className="inline-flex items-center bg-white/15 backdrop-blur-md rounded-full px-3 py-1 mb-5 border border-white/20">
-              <span className="text-xs font-medium tracking-wide">Join our community</span>
+              <span className="text-xs font-medium tracking-wide">{t('register.joinCommunity')}</span>
             </div>
             <h2 className="text-4xl font-bold leading-tight tracking-tight">
-              Build your
-              <span className="block text-white/80">academic profile</span>
+              {t('register.buildProfile')}
+              <span className="block text-white/80">{t('register.academicProfile')}</span>
             </h2>
             <p className="mt-3 text-sm text-white/70 max-w-sm">
-              Create your account to access all university services.
+              {t('register.heroSubtitle')}
             </p>
           </div>
-          <p className="text-white/50 text-xs">Secure registration — Ibn Khaldoun University</p>
+          <p className="text-white/50 text-xs">{t('register.secureRegistration')}</p>
         </div>
       </div>
 
@@ -188,8 +190,8 @@ export default function RegisterPage() {
             <div className="inline-flex items-center justify-center w-14 h-14 bg-brand rounded-lg text-white mb-4 shadow-soft">
               <IconUserPlus />
             </div>
-            <h1 className="text-xl font-bold text-ink tracking-tight">Create account</h1>
-            <p className="text-sm text-ink-secondary">Get started in just a few steps</p>
+            <h1 className="text-xl font-bold text-ink tracking-tight">{t('register.createAccount')}</h1>
+            <p className="text-sm text-ink-secondary">{t('register.getStarted')}</p>
           </div>
 
           {/* Progress */}
@@ -222,31 +224,31 @@ export default function RegisterPage() {
             {step === 1 && (
               <div className="space-y-4 animate-fadeIn">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormInput label="First name" type="text" value={formData.firstName} onChange={handleChange('firstName')} placeholder="Ahmed" error={errors.firstName} required />
-                  <FormInput label="Last name" type="text" value={formData.lastName} onChange={handleChange('lastName')} placeholder="Benali" error={errors.lastName} required />
+                  <FormInput label={t('register.firstName')} type="text" value={formData.firstName} onChange={handleChange('firstName')} placeholder="Ahmed" error={errors.firstName} required />
+                  <FormInput label={t('register.lastName')} type="text" value={formData.lastName} onChange={handleChange('lastName')} placeholder="Benali" error={errors.lastName} required />
                 </div>
-                <FormInput label="Email address" type="email" value={formData.email} onChange={handleChange('email')} placeholder="you@univ-tiaret.dz" error={errors.email} required />
-                <FormInput label="Phone number" type="tel" value={formData.phone} onChange={handleChange('phone')} placeholder="0555 12 34 56" error={errors.phone} required />
+                <FormInput label={t('register.emailAddress')} type="email" value={formData.email} onChange={handleChange('email')} placeholder="you@univ-tiaret.dz" error={errors.email} required />
+                <FormInput label={t('register.phoneNumber')} type="tel" value={formData.phone} onChange={handleChange('phone')} placeholder="0555 12 34 56" error={errors.phone} required />
               </div>
             )}
 
             {/* Step 2 — Academic */}
             {step === 2 && (
               <div className="space-y-4 animate-fadeIn">
-                <FormInput label="Student ID" type="text" value={formData.studentId} onChange={handleChange('studentId')} placeholder="2024001234" error={errors.studentId} required />
+                <FormInput label={t('register.studentId')} type="text" value={formData.studentId} onChange={handleChange('studentId')} placeholder="2024001234" error={errors.studentId} required />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-ink-secondary mb-1">Department</label>
+                    <label className="block text-sm font-medium text-ink-secondary mb-1">{t('register.department')}</label>
                     <select value={formData.department} onChange={(e) => handleChange('department')(e.target.value)}
                       className="w-full px-3 py-2.5 bg-control-bg border border-control-border rounded-md text-sm text-ink focus:ring-2 focus:ring-brand/30 focus:border-brand focus:outline-none">
-                      <option value="computer-science">Computer Science</option>
-                      <option value="mathematics">Mathematics</option>
-                      <option value="physics">Physics</option>
-                      <option value="chemistry">Chemistry</option>
+                      <option value="computer-science">{t('register.deptCS')}</option>
+                      <option value="mathematics">{t('register.deptMath')}</option>
+                      <option value="physics">{t('register.deptPhysics')}</option>
+                      <option value="chemistry">{t('register.deptChemistry')}</option>
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-ink-secondary mb-1">Level</label>
+                    <label className="block text-sm font-medium text-ink-secondary mb-1">{t('register.level')}</label>
                     <select value={formData.level} onChange={(e) => handleChange('level')(e.target.value)}
                       className="w-full px-3 py-2.5 bg-control-bg border border-control-border rounded-md text-sm text-ink focus:ring-2 focus:ring-brand/30 focus:border-brand focus:outline-none">
                       <option value="L1">Licence 1</option>
@@ -257,7 +259,7 @@ export default function RegisterPage() {
                     </select>
                   </div>
                 </div>
-                <FormInput label="Speciality" type="text" value={formData.speciality} onChange={handleChange('speciality')} placeholder="e.g., Software Engineering" />
+                <FormInput label={t('register.speciality')} type="text" value={formData.speciality} onChange={handleChange('speciality')} placeholder={t('register.specialityPlaceholder')} />
               </div>
             )}
 
@@ -266,14 +268,14 @@ export default function RegisterPage() {
               <div className="space-y-4 animate-fadeIn">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="relative">
-                    <FormInput label="Password" type={showPassword ? 'text' : 'password'} value={formData.password} onChange={handleChange('password')} placeholder="••••••••" error={errors.password} required />
+                    <FormInput label={t('register.password')} type={showPassword ? 'text' : 'password'} value={formData.password} onChange={handleChange('password')} placeholder="••••••••" error={errors.password} required />
                     <button type="button" onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-8 text-ink-tertiary hover:text-ink transition-colors">
                       {showPassword ? <IconEyeOff /> : <IconEye />}
                     </button>
                   </div>
                   <div className="relative">
-                    <FormInput label="Confirm password" type={showConfirmPassword ? 'text' : 'password'} value={formData.confirmPassword} onChange={handleChange('confirmPassword')} placeholder="••••••••" error={errors.confirmPassword} required />
+                    <FormInput label={t('register.confirmPassword')} type={showConfirmPassword ? 'text' : 'password'} value={formData.confirmPassword} onChange={handleChange('confirmPassword')} placeholder="••••••••" error={errors.confirmPassword} required />
                     <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       className="absolute right-3 top-8 text-ink-tertiary hover:text-ink transition-colors">
                       {showConfirmPassword ? <IconEyeOff /> : <IconEye />}
@@ -285,12 +287,12 @@ export default function RegisterPage() {
                 {formData.password && (
                   <div className="bg-surface-200 p-4 rounded-lg border border-edge">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-medium text-ink-secondary">Password strength</span>
+                      <span className="text-xs font-medium text-ink-secondary">{t('register.passwordStrength')}</span>
                       <span className={`text-xs font-semibold px-2 py-0.5 rounded-full
                         ${strengthLabel === 'weak' ? 'bg-red-100 text-danger dark:bg-red-900/30' :
                           strengthLabel === 'medium' ? 'bg-yellow-100 text-warning dark:bg-yellow-900/30' :
                           'bg-green-100 text-success dark:bg-green-900/30'}`}>
-                        {strengthLabel.charAt(0).toUpperCase() + strengthLabel.slice(1)}
+                        {t(`register.${strengthLabel}`)}
                       </span>
                     </div>
                     <div className="flex gap-1 h-1.5 mb-3">
@@ -303,10 +305,10 @@ export default function RegisterPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-1">
                       {[
-                        { test: formData.password.length >= 8, text: '8+ characters' },
-                        { test: /[A-Z]/.test(formData.password), text: 'Uppercase' },
-                        { test: /[a-z]/.test(formData.password), text: 'Lowercase' },
-                        { test: /\d/.test(formData.password), text: 'Number' },
+                        { test: formData.password.length >= 8, text: t('register.minChars') },
+                        { test: /[A-Z]/.test(formData.password), text: t('register.uppercase') },
+                        { test: /[a-z]/.test(formData.password), text: t('register.lowercase') },
+                        { test: /\d/.test(formData.password), text: t('register.number') },
                       ].map((req, i) => (
                         <div key={i} className="flex items-center text-xs gap-1">
                           {req.test ? <span className="text-success"><IconCheck /></span> : <span className="text-ink-muted"><IconX /></span>}
@@ -321,9 +323,9 @@ export default function RegisterPage() {
                   <input type="checkbox" checked={acceptedTerms} onChange={(e) => setAcceptedTerms(e.target.checked)}
                     className="h-4 w-4 text-brand focus:ring-brand/30 border-control-border rounded mt-0.5" />
                   <span className="ml-2 text-xs text-ink-secondary">
-                    I agree to the{' '}
-                    <Link to="/terms" className="text-brand font-medium hover:underline">Terms</Link>{' '}and{' '}
-                    <Link to="/privacy" className="text-brand font-medium hover:underline">Privacy Policy</Link>
+                    {t('register.agreeTerms')}{' '}
+                    <Link to="/terms" className="text-brand font-medium hover:underline">{t('register.terms')}</Link>{' '}{t('register.and')}{' '}
+                    <Link to="/privacy" className="text-brand font-medium hover:underline">{t('register.privacyPolicy')}</Link>
                   </span>
                 </label>
                 {errors.terms && <p className="text-xs text-danger">{errors.terms}</p>}
@@ -335,28 +337,28 @@ export default function RegisterPage() {
               {step > 1 && (
                 <button type="button" onClick={() => setStep(step - 1)}
                   className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-surface border border-edge rounded-md text-sm font-medium text-ink-secondary hover:bg-surface-200 focus:ring-2 focus:ring-brand/30 focus:ring-offset-2 transition-all duration-150">
-                  <IconArrowLeft /> Back
+                  <IconArrowLeft /> {t('register.back')}
                 </button>
               )}
               {step < 3 ? (
                 <button type="button" onClick={handleNext}
                   className={`inline-flex items-center gap-1.5 px-4 py-2.5 bg-brand text-white rounded-md text-sm font-medium hover:bg-brand-hover active:bg-brand-dark focus:ring-2 focus:ring-brand/30 focus:ring-offset-2 transition-all duration-150 ${step === 1 ? 'w-full justify-center' : 'ml-auto'}`}>
-                  Next <IconArrowRight />
+                  {t('register.next')} <IconArrowRight />
                 </button>
               ) : (
                 <button type="submit" disabled={isLoading}
                   className={`inline-flex items-center gap-1.5 px-4 py-2.5 bg-brand text-white rounded-md text-sm font-medium hover:bg-brand-hover active:bg-brand-dark focus:ring-2 focus:ring-brand/30 focus:ring-offset-2 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed ${step > 1 ? 'ml-auto' : 'w-full justify-center'}`}>
                   {isLoading ? (
-                    <><span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> Creating...</>
-                  ) : 'Create account'}
+                    <><span className="h-4 w-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> {t('register.creating')}</>
+                  ) : t('register.createAccount')}
                 </button>
               )}
             </div>
           </form>
 
           <p className="text-center text-xs text-ink-tertiary mt-4">
-            Already have an account?{' '}
-            <Link to="/login" className="font-medium text-brand hover:underline">Sign in</Link>
+            {t('register.alreadyHaveAccount')}{' '}
+            <Link to="/login" className="font-medium text-brand hover:underline">{t('common.signIn')}</Link>
           </p>
         </div>
       </div>

@@ -9,8 +9,10 @@
 */
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function ForgotPasswordPage({ onBackToLogin } = {}) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');
@@ -21,7 +23,7 @@ export default function ForgotPasswordPage({ onBackToLogin } = {}) {
     setError('');
 
     if (!email.trim()) {
-      setError('Please enter your email address.');
+      setError(t('forgotPassword.errorEmpty'));
       return;
     }
 
@@ -30,7 +32,7 @@ export default function ForgotPasswordPage({ onBackToLogin } = {}) {
     setLoading(false);
 
     if (!email.includes('@')) {
-      setError('Please enter a valid email address.');
+      setError(t('forgotPassword.errorInvalid'));
       return;
     }
 
@@ -47,12 +49,12 @@ export default function ForgotPasswordPage({ onBackToLogin } = {}) {
             <span className="text-white font-bold text-lg tracking-tight">IK</span>
           </div>
           <h1 className="text-xl font-bold text-ink tracking-tight">
-            {sent ? 'Check your email' : 'Reset your password'}
+            {sent ? t('forgotPassword.titleSent') : t('forgotPassword.title')}
           </h1>
           <p className="mt-1 text-sm text-ink-tertiary">
             {sent
-              ? 'We sent a reset link to your inbox.'
-              : "Enter your email and we'll send a reset link."}
+              ? t('forgotPassword.subtitleSent')
+              : t('forgotPassword.subtitle')}
           </p>
         </div>
 

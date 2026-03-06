@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /* Inline SVG icons */
 const UsersIcon = (p) => <svg {...p} fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>;
@@ -9,10 +10,10 @@ const TrendingUpIcon = (p) => <svg {...p} fill="none" stroke="currentColor" stro
 const StarIcon = (p) => <svg {...p} fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>;
 
 const stats = [
-  { Icon: UsersIcon, value: 2500, label: 'Active Students', suffix: '+' },
-  { Icon: BookIcon, value: 150, label: 'Expert Teachers', suffix: '+' },
-  { Icon: AwardIcon, value: 500, label: 'Projects Completed', suffix: '+' },
-  { Icon: BuildingIcon, value: 98, label: 'Satisfaction Rate', suffix: '%' },
+  { Icon: UsersIcon, value: 2500, labelKey: 'statistics.students', suffix: '+' },
+  { Icon: BookIcon, value: 150, labelKey: 'statistics.teachers', suffix: '+' },
+  { Icon: AwardIcon, value: 500, labelKey: 'statistics.projects', suffix: '+' },
+  { Icon: BuildingIcon, value: 98, labelKey: 'statistics.satisfaction', suffix: '%' },
 ];
 
 function Counter({ end, suffix = '', duration = 2000, isVisible }) {
@@ -40,6 +41,7 @@ function Counter({ end, suffix = '', duration = 2000, isVisible }) {
 export default function StatisticsSection() {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -96,18 +98,18 @@ export default function StatisticsSection() {
         <div className="text-center text-ink mb-16">
           <div className="inline-flex items-center bg-surface/80 dark:bg-surface-200/80 backdrop-blur-sm rounded-full px-4 py-2 mb-6 border border-edge">
             <TrendingUpIcon className="w-4 h-4 mr-2 text-ink-secondary" />
-            <span className="text-sm font-medium text-ink-secondary">Our Impact in Numbers</span>
+            <span className="text-sm font-medium text-ink-secondary">{t('statistics.badge')}</span>
           </div>
 
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Growing Together with
+            {t('statistics.title')}
             <span className="block text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark">
-              Excellence
+              {t('statistics.titleHighlight')}
             </span>
           </h2>
 
           <p className="text-xl text-ink-secondary max-w-2xl mx-auto">
-            Join thousands of students and teachers already using our platform
+            {t('statistics.subtitle')}
           </p>
         </div>
 
@@ -129,10 +131,10 @@ export default function StatisticsSection() {
                   </div>
 
                   {/* Label */}
-                  <div className="text-ink-secondary font-medium mb-4">{stat.label}</div>
+                  <div className="text-ink-secondary font-medium mb-4">{t(stat.labelKey)}</div>
 
                   {/* Stars for satisfaction */}
-                  {stat.label === 'Satisfaction Rate' && (
+                  {stat.labelKey === 'statistics.satisfaction' && (
                     <div className="flex justify-center gap-1">
                       {[...Array(5)].map((_, i) => (
                         <StarIcon key={i} className="w-4 h-4 text-yellow-400" />

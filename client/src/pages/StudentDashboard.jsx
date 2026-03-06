@@ -12,6 +12,7 @@
 */
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import request from '../api';
 
@@ -80,20 +81,21 @@ const DOC_TYPE_ICONS = {
   ),
 };
 
-function formatDeadline(dateStr) {
+function formatDeadline(dateStr, t) {
   const d = new Date(dateStr);
   const now = new Date();
   const diff = Math.ceil((d.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
   const formatted = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-  if (diff <= 0) return { text: 'Overdue', relative: 'Overdue', formatted };
-  if (diff === 1) return { text: 'Tomorrow', relative: 'Tomorrow', formatted };
-  if (diff <= 7) return { text: `${diff} days left`, relative: `In ${diff} days`, formatted };
-  return { text: formatted, relative: `In ${diff} days`, formatted };
+  if (diff <= 0) return { text: t('studentDashboard.overdue'), relative: t('studentDashboard.overdue'), formatted };
+  if (diff === 1) return { text: t('studentDashboard.tomorrow'), relative: t('studentDashboard.tomorrow'), formatted };
+  if (diff <= 7) return { text: t('studentDashboard.daysLeft', { count: diff }), relative: t('studentDashboard.inDays', { count: diff }), formatted };
+  return { text: formatted, relative: t('studentDashboard.inDays', { count: diff }), formatted };
 }
 
 /* ── Component ──────────────────────────────────────────────── */
 export default function StudentDashboard() {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [specialties, setSpecialties] = useState([]);
   const [deadlines, setDeadlines] = useState([]);
   const [documents, setDocuments] = useState([]);
@@ -125,7 +127,7 @@ export default function StudentDashboard() {
   const displayName = user?.firstName || 'Student';
   const dept = user?.student?.department?.name || '';
   const spec = user?.student?.specialite?.name || '';
-  const subtitle = [spec, dept].filter(Boolean).join(' · ') || 'Welcome to your dashboard';
+  const subtitle = [spec, dept].filter(Boolean).join(' · ') || t('studentDashboard.welcomeDefault');
 
   const avgProgress = specialties.length
     ? Math.round(specialties.reduce((s, m) => s + (m.progress || 0), 0) / specialties.length)
@@ -137,7 +139,7 @@ export default function StudentDashboard() {
       {/* ── Page Header ────────────────────────────────────── */}
       <div>
         <h1 className="text-xl font-bold text-ink tracking-tight">
-          Welcome back, {displayName}
+          {t('studentDashboard.welcomeBack', { name: displayName })}
         </h1>
         <p className="mt-1 text-sm text-ink-tertiary">
           {subtitle}
@@ -160,8 +162,8 @@ export default function StudentDashboard() {
           <svg className="w-12 h-12 mx-auto text-ink-muted mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342" />
           </svg>
-          <h3 className="text-base font-semibold text-ink">No data yet</h3>
-          <p className="text-sm text-ink-tertiary mt-1">Your modules, deadlines, and documents will appear here once they are available.</p>
+          <h3 className="text-base font-semibold text-ink">{t('studentDashboard.noDataTitle')}</h3>
+          <p className="text-sm text-ink-tertiary mt-1">{t('studentDashboard.noDataText')}</p>
         </div>
       )}
 
@@ -169,22 +171,22 @@ export default function StudentDashboard() {
       {!loading && (specialties.length > 0 || deadlines.length > 0) && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
-            { label: 'Modules', value: specialties.length, icon: (
+            { label: t('studentDashboard.modules'), value: specialties.length, icon: (
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
               </svg>
             )},
-            { label: 'Credits', value: specialties.reduce((s, m) => s + (m.credits || 0), 0), icon: (
+            { label: t('studentDashboard.credits'), value: specialties.reduce((s, m) => s + (m.credits || 0), 0), icon: (
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
               </svg>
             )},
-            { label: 'Avg Progress', value: `${avgProgress}%`, icon: (
+            { label: t('studentDashboard.avgProgress'), value: `${avgProgress}%`, icon: (
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
               </svg>
             )},
-            { label: 'Due Soon', value: deadlines.filter((d) => d.urgency === 'urgent').length, icon: (
+            { label: t('studentDashboard.dueSoon'), value: deadlines.filter((d) => d.urgency === 'urgent').length, icon: (
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
@@ -211,7 +213,7 @@ export default function StudentDashboard() {
               <svg className="w-5 h-5 text-ink-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5" />
               </svg>
-              <h2 className="text-base font-semibold text-ink">My Modules</h2>
+              <h2 className="text-base font-semibold text-ink">{t('studentDashboard.myModules')}</h2>
               <span className="ml-1 px-2 py-0.5 text-xs font-medium rounded-full bg-blue-50 dark:bg-blue-950/40 text-brand border border-blue-200 dark:border-blue-800/50">
                 {specialties.length}
               </span>
@@ -221,11 +223,11 @@ export default function StudentDashboard() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-edge-subtle">
-                  <th className="px-5 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider">Module</th>
-                  <th className="px-5 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider hidden sm:table-cell">Teacher</th>
-                  <th className="px-5 py-3 text-center text-xs font-medium text-ink-muted uppercase tracking-wider hidden md:table-cell">Type</th>
-                  <th className="px-5 py-3 text-center text-xs font-medium text-ink-muted uppercase tracking-wider hidden lg:table-cell">Credits</th>
-                  <th className="px-5 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider">Progress</th>
+                  <th className="px-5 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider">{t('studentDashboard.thModule')}</th>
+                  <th className="px-5 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider hidden sm:table-cell">{t('studentDashboard.thTeacher')}</th>
+                  <th className="px-5 py-3 text-center text-xs font-medium text-ink-muted uppercase tracking-wider hidden md:table-cell">{t('studentDashboard.thType')}</th>
+                  <th className="px-5 py-3 text-center text-xs font-medium text-ink-muted uppercase tracking-wider hidden lg:table-cell">{t('studentDashboard.thCredits')}</th>
+                  <th className="px-5 py-3 text-left text-xs font-medium text-ink-muted uppercase tracking-wider">{t('studentDashboard.thProgress')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-edge-subtle">
@@ -240,7 +242,7 @@ export default function StudentDashboard() {
                       <span className={`inline-block px-2 py-0.5 text-xs font-medium rounded ${TYPE_BADGE[mod.type] || ''}`}>{mod.type}</span>
                     </td>
                     <td className="px-5 py-3 text-center text-ink-secondary hidden lg:table-cell">
-                      {mod.credits} <span className="text-ink-muted text-xs">/ coeff {mod.coefficient}</span>
+                      {mod.credits} <span className="text-ink-muted text-xs">/ {t('studentDashboard.coeff')} {mod.coefficient}</span>
                     </td>
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-2 min-w-[120px]">
@@ -270,15 +272,15 @@ export default function StudentDashboard() {
                   <svg className="w-5 h-5 text-ink-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <h2 className="text-base font-semibold text-ink">Upcoming Deadlines</h2>
+                  <h2 className="text-base font-semibold text-ink">{t('studentDashboard.upcomingDeadlines')}</h2>
                   <span className="ml-1 px-2 py-0.5 text-xs font-medium rounded-full bg-red-50 dark:bg-red-950/40 text-danger border border-red-200 dark:border-red-800/50">
-                    {deadlines.filter((d) => d.urgency === 'urgent').length} urgent
+                    {deadlines.filter((d) => d.urgency === 'urgent').length} {t('studentDashboard.urgent')}
                   </span>
                 </div>
               </div>
               <ul className="divide-y divide-edge-subtle">
                 {deadlines.map((dl) => {
-                  const deadline = formatDeadline(dl.due);
+                  const deadline = formatDeadline(dl.due, t);
                   const u = URGENCY_STYLES[dl.urgency] || URGENCY_STYLES.normal;
                   return (
                     <li key={dl.id} className="px-5 py-4 hover:bg-surface-200/50 transition-colors duration-100">
@@ -314,7 +316,7 @@ export default function StudentDashboard() {
                 <svg className="w-5 h-5 text-ink-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                 </svg>
-                <h2 className="text-base font-semibold text-ink">Documents</h2>
+                <h2 className="text-base font-semibold text-ink">{t('studentDashboard.documents')}</h2>
               </div>
               <ul className="divide-y divide-edge-subtle">
                 {documents.map((doc) => (
@@ -338,7 +340,7 @@ export default function StudentDashboard() {
               </ul>
               <div className="px-5 py-3 border-t border-edge-subtle">
                 <button className="w-full text-center text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150">
-                  Go to Documents →
+                  {t('studentDashboard.goToDocuments')}
                 </button>
               </div>
             </div>

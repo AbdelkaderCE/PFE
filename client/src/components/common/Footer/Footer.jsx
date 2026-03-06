@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 /* Social SVG icons */
 const FacebookIcon = () => (
@@ -17,40 +18,40 @@ const LinkedInIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.95v5.66H9.36V9h3.41v1.56h.05a3.74 3.74 0 0 1 3.37-1.85c3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.23 0H1.77A1.75 1.75 0 0 0 0 1.73v20.54A1.75 1.75 0 0 0 1.77 24h20.46A1.75 1.75 0 0 0 24 22.27V1.73A1.75 1.75 0 0 0 22.23 0z"/></svg>
 );
 
-const quickLinks = [
-  { label: 'Home', path: '/' },
-  { label: 'About Us', path: '/about' },
-  { label: 'News & Events', path: '/news' },
-  { label: 'Registration', path: '/register' },
-  { label: 'Contact Us', path: '/contact' },
-];
-
 const Footer = () => {
+  const { t } = useTranslation();
+
+  const quickLinks = [
+    { labelKey: 'footer.home', path: '/' },
+    { labelKey: 'footer.aboutUs', path: '/about' },
+    { labelKey: 'footer.newsEvents', path: '/news' },
+    { labelKey: 'footer.registration', path: '/register' },
+    { labelKey: 'footer.contactLink', path: '/contact' },
+  ];
+
   return (
     <footer className="bg-ink text-surface-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* About */}
           <div>
-            <h3 className="text-xl font-bold text-white mb-4">About University</h3>
-            <p className="text-sm leading-relaxed opacity-70">
-              Ibn Khaldoun University — Tiaret
-              <br />
-              Faculty of Mathematics and Computer Science
+            <h3 className="text-xl font-bold text-white mb-4">{t('footer.aboutTitle')}</h3>
+            <p className="text-sm leading-relaxed opacity-70 whitespace-pre-line">
+              {t('footer.aboutText')}
             </p>
             <p className="text-sm mt-4 opacity-70">
-              Established in 1980, dedicated to excellence in education and research.
+              {t('footer.established')}
             </p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-xl font-bold text-white mb-4">Quick Links</h3>
+            <h3 className="text-xl font-bold text-white mb-4">{t('footer.quickLinks')}</h3>
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.path}>
                   <Link to={link.path} className="text-sm opacity-70 hover:opacity-100 hover:text-white transition-colors duration-200">
-                    {link.label}
+                    {t(link.labelKey)}
                   </Link>
                 </li>
               ))}
@@ -59,18 +60,18 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h3 className="text-xl font-bold text-white mb-4">Contact Us</h3>
+            <h3 className="text-xl font-bold text-white mb-4">{t('footer.contactUs')}</h3>
             <ul className="space-y-3 text-sm opacity-70">
               <li className="flex items-start">
-                <span className="inline-block w-20 font-medium text-white/80">Phone:</span>
+                <span className="inline-block w-20 font-medium text-white/80">{t('footer.phone')}</span>
                 <span>+213 555 55 55 55</span>
               </li>
               <li className="flex items-start">
-                <span className="inline-block w-20 font-medium text-white/80">Email:</span>
+                <span className="inline-block w-20 font-medium text-white/80">{t('footer.email')}</span>
                 <span>info@univ-tiaret.dz</span>
               </li>
               <li className="flex items-start">
-                <span className="inline-block w-20 font-medium text-white/80">Address:</span>
+                <span className="inline-block w-20 font-medium text-white/80">{t('footer.address')}</span>
                 <span>BP 78, Tiaret 14000, Algeria</span>
               </li>
             </ul>
@@ -78,8 +79,8 @@ const Footer = () => {
 
           {/* Social */}
           <div>
-            <h3 className="text-xl font-bold text-white mb-4">Follow Us</h3>
-            <div className="flex space-x-3 mb-6">
+            <h3 className="text-xl font-bold text-white mb-4">{t('footer.followUs')}</h3>
+            <div className="flex space-x-3 rtl:space-x-reverse mb-6">
               {[
                 { Icon: FacebookIcon, label: 'Facebook', href: '#' },
                 { Icon: TwitterIcon, label: 'Twitter', href: '#' },
@@ -100,7 +101,7 @@ const Footer = () => {
 
         {/* Bottom bar */}
         <div className="mt-12 pt-8 border-t border-white/10 text-center text-sm opacity-50">
-          © {new Date().getFullYear()} Ibn Khaldoun University — Tiaret. All rights reserved.
+          {t('footer.copyright', { year: new Date().getFullYear() })}
         </div>
       </div>
     </footer>

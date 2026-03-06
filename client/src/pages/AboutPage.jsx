@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import PublicLayout from '../components/public/PublicLayout';
 import ibnKhaldounImg from '../assets/images/ibnKhaldoun.jpg';
 import studentsImg from '../assets/images/Students.jpg';
@@ -54,39 +55,41 @@ const CheckIcon = (p) => (
 
 /* ── Data ──────────────────────────────────────────────────────── */
 const stats = [
-  { Icon: UsersIcon, value: '28,000+', label: 'Students' },
-  { Icon: BookIcon, value: '1,100+', label: 'Faculty Members' },
-  { Icon: BuildingIcon, value: '8', label: 'Faculties' },
-  { Icon: GraduationCapIcon, value: '44+', label: 'Years of Excellence' },
+  { Icon: UsersIcon, value: '28,000+', labelKey: 'about.statStudents' },
+  { Icon: BookIcon, value: '1,100+', labelKey: 'about.statFaculty' },
+  { Icon: BuildingIcon, value: '8', labelKey: 'about.statFaculties' },
+  { Icon: GraduationCapIcon, value: '44+', labelKey: 'about.statYears' },
 ];
 
 const values = [
   {
     Icon: TargetIcon,
-    title: 'Academic Excellence',
-    description: 'We strive for the highest standards of education, research, and innovation, preparing students to lead in their fields.',
+    titleKey: 'about.valueExcellence',
+    descKey: 'about.valueExcellenceDesc',
   },
   {
     Icon: LightbulbIcon,
-    title: 'Innovation & Research',
-    description: 'Our labs and research centers drive discovery across STEM, social sciences, and humanities, producing impactful publications.',
+    titleKey: 'about.valueInnovation',
+    descKey: 'about.valueInnovationDesc',
   },
   {
     Icon: GlobeIcon,
-    title: 'Community Engagement',
-    description: 'We serve the broader community through partnerships, outreach programs, and initiatives that address local and national needs.',
+    titleKey: 'about.valueCommunity',
+    descKey: 'about.valueCommunityDesc',
   },
 ];
 
 const timeline = [
-  { year: '1980', title: 'Foundation', description: 'Ibn Khaldoun University established in Tiaret, Algeria as a centre universitaire.' },
-  { year: '1992', title: 'University Status', description: 'Elevated to full university status with expanded faculties and research programs.' },
-  { year: '2005', title: 'Digital Transformation', description: 'Introduction of digital systems for administration and student services.' },
-  { year: '2015', title: 'Research Growth', description: 'Opening of new research laboratories and international collaboration agreements.' },
-  { year: '2024', title: 'Platform Launch', description: 'Development of the modern digital platform for pedagogical management.' },
+  { year: '1980', titleKey: 'about.timeline1980Title', descKey: 'about.timeline1980Desc' },
+  { year: '1992', titleKey: 'about.timeline1992Title', descKey: 'about.timeline1992Desc' },
+  { year: '2005', titleKey: 'about.timeline2005Title', descKey: 'about.timeline2005Desc' },
+  { year: '2015', titleKey: 'about.timeline2015Title', descKey: 'about.timeline2015Desc' },
+  { year: '2024', titleKey: 'about.timeline2024Title', descKey: 'about.timeline2024Desc' },
 ];
 
 export default function AboutPage() {
+  const { t } = useTranslation();
+
   return (
     <PublicLayout>
       {/* ── Hero ──────────────────────────────────────────────── */}
@@ -103,32 +106,29 @@ export default function AboutPage() {
             <div>
               <div className="inline-flex items-center bg-brand-light rounded-full px-4 py-2 mb-6">
                 <span className="w-2 h-2 bg-brand rounded-full mr-2" />
-                <span className="text-sm font-semibold text-brand uppercase tracking-wider">About Us</span>
+                <span className="text-sm font-semibold text-brand uppercase tracking-wider">{t('about.badge')}</span>
               </div>
 
               <h1 className="text-4xl md:text-5xl font-bold text-ink mb-6 leading-tight tracking-tight">
-                Ibn Khaldoun University{' '}
+                {t('about.title')}{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-hover">
-                  Tiaret
+                  {t('about.titleHighlight')}
                 </span>
               </h1>
 
               <p className="text-lg text-ink-secondary leading-relaxed mb-6">
-                Established in 1980, Ibn Khaldoun University is one of Algeria's leading public institutions
-                of higher education. Located in the city of Tiaret, the university serves over 28,000 students
-                across 8 faculties, offering a comprehensive range of undergraduate and graduate programs.
+                {t('about.subtitle')}
               </p>
 
               <p className="text-base text-ink-tertiary leading-relaxed mb-8">
-                The university is named after Ibn Khaldoun, the renowned 14th-century scholar and historian,
-                reflecting our commitment to knowledge, critical thinking, and scholarly excellence.
+                {t('about.subtitleSecondary')}
               </p>
 
               <Link
                 to="/contact"
                 className="inline-flex items-center px-6 py-2.5 bg-brand text-white rounded-md font-medium text-sm shadow-soft hover:bg-brand-hover focus:ring-2 focus:ring-brand/30 focus:ring-offset-2 transition-all duration-150"
               >
-                Get in Touch
+                {t('about.getInTouch')}
                 <ArrowRightIcon className="ml-2 w-4 h-4" />
               </Link>
             </div>
@@ -138,14 +138,14 @@ export default function AboutPage() {
               <div className="rounded-lg overflow-hidden shadow-card border border-edge">
                 <img
                   src={ibnKhaldounImg}
-                  alt="Ibn Khaldoun University campus"
+                  alt={t('about.captionMainCampus')}
                   className="w-full h-80 lg:h-96 object-cover"
                 />
               </div>
               {/* Floating stat card */}
               <div className="absolute -bottom-6 -left-4 bg-surface rounded-lg shadow-card border border-edge p-4 hidden md:block">
                 <div className="text-2xl font-bold text-brand">44+</div>
-                <div className="text-sm text-ink-secondary font-medium">Years of Excellence</div>
+                <div className="text-sm text-ink-secondary font-medium">{t('about.yearsOfExcellence')}</div>
               </div>
             </div>
           </div>
@@ -156,7 +156,7 @@ export default function AboutPage() {
       <section className="py-16 bg-canvas">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {stats.map(({ Icon, value, label }, i) => (
+            {stats.map(({ Icon, value, labelKey }, i) => (
               <div
                 key={i}
                 className="bg-surface rounded-lg border border-edge shadow-card p-6 text-center transition-all duration-200 hover:-translate-y-0.5"
@@ -165,7 +165,7 @@ export default function AboutPage() {
                   <Icon className="w-6 h-6 text-brand" />
                 </div>
                 <div className="text-2xl font-bold text-ink mb-1">{value}</div>
-                <div className="text-sm font-medium text-ink-secondary">{label}</div>
+                <div className="text-sm font-medium text-ink-secondary">{t(labelKey)}</div>
               </div>
             ))}
           </div>
@@ -181,14 +181,12 @@ export default function AboutPage() {
               <div className="w-12 h-12 rounded-lg bg-brand-light flex items-center justify-center mb-4">
                 <TargetIcon className="w-6 h-6 text-brand" />
               </div>
-              <h2 className="text-xl font-bold text-ink mb-4 tracking-tight">Our Mission</h2>
+              <h2 className="text-xl font-bold text-ink mb-4 tracking-tight">{t('about.missionTitle')}</h2>
               <p className="text-ink-secondary leading-relaxed mb-4">
-                To provide high-quality education and foster an environment of intellectual curiosity,
-                research excellence, and social responsibility. We prepare graduates who are equipped
-                to contribute meaningfully to Algeria's development and the global knowledge economy.
+                {t('about.missionText')}
               </p>
               <ul className="space-y-2">
-                {['Quality education for all', 'Research-driven innovation', 'Community service and outreach'].map((item, i) => (
+                {[t('about.missionPoint1'), t('about.missionPoint2'), t('about.missionPoint3')].map((item, i) => (
                   <li key={i} className="flex items-center text-sm text-ink-secondary">
                     <CheckIcon className="w-4 h-4 text-brand mr-2 shrink-0" />
                     {item}
@@ -202,14 +200,12 @@ export default function AboutPage() {
               <div className="w-12 h-12 rounded-lg bg-brand-light flex items-center justify-center mb-4">
                 <LightbulbIcon className="w-6 h-6 text-brand" />
               </div>
-              <h2 className="text-xl font-bold text-ink mb-4 tracking-tight">Our Vision</h2>
+              <h2 className="text-xl font-bold text-ink mb-4 tracking-tight">{t('about.visionTitle')}</h2>
               <p className="text-ink-secondary leading-relaxed mb-4">
-                To be a nationally recognized center of academic excellence and innovation, advancing
-                knowledge through cutting-edge research and producing graduates who are leaders in
-                their respective fields.
+                {t('about.visionText')}
               </p>
               <ul className="space-y-2">
-                {['National leadership in education', 'International research collaboration', 'Digital transformation of learning'].map((item, i) => (
+                {[t('about.visionPoint1'), t('about.visionPoint2'), t('about.visionPoint3')].map((item, i) => (
                   <li key={i} className="flex items-center text-sm text-ink-secondary">
                     <CheckIcon className="w-4 h-4 text-brand mr-2 shrink-0" />
                     {item}
@@ -225,14 +221,14 @@ export default function AboutPage() {
       <section className="py-20 bg-surface-200 dark:bg-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4 tracking-tight">Our Core Values</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4 tracking-tight">{t('about.valuesTitle')}</h2>
             <p className="text-lg text-ink-secondary max-w-2xl mx-auto">
-              The principles that guide everything we do at Ibn Khaldoun University
+              {t('about.valuesSubtitle')}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {values.map(({ Icon, title, description }, i) => (
+            {values.map(({ Icon, titleKey, descKey }, i) => (
               <div
                 key={i}
                 className="bg-surface rounded-lg border border-edge shadow-card p-6 text-center transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card"
@@ -240,8 +236,8 @@ export default function AboutPage() {
                 <div className="w-14 h-14 mx-auto mb-4 rounded-lg bg-gradient-to-br from-brand to-brand-hover flex items-center justify-center shadow-soft">
                   <Icon className="w-7 h-7 text-white" />
                 </div>
-                <h3 className="text-base font-semibold text-ink mb-2">{title}</h3>
-                <p className="text-sm text-ink-secondary leading-relaxed">{description}</p>
+                <h3 className="text-base font-semibold text-ink mb-2">{t(titleKey)}</h3>
+                <p className="text-sm text-ink-secondary leading-relaxed">{t(descKey)}</p>
               </div>
             ))}
           </div>
@@ -252,9 +248,9 @@ export default function AboutPage() {
       <section className="py-20 bg-canvas">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4 tracking-tight">Our History</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4 tracking-tight">{t('about.historyTitle')}</h2>
             <p className="text-lg text-ink-secondary">
-              Key milestones in the journey of Ibn Khaldoun University
+              {t('about.historySubtitle')}
             </p>
           </div>
 
@@ -277,8 +273,8 @@ export default function AboutPage() {
                   <div className={`ml-12 md:ml-0 md:w-1/2 ${i % 2 === 0 ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}>
                     <div className="bg-surface rounded-lg border border-edge shadow-card p-6 transition-all duration-200 hover:-translate-y-0.5">
                       <span className="inline-block text-sm font-semibold text-brand mb-2">{item.year}</span>
-                      <h3 className="text-base font-semibold text-ink mb-2">{item.title}</h3>
-                      <p className="text-sm text-ink-secondary leading-relaxed">{item.description}</p>
+                      <h3 className="text-base font-semibold text-ink mb-2">{t(item.titleKey)}</h3>
+                      <p className="text-sm text-ink-secondary leading-relaxed">{t(item.descKey)}</p>
                     </div>
                   </div>
                 </div>
@@ -292,17 +288,17 @@ export default function AboutPage() {
       <section className="py-20 bg-gradient-to-b from-canvas to-surface-200 dark:from-canvas dark:to-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4 tracking-tight">Campus Life</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4 tracking-tight">{t('about.campusLifeTitle')}</h2>
             <p className="text-lg text-ink-secondary max-w-2xl mx-auto">
-              A vibrant community of students and faculty shaping the future together
+              {t('about.campusLifeSubtitle')}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { src: ibnKhaldounImg, alt: 'University campus', caption: 'Main Campus' },
-              { src: studentsImg, alt: 'Students', caption: 'Student Life' },
-              { src: profImg, alt: 'Faculty member', caption: 'Our Faculty' },
+              { src: ibnKhaldounImg, alt: t('about.captionMainCampus'), caption: t('about.captionMainCampus') },
+              { src: studentsImg, alt: t('about.captionStudentLife'), caption: t('about.captionStudentLife') },
+              { src: profImg, alt: t('about.captionFaculty'), caption: t('about.captionFaculty') },
             ].map((img, i) => (
               <div key={i} className="group relative rounded-lg overflow-hidden shadow-card border border-edge">
                 <img
@@ -324,24 +320,24 @@ export default function AboutPage() {
       <section className="py-20 bg-surface-200 dark:bg-surface">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4 tracking-tight">
-            Ready to Join Our Community?
+            {t('about.ctaTitle')}
           </h2>
           <p className="text-lg text-ink-secondary mb-8">
-            Whether you are a prospective student, researcher, or partner, we would love to hear from you.
+            {t('about.ctaSubtitle')}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/contact"
               className="inline-flex items-center justify-center px-6 py-2.5 bg-brand text-white rounded-md font-medium text-sm shadow-soft hover:bg-brand-hover focus:ring-2 focus:ring-brand/30 focus:ring-offset-2 transition-all duration-150"
             >
-              Contact Us
+              {t('about.ctaContact')}
               <ArrowRightIcon className="ml-2 w-4 h-4" />
             </Link>
             <Link
               to="/login"
               className="inline-flex items-center justify-center px-6 py-2.5 bg-surface text-ink-secondary border border-edge rounded-md font-medium text-sm hover:bg-surface-200 focus:ring-2 focus:ring-brand/30 focus:ring-offset-2 transition-all duration-150"
             >
-              Student Portal
+              {t('about.ctaPortal')}
             </Link>
           </div>
         </div>

@@ -12,11 +12,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 export default function LoginPage() {
   const { login, isAuthenticated, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
 
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
@@ -36,11 +38,11 @@ export default function LoginPage() {
     setError('');
 
     if (!identifier.trim()) {
-      setError('Please enter your email or ID.');
+      setError(t('login.errorEmail'));
       return;
     }
     if (!password) {
-      setError('Please enter your password.');
+      setError(t('login.errorPassword'));
       return;
     }
 
@@ -49,7 +51,7 @@ export default function LoginPage() {
       await login(identifier.trim(), password);
       /* AuthContext sets the user → the useEffect above will redirect */
     } catch (err) {
-      setError(err.message || 'Invalid credentials. Please check your email and password.');
+      setError(err.message || t('login.errorInvalid'));
     } finally {
       setLoading(false);
     }
@@ -66,9 +68,9 @@ export default function LoginPage() {
             alt="Ibn Khaldoun University"
             className="mx-auto mb-4 w-14 h-14 rounded-lg object-cover"
           />
-          <h1 className="text-xl font-bold text-ink tracking-tight">Welcome back</h1>
+          <h1 className="text-xl font-bold text-ink tracking-tight">{t('login.welcome')}</h1>
           <p className="mt-1 text-sm text-ink-tertiary">
-            Digital Platform for Pedagogical Activities
+            {t('login.subtitle')}
           </p>
         </div>
 
@@ -88,7 +90,7 @@ export default function LoginPage() {
           {/* Identifier */}
           <div className="mb-4">
             <label htmlFor="identifier" className="block mb-1.5 text-sm font-medium text-ink-secondary">
-              Email or ID
+              {t('login.emailOrId')}
             </label>
             <input
               id="identifier"
@@ -107,7 +109,7 @@ export default function LoginPage() {
           {/* Password */}
           <div className="mb-4">
             <label htmlFor="password" className="block mb-1.5 text-sm font-medium text-ink-secondary">
-              Password
+              {t('login.password')}
             </label>
             <div className="relative">
               <input
@@ -165,13 +167,13 @@ export default function LoginPage() {
                   </svg>
                 )}
               </span>
-              Remember me
+              {t('login.rememberMe')}
             </label>
             <Link
               to="/forgot-password"
               className="text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150"
             >
-              Forgot password?
+              {t('login.forgotPassword')}
             </Link>
           </div>
 
@@ -192,7 +194,7 @@ export default function LoginPage() {
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
               </svg>
             )}
-            {loading ? 'Signing in…' : 'Sign in'}
+            {loading ? t('login.signingIn') : t('common.signIn')}
           </button>
         </form>
       </div>

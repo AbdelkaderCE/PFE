@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import studentsGroup from '../../assets/images/Students.jpg';
 import student1 from '../../assets/images/student1.jpg';
 import student2 from '../../assets/images/student2.jpg';
@@ -20,29 +21,29 @@ const XIcon = ({ className }) => (
 const images = [
   {
     src: studentsGroup,
-    title: 'Student Life',
-    description: 'Students collaborating on projects',
+    titleKey: 'gallery.studentLife',
+    descKey: 'gallery.studentLifeDesc',
     category: 'Students',
     gradient: 'from-blue-500 to-cyan-500',
   },
   {
     src: student1,
-    title: 'Academic Excellence',
-    description: 'Professor engaging with students in lecture',
+    titleKey: 'gallery.academicExcellence',
+    descKey: 'gallery.academicExcellenceDesc',
     category: 'Faculty',
     gradient: 'from-orange-500 to-red-500',
   },
   {
     src: student2,
-    title: 'Proud Moments',
-    description: 'Graduate celebrating with family',
+    titleKey: 'gallery.proudMoments',
+    descKey: 'gallery.proudMomentsDesc',
     category: 'Graduation',
     gradient: 'from-green-500 to-emerald-500',
   },
   {
     src: prof,
-    title: 'Campus Life',
-    description: 'Students enjoying campus activities',
+    titleKey: 'gallery.campusLife',
+    descKey: 'gallery.campusLifeDesc',
     category: 'Campus',
     gradient: 'from-purple-500 to-pink-500',
   },
@@ -50,6 +51,7 @@ const images = [
 
 export default function GallerySection() {
   const [selectedImage, setSelectedImage] = useState(null);
+  const { t } = useTranslation();
 
   return (
     <section className="py-20 bg-surface-200 dark:bg-canvas">
@@ -58,11 +60,11 @@ export default function GallerySection() {
         <div className="text-center mb-12">
           <div className="inline-flex items-center bg-brand-light rounded-full px-4 py-2 mb-4">
             <CameraIcon className="w-4 h-4 text-brand mr-2" />
-            <span className="text-sm font-medium text-brand">Our Gallery</span>
+            <span className="text-sm font-medium text-brand">{t('gallery.badge')}</span>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4">University Family</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4">{t('gallery.title')}</h2>
           <p className="text-xl text-ink-secondary max-w-2xl mx-auto">
-            A vibrant community of students, faculty, and staff dedicated to excellence in education
+            {t('gallery.subtitle')}
           </p>
         </div>
 
@@ -76,7 +78,7 @@ export default function GallerySection() {
             >
               <img
                 src={image.src}
-                alt={image.title}
+                alt={t(image.titleKey)}
                 className="w-full h-80 object-cover transition-transform duration-200 group-hover:scale-105"
               />
 
@@ -88,10 +90,10 @@ export default function GallerySection() {
                   >
                     {image.category}
                   </span>
-                  <h3 className="text-xl font-bold mb-2">{image.title}</h3>
-                  <p className="text-sm text-white/80 mb-4">{image.description}</p>
+                  <h3 className="text-xl font-bold mb-2">{t(image.titleKey)}</h3>
+                  <p className="text-sm text-white/80 mb-4">{t(image.descKey)}</p>
                   <span className="flex items-center text-sm font-semibold">
-                    View Image
+                    {t('common.viewImage')}
                     <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>

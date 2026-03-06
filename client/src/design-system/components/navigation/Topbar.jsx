@@ -68,7 +68,7 @@ export default function Topbar({ role = 'student', user, onLogout, onHamburger, 
         {/* Mobile hamburger */}
         <button
           onClick={onHamburger}
-          className="lg:hidden p-2 -ml-2 rounded-md text-ink-tertiary hover:text-ink-secondary hover:bg-surface-200 transition-colors duration-150"
+          className="lg:hidden p-2 -ms-2 rounded-md text-ink-tertiary hover:text-ink-secondary hover:bg-surface-200 transition-colors duration-150"
           aria-label={t('topbar.openMenu')}
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -79,11 +79,11 @@ export default function Topbar({ role = 'student', user, onLogout, onHamburger, 
         {/* Desktop sidebar toggle */}
         <button
           onClick={onToggleSidebar}
-          className="hidden lg:flex p-2 -ml-2 rounded-md text-ink-tertiary hover:text-ink-secondary hover:bg-surface-200 transition-colors duration-150"
+          className="hidden lg:flex p-2 -ms-2 rounded-md text-ink-tertiary hover:text-ink-secondary hover:bg-surface-200 transition-colors duration-150"
           aria-label={sidebarCollapsed ? t('topbar.expandSidebar') : t('topbar.collapseSidebar')}
           title={sidebarCollapsed ? t('topbar.expandSidebar') : t('topbar.collapseSidebar')}
         >
-          <svg className={`w-5 h-5 transition-transform duration-200 ${sidebarCollapsed ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <svg className={`w-5 h-5 transition-transform duration-200 ${sidebarCollapsed ? 'rotate-180 rtl:-rotate-180' : 'rtl:rotate-180'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
           </svg>
         </button>
@@ -136,7 +136,7 @@ export default function Topbar({ role = 'student', user, onLogout, onHamburger, 
 
           {/* Dropdown — elevation level 2 */}
           {profileOpen && (
-            <div className="absolute right-0 mt-1 w-56 bg-surface rounded-lg shadow-card border border-edge py-1 z-50">
+            <div className="absolute end-0 mt-1 w-56 bg-surface rounded-lg shadow-card border border-edge py-1 z-50">
               <div className="px-4 py-3 border-b border-edge-subtle">
                 <p className="text-sm font-medium text-ink">
                   {displayName}

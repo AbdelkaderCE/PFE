@@ -120,12 +120,12 @@ export default function Sidebar({ modules = [], open = false, onClose, onNavigat
 
       <aside
         className={`
-          fixed top-0 left-0 z-40 h-full
-          bg-canvas border-r border-edge
+          fixed top-0 start-0 z-40 h-full
+          bg-canvas border-e border-edge
           flex flex-col
           transition-all duration-200 ease-out
-          lg:translate-x-0 lg:static lg:z-auto
-          ${open ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'}
+          lg:translate-x-0 rtl:lg:-translate-x-0 lg:static lg:z-auto
+          ${open ? 'translate-x-0 rtl:-translate-x-0 w-64' : '-translate-x-full rtl:translate-x-full lg:translate-x-0 rtl:lg:-translate-x-0'}
           ${collapsed ? 'lg:w-[68px]' : 'lg:w-64'}
         `}
       >
@@ -146,7 +146,7 @@ export default function Sidebar({ modules = [], open = false, onClose, onNavigat
           {/* Close — mobile only */}
           <button
             onClick={onClose}
-            className="ml-auto lg:hidden p-1.5 rounded-md text-ink-tertiary hover:bg-surface-200 transition-colors duration-150"
+            className="ms-auto lg:hidden p-1.5 rounded-md text-ink-tertiary hover:bg-surface-200 transition-colors duration-150"
             aria-label={t('sidebar.closeMenu')}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

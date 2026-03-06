@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /* ── Inline SVG icons ──────────────────────────────────────────── */
 const icons = {
@@ -15,57 +16,59 @@ const icons = {
 
 const features = [
   {
-    icon: 'Users', title: 'Student Portal',
-    description: 'Access grades, projects, complaints, and communicate with teachers in one place',
-    gradient: 'from-blue-600 to-blue-400', stats: '2,500+ active students',
+    icon: 'Users', titleKey: 'features.studentPortal',
+    descKey: 'features.studentPortalDesc',
+    gradient: 'from-blue-600 to-blue-400', stats: '2,500+',
+    benefitKeys: ['features.benefitGradeUpdates', 'features.benefitMessaging', 'features.benefitSubmission'],
     benefits: ['Real-time grade updates', 'Direct messaging', 'Project submission'],
   },
   {
-    icon: 'BookOpen', title: 'Course Management',
-    description: 'Powerful tools for creating, organizing, and delivering course content',
-    gradient: 'from-orange-600 to-orange-400', stats: '150+ courses',
+    icon: 'BookOpen', titleKey: 'features.courseManagement',
+    descKey: 'features.courseManagementDesc',
+    gradient: 'from-orange-600 to-orange-400', stats: '150+',
     benefits: ['Lesson planning', 'Assignment grading', 'Resource library'],
   },
   {
-    icon: 'GraduationCap', title: 'Graduation Projects',
-    description: 'End-to-end PFE project management from proposal to final defense',
-    gradient: 'from-green-600 to-green-400', stats: '500+ projects',
+    icon: 'GraduationCap', titleKey: 'features.graduationProjects',
+    descKey: 'features.graduationProjectsDesc',
+    gradient: 'from-green-600 to-green-400', stats: '500+',
     benefits: ['Supervisor assignment', 'Progress tracking', 'Online defense'],
   },
   {
-    icon: 'FileText', title: 'Disciplinary Committee',
-    description: 'Streamlined case management for fair and transparent resolutions',
-    gradient: 'from-purple-600 to-purple-400', stats: '95% resolution rate',
+    icon: 'FileText', titleKey: 'features.disciplinaryCommittee',
+    descKey: 'features.disciplinaryCommitteeDesc',
+    gradient: 'from-purple-600 to-purple-400', stats: '95%',
     benefits: ['Case tracking', 'Hearing scheduling', 'Decision documentation'],
   },
   {
-    icon: 'Clock', title: 'Real-time Updates',
-    description: 'Instant notifications for grades, announcements, and important deadlines',
-    gradient: 'from-yellow-600 to-yellow-400', stats: 'Real-time sync',
+    icon: 'Clock', titleKey: 'features.realTimeUpdates',
+    descKey: 'features.realTimeUpdatesDesc',
+    gradient: 'from-yellow-600 to-yellow-400', stats: '⚡',
     benefits: ['Push notifications', 'Email alerts', 'Calendar integration'],
   },
   {
-    icon: 'Shield', title: 'Secure System',
-    description: 'Enterprise-grade security with role-based access and data protection',
-    gradient: 'from-indigo-600 to-indigo-400', stats: 'Bank-level security',
+    icon: 'Shield', titleKey: 'features.secureSystem',
+    descKey: 'features.secureSystemDesc',
+    gradient: 'from-indigo-600 to-indigo-400', stats: '🔒',
     benefits: ['Role-based access', 'Data encryption', 'Audit logs'],
   },
   {
-    icon: 'MessageSquare', title: 'Communication Hub',
-    description: 'Seamless communication between students, teachers, and administration',
-    gradient: 'from-pink-600 to-pink-400', stats: '10k+ messages/day',
+    icon: 'MessageSquare', titleKey: 'features.communicationHub',
+    descKey: 'features.communicationHubDesc',
+    gradient: 'from-pink-600 to-pink-400', stats: '10k+',
     benefits: ['Group chats', 'Announcements', 'Private messaging'],
   },
   {
-    icon: 'BarChart', title: 'Analytics Dashboard',
-    description: 'Comprehensive insights into academic performance and trends',
-    gradient: 'from-teal-600 to-teal-400', stats: 'Real-time analytics',
+    icon: 'BarChart', titleKey: 'features.analyticsDashboard',
+    descKey: 'features.analyticsDashboardDesc',
+    gradient: 'from-teal-600 to-teal-400', stats: '📊',
     benefits: ['Performance tracking', 'Trend analysis', 'Export reports'],
   },
 ];
 
 export default function FeaturesSection() {
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const { t } = useTranslation();
 
   return (
     <section
@@ -92,19 +95,19 @@ export default function FeaturesSection() {
           <div className="inline-flex items-center bg-brand-light rounded-full px-4 py-2 mb-4">
             <span className="w-2 h-2 bg-brand rounded-full mr-2" />
             <span className="text-sm font-semibold text-brand uppercase tracking-wider">
-              Why Choose Us
+              {t('features.badge')}
             </span>
           </div>
 
           <h2 className="text-4xl md:text-5xl font-bold text-ink mb-6">
-            Powerful Features for{' '}
+            {t('features.title')}{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-hover">
-              Modern Education
+              {t('features.titleHighlight')}
             </span>
           </h2>
 
           <p className="text-xl text-ink-secondary max-w-3xl mx-auto">
-            Everything you need to manage your academic life in one integrated platform
+            {t('features.subtitle')}
           </p>
         </div>
 
@@ -140,8 +143,8 @@ export default function FeaturesSection() {
                   </div>
 
                   {/* Title & description */}
-                  <h3 className="text-xl font-bold text-ink mb-2">{f.title}</h3>
-                  <p className="text-ink-secondary mb-4 text-sm leading-relaxed">{f.description}</p>
+                  <h3 className="text-xl font-bold text-ink mb-2">{t(f.titleKey)}</h3>
+                  <p className="text-ink-secondary mb-4 text-sm leading-relaxed">{t(f.descKey)}</p>
 
                   {/* Benefits */}
                   <div className="space-y-2 mb-4">
@@ -163,7 +166,7 @@ export default function FeaturesSection() {
                         isHovered ? 'text-brand' : 'text-ink-muted'
                       }`}
                     >
-                      Learn More
+                      {t('common.learnMore')}
                       <icons.ChevronRight
                         className={`w-4 h-4 ml-1 transition-transform duration-300 ${isHovered ? 'translate-x-1' : ''}`}
                       />
