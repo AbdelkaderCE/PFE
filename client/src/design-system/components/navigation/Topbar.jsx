@@ -13,7 +13,7 @@ import { useTheme } from '../../../theme/ThemeProvider';
 import ThemeSwitcher from '../../../theme/ThemeSwitcher';
 
 /* ── Page titles mapped to routes ─────────────────────────────── */
-const PAGE_TITLES: Record<string, string> = {
+const PAGE_TITLES = {
   '/dashboard':     'Dashboard',
   '/actualites':    'Actualités',
   '/projects':      'Projects',
@@ -31,20 +31,10 @@ const PAGE_TITLES: Record<string, string> = {
   '/profile':       'Profile',
 };
 
-interface TopbarProps {
-  role?: string;
-  onRoleChange: (role: string) => void;
-  onHamburger: () => void;
-  onNavigate: (path: string) => void;
-  activeKey?: string;
-  sidebarCollapsed?: boolean;
-  onToggleSidebar: () => void;
-}
-
-export default function Topbar({ role = 'student', onRoleChange, onHamburger, onNavigate, activeKey = '/dashboard', sidebarCollapsed = false, onToggleSidebar }: TopbarProps) {
+export default function Topbar({ role = 'student', onRoleChange, onHamburger, onNavigate, activeKey = '/dashboard', sidebarCollapsed = false, onToggleSidebar }) {
   const { toggleMode, isDark } = useTheme();
   const [profileOpen, setProfileOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const dropdownRef = useRef(null);
 
   /* Close on outside click */
   useEffect(() => {
@@ -227,14 +217,7 @@ export default function Topbar({ role = 'student', onRoleChange, onHamburger, on
   );
 }
 
-interface DropdownItemProps {
-  label: string;
-  icon?: React.ReactNode;
-  variant?: string;
-  onClick?: () => void;
-}
-
-function DropdownItem({ label, icon, variant = 'default', onClick }: DropdownItemProps) {
+function DropdownItem({ label, icon, variant = 'default', onClick }) {
   return (
     <button
       onClick={onClick}

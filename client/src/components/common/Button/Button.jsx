@@ -5,7 +5,7 @@
 
 import React from 'react';
 
-const variantClasses: Record<string, string> = {
+const variantClasses = {
   primary: 'bg-brand text-white hover:bg-brand-hover active:bg-brand-dark focus:ring-brand/30',
   secondary: 'bg-surface border border-edge text-ink-secondary hover:bg-surface-200',
   ghost: 'bg-transparent text-ink-secondary hover:bg-surface-200',
@@ -13,20 +13,13 @@ const variantClasses: Record<string, string> = {
   danger: 'bg-danger text-white hover:opacity-90 focus:ring-danger/30',
 };
 
-const sizeClasses: Record<string, string> = {
+const sizeClasses = {
   sm: 'px-3 py-1.5 text-sm',
   md: 'px-4 py-2.5 text-sm',   /* 40px height — rules.md default */
   lg: 'px-6 py-3 text-base',
 };
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children?: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'ghost' | 'outline' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
-  isLoading?: boolean;
-}
-
-const Button: React.FC<ButtonProps> = ({
+const Button = ({
   children,
   onClick,
   type = 'button',

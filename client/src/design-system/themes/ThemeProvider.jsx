@@ -9,26 +9,20 @@ const darkColors = {
   border: '#334155', // slate-700
 };
 
-const themes: Record<string, typeof lightColors> = {
+const themes = {
   light: lightColors,
   dark: darkColors,
 };
 
-interface ThemeContextValue {
-  theme: string;
-  colors: typeof lightColors;
-  setTheme: (theme: string) => void;
-}
-
-const ThemeContext = createContext<ThemeContextValue>({
+const ThemeContext = createContext({
   theme: 'light',
   colors: lightColors,
   setTheme: () => {},
 });
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState('light');
-  const value: ThemeContextValue = {
+  const value = {
     theme,
     colors: themes[theme] || lightColors,
     setTheme,

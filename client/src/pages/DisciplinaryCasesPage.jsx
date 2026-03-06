@@ -300,7 +300,7 @@ const TABS = [
    MAIN COMPONENT
    ═══════════════════════════════════════════════════════════════ */
 
-export default function DisciplinaryCasesPage({ role = 'teacher' }: { role?: string }) {
+export default function DisciplinaryCasesPage({ role = 'teacher' }) {
   /* Top-level nav */
   const [activeTab, setActiveTab] = useState('cases');
   const [selectedCase, setSelectedCase] = useState(null);

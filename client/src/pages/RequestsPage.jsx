@@ -296,18 +296,18 @@ function FileUploadZone({ files, setFiles, dragActive, setDragActive, fileInputR
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files?.[0]) {
-      const newFiles = Array.from(e.dataTransfer.files).map((f: File) => ({
+      const newFiles = Array.from(e.dataTransfer.files).map((f) => ({
         name: f.name,
         size: `${(f.size / 1024).toFixed(0)} KB`,
         type: f.type.startsWith('image/') ? 'Image' : 'PDF',
       }));
-      setFiles((prev: any[]) => [...prev, ...newFiles]);
+      setFiles((prev) => [...prev, ...newFiles]);
     }
   };
 
-  const handleFileSelect = (e: any) => {
+  const handleFileSelect = (e) => {
     if (e.target.files?.[0]) {
-      const newFiles = Array.from(e.target.files).map((f: any) => ({
+      const newFiles = Array.from(e.target.files).map((f) => ({
         name: f.name,
         size: `${(f.size / 1024).toFixed(0)} KB`,
         type: f.type.startsWith('image/') ? 'Image' : 'PDF',
@@ -397,7 +397,7 @@ function FileUploadZone({ files, setFiles, dragActive, setDragActive, fileInputR
    ██  MAIN COMPONENT
    ═══════════════════════════════════════════════════════════════ */
 
-export default function RequestsPage({ role = 'student' }: { role?: string }) {
+export default function RequestsPage({ role = 'student' }) {
   /* ─── State ──────────────────────────────────────────────── */
   const [view, setView] = useState('list');
   const [selectedRequest, setSelectedRequest] = useState(null);

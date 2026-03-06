@@ -63,7 +63,7 @@ function FileIcon({ type }) {
 
 /* ── Section wrapper ────────────────────────────────────────── */
 
-function Section({ title, icon, children, action }: { title: string; icon?: React.ReactNode; children?: React.ReactNode; action?: React.ReactNode }) {
+function Section({ title, icon, children, action }) {
   return (
     <div className="bg-surface rounded-lg border border-edge shadow-card">
       <div className="px-6 py-4 border-b border-edge-subtle flex items-center justify-between">
@@ -80,7 +80,7 @@ function Section({ title, icon, children, action }: { title: string; icon?: Reac
 
 /* ── Component ──────────────────────────────────────────────── */
 
-export default function CaseDetailPage({ caseData, onBack }: { caseData?: any; onBack?: () => void }) {
+export default function CaseDetailPage({ caseData, onBack }) {
   const [showSanctionModal, setShowSanctionModal] = useState(false);
   const [showSummonsModal, setShowSummonsModal] = useState(false);
   const [hearingDate, setHearingDate] = useState(caseData.hearingDate || '');

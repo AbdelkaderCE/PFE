@@ -10,7 +10,7 @@
 
 import React, { useState } from 'react';
 
-export default function ForgotPasswordPage({ onBackToLogin }: { onBackToLogin?: () => void }) {
+export default function ForgotPasswordPage({ onBackToLogin } = {}) {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
   const [error, setError] = useState('');

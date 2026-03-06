@@ -12,7 +12,7 @@
 import React, { useState } from 'react';
 import { authAPI } from '../api';
 
-export default function LoginPage({ onForgotPassword }: { onForgotPassword?: () => void }) {
+export default function LoginPage({ onForgotPassword } = {}) {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);

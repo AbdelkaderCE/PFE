@@ -7,12 +7,7 @@
 
 import React from 'react';
 
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  children?: React.ReactNode;
-  className?: string;
-}
-
-export function Card({ children, className = '', ...props }: CardProps) {
+export function Card({ children, className = '', ...props }) {
   return (
     <div
       className={`bg-surface rounded-md shadow-card border border-edge ${className}`}
@@ -23,7 +18,7 @@ export function Card({ children, className = '', ...props }: CardProps) {
   );
 }
 
-export function CardHeader({ children, className = '', ...props }: CardProps) {
+export function CardHeader({ children, className = '', ...props }) {
   return (
     <div className={`px-6 py-4 border-b border-edge-subtle ${className}`} {...props}>
       {children}
@@ -31,13 +26,7 @@ export function CardHeader({ children, className = '', ...props }: CardProps) {
   );
 }
 
-interface CardTitleProps extends React.HTMLAttributes<HTMLElement> {
-  children?: React.ReactNode;
-  className?: string;
-  as?: React.ElementType;
-}
-
-export function CardTitle({ children, className = '', as: Tag = 'h3', ...props }: CardTitleProps) {
+export function CardTitle({ children, className = '', as: Tag = 'h3', ...props }) {
   return (
     <Tag className={`text-base font-semibold text-ink tracking-tight ${className}`} {...props}>
       {children}
@@ -45,15 +34,15 @@ export function CardTitle({ children, className = '', as: Tag = 'h3', ...props }
   );
 }
 
-export function CardDescription({ children, className = '', ...props }: CardProps) {
+export function CardDescription({ children, className = '', ...props }) {
   return (
-    <p className={`mt-1 text-sm text-ink-tertiary ${className}`} {...(props as React.HTMLAttributes<HTMLParagraphElement>)}>
+    <p className={`mt-1 text-sm text-ink-tertiary ${className}`} {...props}>
       {children}
     </p>
   );
 }
 
-export function CardBody({ children, className = '', ...props }: CardProps) {
+export function CardBody({ children, className = '', ...props }) {
   return (
     <div className={`px-6 py-5 ${className}`} {...props}>
       {children}
@@ -61,7 +50,7 @@ export function CardBody({ children, className = '', ...props }: CardProps) {
   );
 }
 
-export function CardFooter({ children, className = '', ...props }: CardProps) {
+export function CardFooter({ children, className = '', ...props }) {
   return (
     <div className={`px-6 py-4 border-t border-edge-subtle flex items-center gap-3 ${className}`} {...props}>
       {children}

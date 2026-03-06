@@ -33,11 +33,7 @@ const ALL_MODULES = [
   { name: 'Support',       path: '/support',       roles: ['student', 'teacher'] },
 ];
 
-interface DashboardLayoutProps {
-  children?: React.ReactNode;
-}
-
-const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+const DashboardLayout = ({ children }) => {
   const [role, setRole] = useState('student');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -76,7 +72,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">
           {children
             ? React.Children.map(children, (child) =>
-                React.isValidElement(child) ? React.cloneElement(child as React.ReactElement<any>, { role }) : child
+                React.isValidElement(child) ? React.cloneElement(child, { role }) : child
               )
             : (role === 'teacher' ? <TeacherDashboard /> : <StudentDashboard />)
           }

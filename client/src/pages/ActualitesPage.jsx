@@ -191,7 +191,7 @@ function formatDateFull(dateStr) {
   return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
 }
 
-function daysUntil(dateStr: string) {
+function daysUntil(dateStr) {
   const now = new Date('2026-02-20');
   const target = new Date(dateStr);
   const diff = Math.ceil((target.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
@@ -201,7 +201,7 @@ function daysUntil(dateStr: string) {
   return `In ${diff} days`;
 }
 
-function daysUntilStyle(dateStr: string) {
+function daysUntilStyle(dateStr) {
   const now = new Date('2026-02-20');
   const target = new Date(dateStr);
   const diff = Math.ceil((target.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));

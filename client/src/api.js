@@ -5,33 +5,23 @@
   Auto-refresh: on 401, tries /refresh-token once then retries the original request.
 */
 
-const API_BASE: string = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-
-interface ApiError extends Error {
-  status?: number;
-  code?: string;
-}
-
-interface QueueItem {
-  resolve: () => void;
-  reject: (err: unknown) => void;
-}
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 let isRefreshing = false;
-let refreshQueue: QueueItem[] = [];
+let refreshQueue = [];
 
-function processQueue(error: unknown): void {
+function processQueue(error) {
   refreshQueue.forEach(({ resolve, reject }) => (error ? reject(error) : resolve()));
   refreshQueue = [];
 }
 
-async function request(endpoint: string, options: RequestInit = {}, _isRetry = false): Promise<any> {
+async function request(endpoint, options = {}, _isRetry = false) {
   const url = `${API_BASE}${endpoint}`;
 
   const res = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      ...(options.headers as Record<string, string>),
+      ...options.headers,
     },
     credentials: 'include', // send httpOnly cookies
     ...options,
@@ -39,7 +29,7 @@ async function request(endpoint: string, options: RequestInit = {}, _isRetry = f
 
   // Rate limiter returns HTML, not JSON
   if (res.status === 429) {
-    const error: ApiError = new Error('Too many attempts. Please wait a few minutes and try again.');
+    const error = new Error('Too many attempts. Please wait a few minutes and try again.');
     error.status = 429;
     error.code = 'RATE_LIMITED';
     throw error;
@@ -63,24 +53,24 @@ async function request(endpoint: string, options: RequestInit = {}, _isRetry = f
       }
     } else {
       // Another refresh is in-flight — wait for it
-      await new Promise<void>((resolve, reject) => refreshQueue.push({ resolve, reject }));
+      await new Promise((resolve, reject) => refreshQueue.push({ resolve, reject }));
     }
     // Retry the original request once
     return request(endpoint, options, true);
   }
 
-  let data: any;
+  let data;
   try {
     data = await res.json();
   } catch {
-    const error: ApiError = new Error('Server error. Please try again later.');
+    const error = new Error('Server error. Please try again later.');
     error.status = res.status;
     throw error;
   }
 
   if (!res.ok) {
     const message = data?.error?.message || data?.message || 'Something went wrong';
-    const error: ApiError = new Error(message);
+    const error = new Error(message);
     error.status = res.status;
     error.code = data?.error?.code;
     throw error;
@@ -92,13 +82,13 @@ async function request(endpoint: string, options: RequestInit = {}, _isRetry = f
 /* ── Auth API ───────────────────────────────────────────────── */
 
 export const authAPI = {
-  login: (email: string, password: string) =>
+  login: (email, password) =>
     request('/api/v1/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     }),
 
-  register: (userData: Record<string, unknown>) =>
+  register: (userData) =>
     request('/api/v1/auth/register', {
       method: 'POST',
       body: JSON.stringify(userData),
@@ -113,29 +103,29 @@ export const authAPI = {
   getMe: () =>
     request('/api/v1/auth/me'),
 
-  verifyEmail: (token: string) =>
+  verifyEmail: (token) =>
     request(`/api/v1/auth/verify-email?token=${token}`),
 
-  resendVerification: (email: string) =>
+  resendVerification: (email) =>
     request('/api/v1/auth/resend-verification', {
       method: 'POST',
       body: JSON.stringify({ email }),
     }),
 
-  changePassword: (currentPassword: string, newPassword: string) =>
+  changePassword: (currentPassword, newPassword) =>
     request('/api/v1/auth/change-password', {
       method: 'POST',
       body: JSON.stringify({ currentPassword, newPassword }),
     }),
 
   /* Admin-only endpoints */
-  adminCreateUser: (userData: Record<string, unknown>) =>
+  adminCreateUser: (userData) =>
     request('/api/v1/auth/admin/create-user', {
       method: 'POST',
       body: JSON.stringify(userData),
     }),
 
-  adminResetPassword: (userId: string) =>
+  adminResetPassword: (userId) =>
     request(`/api/v1/auth/admin/reset-password/${userId}`, {
       method: 'POST',
     }),

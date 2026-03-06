@@ -84,7 +84,7 @@ function Section({ title, icon, children }) {
    ██  COMPONENT
    ════════════════════════════════════════════════════════════════ */
 
-export default function RequestDetailPage({ request, onBack }: { request?: any; onBack?: () => void }) {
+export default function RequestDetailPage({ request, onBack }) {
   const status = STATUS_CONFIG[request.status];
 
   return (

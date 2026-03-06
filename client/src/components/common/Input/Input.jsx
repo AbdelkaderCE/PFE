@@ -5,19 +5,7 @@
 
 import React from 'react';
 
-interface InputProps {
-  type?: string;
-  label?: string;
-  value: any;
-  onChange: (value: any) => void;
-  placeholder?: string;
-  required?: boolean;
-  error?: string;
-  className?: string;
-  [key: string]: any;
-}
-
-const Input: React.FC<InputProps> = ({
+const Input = ({
   type = 'text',
   label,
   value,

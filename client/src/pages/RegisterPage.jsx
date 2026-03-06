@@ -51,7 +51,7 @@ const IconX = () => (
 );
 
 /* ── Reusable form input (uses design tokens) ───────────────── */
-const FormInput = ({ label, error, ...props }: { label: string; error?: string; [key: string]: any }) => (
+const FormInput = ({ label, error, ...props }) => (
   <div>
     <label className="block text-sm font-medium text-ink-secondary mb-1">{label}</label>
     <input
@@ -75,7 +75,7 @@ export default function RegisterPage() {
     studentId: '', department: 'computer-science', level: 'L1', speciality: '',
     password: '', confirmPassword: '',
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -94,7 +94,7 @@ export default function RegisterPage() {
 
   /* ── Step validators ──────────────────────────────────────── */
   const validateStep1 = () => {
-    const e: Record<string, string> = {};
+    const e = {};
     if (!formData.firstName) e.firstName = 'First name is required';
     if (!formData.lastName) e.lastName = 'Last name is required';
     if (!formData.email) e.email = 'Email is required';
@@ -106,14 +106,14 @@ export default function RegisterPage() {
   };
 
   const validateStep2 = () => {
-    const e: Record<string, string> = {};
+    const e = {};
     if (!formData.studentId) e.studentId = 'Student ID is required';
     setErrors((prev) => ({ ...prev, ...e }));
     return Object.keys(e).length === 0;
   };
 
   const validateStep3 = () => {
-    const e: Record<string, string> = {};
+    const e = {};
     if (!formData.password) e.password = 'Password is required';
     else if (formData.password.length < 8) e.password = 'Password must be at least 8 characters';
     else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password))
