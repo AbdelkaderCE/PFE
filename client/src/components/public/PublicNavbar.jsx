@@ -20,6 +20,8 @@ export default function PublicNavbar() {
 
   const navLinks = [
     { name: 'Home', path: '/home' },
+    { name: 'Actualités', path: '/actualites' },
+    { name: 'Requests', path: '/requests' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' },
   ];

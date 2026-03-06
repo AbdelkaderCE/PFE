@@ -10,47 +10,77 @@
 */
 
 import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from './navigation/Sidebar';
 import Topbar from './navigation/Topbar';
 import TeacherDashboard from '../../pages/TeacherDashboard';
 import StudentDashboard from '../../pages/StudentDashboard';
+import { useAuth } from '../../contexts/AuthContext';
 
 /* ── 11 Modules ─────────────────────────────────────────────── */
 const ALL_MODULES = [
-  { name: 'Dashboard',     path: '/dashboard',     roles: ['student', 'teacher'] },
-  { name: 'Actualités',    path: '/actualites',    roles: ['student', 'teacher'] },
-  { name: 'Projects',      path: '/projects',      roles: ['student', 'teacher'] },
-  { name: 'Grades',        path: '/grades',        roles: ['student', 'teacher'] },
-  { name: 'AI Assistant',  path: '/ai',            roles: ['student', 'teacher'] },
-  { name: 'Documents',     path: '/documents',     roles: ['student', 'teacher'] },
-  { name: 'Calendar',      path: '/calendar',      roles: ['student', 'teacher'] },
-  { name: 'Attendance',    path: '/attendance',     roles: ['teacher'] },
-  { name: 'Disciplinary',  path: '/disciplinary',  roles: ['teacher'] },
-  { name: 'Requests',      path: '/requests',      roles: ['student', 'teacher'] },
-  { name: 'Messages',      path: '/messages',      roles: ['student', 'teacher'] },
-  { name: 'Notifications', path: '/notifications', roles: ['student', 'teacher'] },
-  { name: 'Settings',      path: '/settings',      roles: ['student', 'teacher'] },
-  { name: 'Support',       path: '/support',       roles: ['student', 'teacher'] },
+  { name: 'Dashboard',     path: '/dashboard',                roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'SPECIALITE_CHEF', 'DEPARTEMENT_CHEF', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
+  { name: 'Actualités',    path: '/dashboard/actualites',     roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'SPECIALITE_CHEF', 'DEPARTEMENT_CHEF', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
+  { name: 'Projects',      path: '/dashboard/projects',       roles: ['STUDENT', 'DELEGATE', 'TEACHER'] },
+  { name: 'Grades',        path: '/dashboard/grades',         roles: ['STUDENT', 'DELEGATE', 'TEACHER'] },
+  { name: 'AI Assistant',  path: '/dashboard/ai',             roles: ['STUDENT', 'DELEGATE', 'TEACHER'] },
+  { name: 'Documents',     path: '/dashboard/documents',      roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
+  { name: 'Calendar',      path: '/dashboard/calendar',       roles: ['STUDENT', 'DELEGATE', 'TEACHER'] },
+  { name: 'Attendance',    path: '/dashboard/attendance',     roles: ['TEACHER', 'SPECIALITE_CHEF', 'DEPARTEMENT_CHEF'] },
+  { name: 'Disciplinary',  path: '/dashboard/disciplinary',   roles: ['TEACHER', 'COMMITTEE_MEMBER', 'COMMITTEE_PRESIDENT', 'ADMIN_FACULTY'] },
+  { name: 'Requests',      path: '/dashboard/requests',       roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'SPECIALITE_CHEF', 'DEPARTEMENT_CHEF', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
+  { name: 'Messages',      path: '/dashboard/messages',       roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
+  { name: 'Notifications', path: '/dashboard/notifications',  roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
+  { name: 'Settings',      path: '/dashboard/settings',       roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'SPECIALITE_CHEF', 'DEPARTEMENT_CHEF', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
+  { name: 'Support',       path: '/dashboard/support',        roles: ['STUDENT', 'DELEGATE', 'TEACHER'] },
 ];
 
+/* Map DB roles to the UI role token used by children (student | teacher | admin) */
+function uiRole(dbRole) {
+  if (!dbRole) return 'student';
+  const r = dbRole.toUpperCase();
+  if (['TEACHER', 'SPECIALITE_CHEF', 'DEPARTEMENT_CHEF'].includes(r)) return 'teacher';
+  if (['ADMIN_FACULTY', 'ADMIN_SUPER'].includes(r)) return 'admin';
+  return 'student'; // STUDENT, DELEGATE, etc.
+}
+
 const DashboardLayout = ({ children }) => {
-  const [role, setRole] = useState('student');
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [activeKey, setActiveKey] = useState('/dashboard');
 
-  /* Filter modules by active role */
-  const visibleModules = ALL_MODULES.filter((m) => m.roles.includes(role));
+  /* Derive activeKey from the current URL */
+  const activeKey = location.pathname;
+
+  const role = uiRole(user?.role);
+
+  /* Filter modules by the user's actual DB role */
+  const visibleModules = ALL_MODULES.filter((m) =>
+    user?.role ? m.roles.includes(user.role) : m.roles.includes('STUDENT')
+  );
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
+
+  /* Navigate to the clicked module path */
+  const handleNavigate = (path) => {
+    navigate(path);
+    setSidebarOpen(false);
+  };
 
   return (
-    <div className="flex flex-1 w-full min-h-0 bg-canvas overflow-hidden">
+    <div className="flex h-screen w-full bg-canvas overflow-hidden">
       {/* Sidebar — same canvas bg, separated by border only */}
       <Sidebar
         modules={visibleModules}
         role={role}
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-        onNavigate={(path) => { setActiveKey(path); setSidebarOpen(false); }}
+        onNavigate={handleNavigate}
         activeKey={activeKey}
         collapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed(v => !v)}
@@ -60,9 +90,10 @@ const DashboardLayout = ({ children }) => {
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <Topbar
           role={role}
-          onRoleChange={setRole}
+          user={user}
+          onLogout={handleLogout}
           onHamburger={() => setSidebarOpen(true)}
-          onNavigate={(path) => { setActiveKey(path); setSidebarOpen(false); }}
+          onNavigate={handleNavigate}
           activeKey={activeKey}
           sidebarCollapsed={sidebarCollapsed}
           onToggleSidebar={() => setSidebarCollapsed(v => !v)}

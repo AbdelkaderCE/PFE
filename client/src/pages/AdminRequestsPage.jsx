@@ -10,96 +10,8 @@
   Spacing: 4px base. Cards p-6. gap-6 between sections.
 */
 
-import React, { useState } from 'react';
-
-/* ── Mock Data ──────────────────────────────────────────────── */
-
-const MOCK_INBOX = [
-  {
-    id: 'REQ-2026-022',
-    studentName: 'Amira Bensalem',
-    studentId: '202300456',
-    department: 'Computer Science',
-    title: 'Schedule Conflict — Overlapping Modules',
-    type: 'Schedule Conflict',
-    status: 'submitted',
-    priority: 'normal',
-    dateSubmitted: '2026-02-22',
-    description: 'My S2 schedule has a conflict: "Database Systems" (Group 2) and "Software Engineering" (Group 1) are both scheduled for Sunday 10:00–11:30 in different buildings. I am requesting reassignment to a different group for one of these modules.',
-    attachments: [
-      { name: 'Schedule_Screenshot.png', type: 'Image', size: '890 KB' },
-    ],
-    linkedExam: null,
-    internalNotes: '',
-  },
-  {
-    id: 'REQ-2026-019',
-    studentName: 'Yacine Mehdaoui',
-    studentId: '202200312',
-    department: 'Computer Science',
-    title: 'Grade Reclamation — Algorithms Final Exam',
-    type: 'Grade Error',
-    status: 'under-review',
-    priority: 'high',
-    dateSubmitted: '2026-02-18',
-    description: 'I believe there is an error in my Algorithms final exam grade. My calculated score based on the answer sheet should be 14/20, but the posted grade shows 09/20. I am requesting a re-verification of my exam paper.',
-    attachments: [
-      { name: 'Answer_Sheet_Photo.jpg', type: 'Image', size: '3.2 MB' },
-    ],
-    linkedExam: { name: 'Algorithms — S1 Final', deadline: '2026-02-28' },
-    internalNotes: 'Forwarded to Prof. Hamdani for exam paper re-check. Awaiting response.',
-  },
-  {
-    id: 'REQ-2026-020',
-    studentName: 'Fatima Zerhouni',
-    studentId: '202100198',
-    department: 'Physics',
-    title: 'Absence Justification — Medical Emergency',
-    type: 'Absence Justification',
-    status: 'submitted',
-    priority: 'normal',
-    dateSubmitted: '2026-02-20',
-    description: 'I was unable to attend classes from February 17–19 due to a medical emergency. I have attached the hospital discharge summary.',
-    attachments: [
-      { name: 'Medical_Certificate.pdf', type: 'PDF', size: '420 KB' },
-      { name: 'Hospital_Discharge.pdf', type: 'PDF', size: '1.1 MB' },
-    ],
-    linkedExam: null,
-    internalNotes: '',
-  },
-  {
-    id: 'REQ-2026-017',
-    studentName: 'Sara Djeraba',
-    studentId: '202300621',
-    department: 'Biology',
-    title: 'Grade Reclamation — Organic Chemistry TP',
-    type: 'Grade Error',
-    status: 'submitted',
-    priority: 'high',
-    dateSubmitted: '2026-02-16',
-    description: 'The TP grade posted for Organic Chemistry shows 06/20 but I attended all sessions and submitted all reports. I believe the grade was mixed up with another student.',
-    attachments: [
-      { name: 'TP_Reports_Scans.pdf', type: 'PDF', size: '5.4 MB' },
-    ],
-    linkedExam: { name: 'Organic Chemistry TP — S1', deadline: '2026-02-26' },
-    internalNotes: '',
-  },
-  {
-    id: 'REQ-2026-015',
-    studentName: 'Khaled Benali',
-    studentId: '202100087',
-    department: 'Computer Science',
-    title: 'Absence Justification — Family Emergency',
-    type: 'Absence Justification',
-    status: 'info-requested',
-    priority: 'normal',
-    dateSubmitted: '2026-02-14',
-    description: 'I was absent from February 10–13 due to a family emergency in Oran.',
-    attachments: [],
-    linkedExam: null,
-    internalNotes: 'Requested supporting documentation. No documents provided yet.',
-  },
-];
+import React, { useState, useEffect } from 'react';
+import request from '../api';
 
 /* ── Status Config ──────────────────────────────────────────── */
 
@@ -182,6 +94,8 @@ function FileIcon({ type }) {
    ════════════════════════════════════════════════════════════════ */
 
 export default function AdminRequestsPage() {
+  const [inbox, setInbox] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('urgency');
@@ -189,8 +103,21 @@ export default function AdminRequestsPage() {
   const [responseText, setResponseText] = useState('');
   const [internalNote, setInternalNote] = useState('');
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await request.get('/api/v1/admin/requests');
+        setInbox(res.data ?? []);
+      } catch {
+        /* endpoint may not exist yet */
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
   /* Filters */
-  const activeRequests = MOCK_INBOX.filter((r) => {
+  const activeRequests = inbox.filter((r) => {
     if (filterType === 'justifications') return r.type === 'Absence Justification';
     if (filterType === 'reclamations') return r.type === 'Grade Error';
     if (filterType === 'other') return r.type !== 'Absence Justification' && r.type !== 'Grade Error';
@@ -210,11 +137,19 @@ export default function AdminRequestsPage() {
   });
 
   const stats = {
-    total: MOCK_INBOX.length,
-    newCount: MOCK_INBOX.filter((r) => r.status === 'submitted').length,
-    reviewing: MOCK_INBOX.filter((r) => r.status === 'under-review').length,
-    infoReq: MOCK_INBOX.filter((r) => r.status === 'info-requested').length,
+    total: inbox.length,
+    newCount: inbox.filter((r) => r.status === 'submitted').length,
+    reviewing: inbox.filter((r) => r.status === 'under-review').length,
+    infoReq: inbox.filter((r) => r.status === 'info-requested').length,
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-32">
+        <div className="w-8 h-8 border-4 border-brand/30 border-t-brand rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   /* ── Action Modal ────────────────────────────────────────── */
   const actionModalJSX = actionModal && (
@@ -680,7 +615,7 @@ export default function AdminRequestsPage() {
         {/* Footer */}
         <div className="px-6 py-3 border-t border-edge-subtle flex items-center justify-between">
           <p className="text-xs text-ink-muted">
-            Showing {sorted.length} of {MOCK_INBOX.length} requests
+            Showing {sorted.length} of {inbox.length} requests
           </p>
           <div className="flex items-center gap-1">
             <button className="px-2.5 py-1 text-xs font-medium text-ink-tertiary bg-surface-200 rounded hover:bg-surface-300 transition-colors">Prev</button>

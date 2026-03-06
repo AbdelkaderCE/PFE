@@ -9,40 +9,11 @@
   Typography: Inter. Headings text-base font-semibold.
 */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import request from '../api';
 
 /* ── Mock student notifications ─────────────────────────────── */
-
-const MOCK_NOTIFICATIONS = [
-  {
-    id: 1,
-    type: 'hearing',
-    title: 'Hearing Scheduled',
-    description: 'You have been summoned to a disciplinary hearing regarding case #DC-2024-003.',
-    date: '2024-02-20',
-    hearingDate: '2024-03-01',
-    location: 'Administration Building, Room 102',
-    read: false,
-  },
-  {
-    id: 2,
-    type: 'decision',
-    title: 'Decision Issued',
-    description: 'A decision has been rendered for case #DC-2024-001. You have the right to file an appeal within 15 days.',
-    date: '2024-01-20',
-    verdict: 'Warning',
-    appealDeadline: '2024-02-04',
-    read: true,
-  },
-  {
-    id: 3,
-    type: 'info',
-    title: 'Case Update',
-    description: 'Your case #DC-2024-003 has moved to the investigation phase. You may be contacted for additional information.',
-    date: '2024-02-10',
-    read: true,
-  },
-];
+/* Data fetched from API — see component useEffect */
 
 /* ── Helpers ────────────────────────────────────────────────── */
 
@@ -94,7 +65,31 @@ const TYPE_CONFIG = {
 /* ── Component ──────────────────────────────────────────────── */
 
 export default function StudentDisciplinaryView() {
-  const unread = MOCK_NOTIFICATIONS.filter((n) => !n.read).length;
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await request.get('/api/v1/disciplinary/notifications');
+        setNotifications(res.data ?? []);
+      } catch {
+        /* endpoint may not exist yet */
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const unread = notifications.filter((n) => !n.read).length;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-32">
+        <div className="w-8 h-8 border-4 border-brand/30 border-t-brand rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
@@ -135,7 +130,9 @@ export default function StudentDisciplinaryView() {
 
       {/* ── Notification Cards ──────────────────────────────── */}
       <div className="space-y-4">
-        {MOCK_NOTIFICATIONS.map((notif) => {
+        {notifications.length === 0 ? (
+          <div className="px-5 py-12 text-center text-sm text-ink-muted">No disciplinary notifications.</div>
+        ) : notifications.map((notif) => {
           const cfg = TYPE_CONFIG[notif.type];
 
           return (
@@ -218,7 +215,8 @@ export default function StudentDisciplinaryView() {
               </div>
             </div>
           );
-        })}
+        })
+      }
       </div>
 
       {/* ── Contact Box ─────────────────────────────────────── */}

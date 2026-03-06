@@ -127,7 +127,7 @@ export default function SettingsPage() {
     setAccessibility((prev) => ({ ...prev, [key]: !prev[key] }));
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6 max-w-3xl min-w-0">
 
       {/* ── Page Header ────────────────────────────────────── */}
       <div>

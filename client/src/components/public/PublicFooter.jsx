@@ -49,6 +49,7 @@ export default function PublicFooter() {
                 { label: 'Home', to: '/home' },
                 { label: 'About Us', to: '/about' },
                 { label: 'News & Events', to: '/actualites' },
+                { label: 'Requests', to: '/requests' },
                 { label: 'Contact Us', to: '/contact' },
               ].map((item) => (
                 <li key={item.to}>
@@ -92,14 +93,14 @@ export default function PublicFooter() {
                 { Icon: LinkedinIcon, label: 'LinkedIn', hover: 'hover:bg-blue-700' },
                 { Icon: InstagramIcon, label: 'Instagram', hover: 'hover:bg-pink-600' },
               ].map(({ Icon, label, hover }) => (
-                <a
+                <button
                   key={label}
-                  href="#"
+                  type="button"
                   className={`bg-surface-200 dark:bg-surface-300 p-2 rounded-full ${hover} hover:text-white transition-colors duration-150`}
                   aria-label={label}
                 >
                   <Icon className="w-5 h-5" />
-                </a>
+                </button>
               ))}
             </div>
 
@@ -125,12 +126,12 @@ export default function PublicFooter() {
           <div className="flex flex-col md:flex-row justify-between items-center text-ink-tertiary text-sm">
             <p>© {new Date().getFullYear()} Ibn Khaldoun University — Tiaret. All rights reserved.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
-              <a href="#" className="hover:text-brand transition-colors duration-150">
+              <button type="button" className="hover:text-brand transition-colors duration-150">
                 Privacy Policy
-              </a>
-              <a href="#" className="hover:text-brand transition-colors duration-150">
+              </button>
+              <button type="button" className="hover:text-brand transition-colors duration-150">
                 Terms of Use
-              </a>
+              </button>
             </div>
           </div>
         </div>

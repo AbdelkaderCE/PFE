@@ -20,7 +20,7 @@ const router = Router();
 // Public routes
 router.post("/register", registerLimiter, register);
 router.post("/login", loginLimiter, login);
-router.post("/refresh", refreshLimiter, refresh);
+router.post("/refresh-token", refreshLimiter, refresh);
 router.post("/logout", logout);
 
 // Email verification routes

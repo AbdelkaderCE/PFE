@@ -1,9 +1,31 @@
-
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider } from './theme/ThemeProvider';
-import DevNav from './DevNav';
-import { DEV_PAGES } from './pages/_devPages';
+import { AuthProvider } from './contexts/AuthContext';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+
+/* ── Public (guest-accessible) pages ── */
+import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
+import ActualitesPage from './pages/ActualitesPage';
+import RequestsPage from './pages/RequestsPage';
+import PublicLayout from './components/public/PublicLayout';
+
+/* ── Auth pages ── */
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ChangePasswordPage from './pages/ChangePasswordPage';
+
+/* ── Protected (requires login) ── */
+import DashboardLayout from './design-system/components/DashboardLayout';
+import SettingsPage from './pages/SettingsPage';
+import ProfilePage from './pages/ProfilePage';
+import DisciplinaryCasesPage from './pages/DisciplinaryCasesPage';
+
+/* ── Misc ── */
+import UnauthorizedPage from './pages/UnauthorizedPage';
 import NotFoundPage from './pages/NotFoundPage';
 import AIChatbot from './components/ai/AIChatbot';
 
@@ -11,17 +33,38 @@ function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
-        <div className="flex flex-col h-full overflow-hidden">
-          <DevNav />
-          <Routes>
-            {DEV_PAGES.map(({ path, element }) => (
-              <Route key={path} path={path} element={element} />
-            ))}
-            {/* Catch-all 404 */}
-            <Route path="*" element={<div className="flex-1 overflow-y-auto"><NotFoundPage /></div>} />
-          </Routes>
-          <AIChatbot />
-        </div>
+        <AuthProvider>
+          <div className="min-h-full">
+            <Routes>
+              {/* ── Public / Guest routes (PublicLayout: navbar + footer, no sidebar) ── */}
+              <Route path="/" element={<Navigate to="/home" replace />} />
+              <Route path="/home" element={<HomePage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/actualites" element={<PublicLayout contained><ActualitesPage role="guest" /></PublicLayout>} />
+              <Route path="/requests" element={<PublicLayout contained><RequestsPage role="guest" /></PublicLayout>} />
+
+              {/* ── Auth routes (standalone — no sidebar, no navbar) ── */}
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/change-password" element={<ChangePasswordPage />} />
+
+              {/* ── Protected routes (DashboardLayout: sidebar + topbar) ── */}
+              <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>} />
+              <Route path="/dashboard/settings" element={<ProtectedRoute><DashboardLayout><SettingsPage /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/profile" element={<ProtectedRoute><DashboardLayout><ProfilePage /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/disciplinary" element={<ProtectedRoute><DashboardLayout><DisciplinaryCasesPage /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/actualites" element={<ProtectedRoute><DashboardLayout><ActualitesPage /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/requests" element={<ProtectedRoute><DashboardLayout><RequestsPage /></DashboardLayout></ProtectedRoute>} />
+
+              {/* ── Error pages ── */}
+              <Route path="/unauthorized" element={<UnauthorizedPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+            <AIChatbot />
+          </div>
+        </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>
   );

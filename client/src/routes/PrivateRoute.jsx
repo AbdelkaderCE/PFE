@@ -6,7 +6,7 @@
 
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../contexts/AuthContext';
 
 /**
  * @param {string[]} allowedRoles  — e.g. ['TEACHER','ADMIN_SUPER']

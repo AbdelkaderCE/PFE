@@ -9,16 +9,27 @@
   Spacing: 4px base. Card padding 32px. Form fields 16px gap.
 */
 
-import React, { useState } from 'react';
-import { authAPI } from '../api';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
-export default function LoginPage({ onForgotPassword } = {}) {
+export default function LoginPage() {
+  const { login, isAuthenticated, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  /* If already authenticated, redirect to dashboard */
+  const from = location.state?.from?.pathname || '/dashboard';
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) navigate(from, { replace: true });
+  }, [authLoading, isAuthenticated, navigate, from]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,11 +46,8 @@ export default function LoginPage({ onForgotPassword } = {}) {
 
     setLoading(true);
     try {
-      const data = await authAPI.login(identifier.trim(), password);
-      console.log('✅ Login successful:', data.data.user);
-      // TODO: redirect to dashboard or store user in context
-      setError('');
-      alert(`Welcome, ${data.data.user.firstName} ${data.data.user.lastName}! (${data.data.user.role})`);
+      await login(identifier.trim(), password);
+      /* AuthContext sets the user → the useEffect above will redirect */
     } catch (err) {
       setError(err.message || 'Invalid credentials. Please check your email and password.');
     } finally {
@@ -159,13 +167,12 @@ export default function LoginPage({ onForgotPassword } = {}) {
               </span>
               Remember me
             </label>
-            <button
-              type="button"
-              onClick={onForgotPassword}
+            <Link
+              to="/forgot-password"
               className="text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150"
             >
               Forgot password?
-            </button>
+            </Link>
           </div>
 
           {/* Submit */}

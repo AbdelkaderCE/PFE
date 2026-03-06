@@ -13,7 +13,8 @@
   Spacing: 4px base. Cards p-5/p-6. Grid gap-4 on stats, gap-6 between sections.
 */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import request from '../api';
 
 /* ── Mock Data ──────────────────────────────────────────────── */
 
@@ -34,145 +35,22 @@ const CATEGORY_STYLES = {
   'student-life': 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800/50',
 };
 
-const PINNED_ANNOUNCEMENTS = [
-  {
-    id: 'p1',
-    title: 'Examens de rattrapage — Calendrier S1 2025/2026',
-    excerpt: 'Le calendrier des examens de rattrapage du premier semestre est disponible. Les étudiants sont priés de consulter les dates et les salles affectées à chaque module.',
-    category: 'academic',
-    date: '2026-02-19',
-    author: 'Vice-Doyen Pédagogique',
-    pinned: true,
-    urgent: true,
-  },
-  {
-    id: 'p2',
-    title: 'Inscription aux PFE — Date limite prolongée',
-    excerpt: 'La date limite pour le dépôt des fiches de vœux PFE est prolongée au 28 février 2026. Les étudiants de M2 doivent soumettre leur fiche signée au secrétariat du département.',
-    category: 'academic',
-    date: '2026-02-18',
-    author: 'Chef de Département Informatique',
-    pinned: true,
-    urgent: false,
-  },
-];
-
-const NEWS_FEED = [
-  {
-    id: 1,
-    title: 'Journée portes ouvertes — Faculté des Sciences',
-    excerpt: 'La faculté organise une journée portes ouvertes le 5 mars 2026 destinée aux lycéens et à leurs parents. Les enseignants et étudiants volontaires sont invités à participer à l\'encadrement.',
-    category: 'events',
-    date: '2026-02-19',
-    author: 'Service Communication',
-    comments: 12,
-    views: 234,
-  },
-  {
-    id: 2,
-    title: 'Mise à jour du règlement intérieur — Absences et justificatifs',
-    excerpt: 'Le conseil de faculté a approuvé les nouvelles dispositions concernant la gestion des absences. Les justificatifs doivent désormais être déposés dans un délai de 48h.',
-    category: 'administrative',
-    date: '2026-02-18',
-    author: 'Secrétariat Général',
-    comments: 8,
-    views: 456,
-  },
-  {
-    id: 3,
-    title: 'Appel à candidatures — Bourse de recherche DGRSDT',
-    excerpt: 'La Direction Générale de la Recherche Scientifique lance un appel pour les bourses de recherche 2026. Les doctorants et enseignants-chercheurs sont éligibles. Dossiers à déposer avant le 15 mars.',
-    category: 'research',
-    date: '2026-02-17',
-    author: 'Vice-Rectorat Recherche',
-    comments: 5,
-    views: 189,
-  },
-  {
-    id: 4,
-    title: 'Club Scientifique — Hackathon Intelligence Artificielle',
-    excerpt: 'Le club scientifique "ByteForge" organise un hackathon de 48h sur le thème de l\'IA appliquée à l\'éducation. Inscription ouverte aux étudiants de L3 et Master.',
-    category: 'student-life',
-    date: '2026-02-16',
-    author: 'Club ByteForge',
-    comments: 23,
-    views: 567,
-  },
-  {
-    id: 5,
-    title: 'Planning des soutenances de Master — Session février',
-    excerpt: 'Le planning des soutenances de mémoire de Master pour la session de février 2026 est affiché. Les étudiants concernés doivent confirmer leur présence auprès du secrétariat.',
-    category: 'academic',
-    date: '2026-02-15',
-    author: 'Chef de Département Informatique',
-    comments: 15,
-    views: 892,
-  },
-  {
-    id: 6,
-    title: 'Maintenance programmée — Plateforme Moodle',
-    excerpt: 'Une maintenance technique est prévue le samedi 22 février de 22h à 6h. La plateforme Moodle sera temporairement inaccessible pendant cette période.',
-    category: 'administrative',
-    date: '2026-02-14',
-    author: 'Direction des Systèmes d\'Information',
-    comments: 3,
-    views: 312,
-  },
-  {
-    id: 7,
-    title: 'Conférence — Cybersécurité et Systèmes Distribués',
-    excerpt: 'Le Pr. Ahmed Benali de l\'Université de Tlemcen donnera une conférence sur les défis de la cybersécurité dans les systèmes distribués. Amphi A, 10h-12h.',
-    category: 'research',
-    date: '2026-02-13',
-    author: 'Laboratoire LRIA',
-    comments: 7,
-    views: 145,
-  },
-];
-
-const UPCOMING_EVENTS = [
-  { id: 'e1', title: 'Hackathon IA — Club ByteForge',           date: '2026-02-22', time: '09:00', location: 'Salle TP4' },
-  { id: 'e2', title: 'Conférence Cybersécurité',                date: '2026-02-25', time: '10:00', location: 'Amphi A' },
-  { id: 'e3', title: 'Journée portes ouvertes',                  date: '2026-03-05', time: '08:30', location: 'Hall Faculté' },
-  { id: 'e4', title: 'Date limite dépôt PFE',                    date: '2026-02-28', time: '16:00', location: 'Secrétariat' },
-  { id: 'e5', title: 'Conseil de département',                   date: '2026-03-10', time: '14:00', location: 'Salle Réunion' },
-];
-
-const QUICK_STATS = [
-  {
-    label: 'Announcements',
-    value: String(NEWS_FEED.length + PINNED_ANNOUNCEMENTS.length),
-    sub: 'This month',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46" />
-      </svg>
-    ),
-    color: 'brand',
-  },
-  {
-    label: 'Upcoming Events',
-    value: String(UPCOMING_EVENTS.length),
-    sub: 'Next 30 days',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-      </svg>
-    ),
-    color: 'brand',
-  },
-  {
-    label: 'Pinned',
-    value: String(PINNED_ANNOUNCEMENTS.length),
-    sub: 'Important notices',
-    icon: (
-      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-      </svg>
-    ),
-    color: 'warning',
-  },
-];
+/* ── Quick-stat icon definitions ────────────────────────────── */
+const STAT_ICON_ANNOUNCE = (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.461a20.845 20.845 0 01-1.44-4.282m3.102.069a18.03 18.03 0 01-.59-4.59c0-1.586.205-3.124.59-4.59m0 9.18a23.848 23.848 0 018.835 2.535M10.34 6.66a23.847 23.847 0 008.835-2.535m0 0A23.74 23.74 0 0018.795 3m.38 1.125a23.91 23.91 0 011.014 5.395m-1.014 8.855c-.118.38-.245.754-.38 1.125m.38-1.125a23.91 23.91 0 001.014-5.395m0-3.46c.495.413.811 1.035.811 1.73 0 .695-.316 1.317-.811 1.73m0-3.46a24.347 24.347 0 010 3.46" />
+  </svg>
+);
+const STAT_ICON_CALENDAR = (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+  </svg>
+);
+const STAT_ICON_STAR = (
+  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+    <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+  </svg>
+);
 
 /* ── Helpers ────────────────────────────────────────────────── */
 
@@ -184,11 +62,6 @@ const STAT_COLORS = {
 function formatDate(dateStr) {
   const d = new Date(dateStr);
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
-}
-
-function formatDateFull(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
 }
 
 function daysUntil(dateStr) {
@@ -211,15 +84,53 @@ function daysUntilStyle(dateStr) {
 }
 
 /* ── Component ──────────────────────────────────────────────── */
-export default function ActualitesPage() {
+export default function ActualitesPage({ role }) {
+  const isGuest = !role || role === 'guest';
   const [activeFilter, setActiveFilter] = useState('all');
+  const [pinnedAnnouncements, setPinnedAnnouncements] = useState([]);
+  const [newsFeed, setNewsFeed] = useState([]);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const [pRes, nRes, eRes] = await Promise.allSettled([
+          request.get('/api/v1/actualites/pinned'),
+          request.get('/api/v1/actualites/news'),
+          request.get('/api/v1/actualites/events'),
+        ]);
+        if (pRes.status === 'fulfilled') setPinnedAnnouncements(pRes.value.data ?? []);
+        if (nRes.status === 'fulfilled') setNewsFeed(nRes.value.data ?? []);
+        if (eRes.status === 'fulfilled') setUpcomingEvents(eRes.value.data ?? []);
+      } catch {
+        /* endpoints may not exist yet */
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   const filteredNews = activeFilter === 'all'
-    ? NEWS_FEED
-    : NEWS_FEED.filter((n) => n.category === activeFilter);
+    ? newsFeed
+    : newsFeed.filter((n) => n.category === activeFilter);
+
+  const QUICK_STATS = [
+    { label: 'Announcements', value: String(newsFeed.length + pinnedAnnouncements.length), sub: 'This month', icon: STAT_ICON_ANNOUNCE, color: 'brand' },
+    { label: 'Upcoming Events', value: String(upcomingEvents.length), sub: 'Next 30 days', icon: STAT_ICON_CALENDAR, color: 'brand' },
+    { label: 'Pinned', value: String(pinnedAnnouncements.length), sub: 'Important notices', icon: STAT_ICON_STAR, color: 'warning' },
+  ];
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-32">
+        <div className="w-8 h-8 border-4 border-brand/30 border-t-brand rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 min-w-0">
 
       {/* ── Page Header ────────────────────────────────────── */}
       <div>
@@ -229,7 +140,28 @@ export default function ActualitesPage() {
         </p>
       </div>
 
-      {/* ── Quick Stats ────────────────────────────────────── */}
+      {/* ── Guest Sign-in Banner ───────────────────────────── */}
+      {isGuest && (
+        <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/50 rounded-lg px-5 py-4 flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center">
+              <svg className="w-5 h-5 text-brand" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-ink">Sign in to personalize your feed</p>
+              <p className="text-xs text-ink-tertiary">Get notifications, save articles, and access your dashboard.</p>
+            </div>
+          </div>
+          <a href="/login" className="px-4 py-2 text-sm font-medium text-white bg-brand rounded-md hover:bg-brand-hover transition-colors duration-150 shadow-sm whitespace-nowrap">
+            Sign In
+          </a>
+        </div>
+      )}
+
+      {/* ── Quick Stats (authenticated only) ───────────────── */}
+      {!isGuest && (
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {QUICK_STATS.map((stat) => {
           const c = STAT_COLORS[stat.color];
@@ -250,10 +182,11 @@ export default function ActualitesPage() {
           );
         })}
       </div>
+      )}
 
       {/* ── Pinned Announcements ───────────────────────────── */}
       <div className="space-y-3">
-        {PINNED_ANNOUNCEMENTS.map((item) => (
+        {pinnedAnnouncements.map((item) => (
           <div
             key={item.id}
             className={`
@@ -431,7 +364,7 @@ export default function ActualitesPage() {
             </div>
 
             <ul className="divide-y divide-edge-subtle">
-              {UPCOMING_EVENTS.map((event) => (
+              {upcomingEvents.map((event) => (
                 <li key={event.id} className="px-5 py-3.5 hover:bg-surface-200/50 transition-colors duration-100">
                   <div className="flex items-start gap-3">
                     {/* Date block */}

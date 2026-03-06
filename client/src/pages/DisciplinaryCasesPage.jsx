@@ -9,9 +9,10 @@
   Spacing: 4px base. Cards p-6. gap-6 between sections.
 */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CaseDetailPage from './CaseDetailPage';
 import StudentDisciplinaryView from './StudentDisciplinaryView';
+import request from '../api';
 
 /* ── Inline SVG Icons (stroke 1.5) ─────────────────────────── */
 
@@ -94,122 +95,10 @@ const icons = {
 };
 
 /* ── Mock Data — Cases ──────────────────────────────────────── */
-
-const MOCK_CASES = [
-  {
-    id: 'DC-2026-001', studentId: '202300456', studentName: 'Amira Bensalem',
-    violationType: 'Plagiarism', status: 'pending', dateOfIncident: '2026-02-10',
-    dateReported: '2026-02-11', department: 'Computer Science',
-    description: 'Submitted a final project report with sections copied verbatim from an external source without attribution.',
-    urgency: true,
-    evidence: [
-      { name: 'Original_Report.pdf', type: 'PDF', size: '2.4 MB' },
-      { name: 'Plagiarism_Check.pdf', type: 'PDF', size: '1.1 MB' },
-    ],
-    timeline: [
-      { date: '2026-02-11', event: 'Report Submitted', by: 'Prof. Boudiaf R.', detail: 'Plagiarism detected in PFE report submission.' },
-      { date: '2026-02-13', event: 'Investigation Started', by: 'Discipline Committee', detail: 'Case assigned for review.' },
-    ],
-    decision: null,
-  },
-  {
-    id: 'DC-2026-002', studentId: '202200312', studentName: 'Yacine Mehdaoui',
-    violationType: 'Exam Fraud', status: 'hearing', dateOfIncident: '2026-01-28',
-    dateReported: '2026-01-29', department: 'Mathematics',
-    description: 'Student was found using a concealed electronic device during the S1 final examination.',
-    urgency: false,
-    evidence: [
-      { name: 'Surveillance_Photo.jpg', type: 'Image', size: '890 KB' },
-      { name: 'Proctor_Statement.pdf', type: 'PDF', size: '340 KB' },
-    ],
-    timeline: [
-      { date: '2026-01-29', event: 'Report Submitted', by: 'Dr. Hamdani S.', detail: 'Electronic device confiscated during exam.' },
-      { date: '2026-01-31', event: 'Investigation Started', by: 'Discipline Committee', detail: 'Case reviewed, evidence confirmed.' },
-      { date: '2026-02-05', event: 'Meeting with Student', by: 'Committee Chair', detail: 'Student acknowledged the device but denied intent to cheat.' },
-      { date: '2026-02-15', event: 'Hearing Scheduled', by: 'Discipline Committee', detail: 'Formal hearing set for February 20, 2026.' },
-    ],
-    decision: null, hearingDate: '2026-02-20',
-  },
-  {
-    id: 'DC-2025-018', studentId: '202100198', studentName: 'Fatima Zerhouni',
-    violationType: 'Misconduct', status: 'sanctioned', dateOfIncident: '2025-12-05',
-    dateReported: '2025-12-06', department: 'Physics',
-    description: 'Disruptive behavior during a laboratory session, resulting in damage to equipment.',
-    urgency: false,
-    evidence: [
-      { name: 'Lab_Damage_Report.pdf', type: 'PDF', size: '560 KB' },
-      { name: 'Witness_Statements.pdf', type: 'PDF', size: '420 KB' },
-    ],
-    timeline: [
-      { date: '2025-12-06', event: 'Report Submitted', by: 'Prof. Khelifi M.', detail: 'Lab equipment damaged during session.' },
-      { date: '2025-12-08', event: 'Investigation Started', by: 'Discipline Committee', detail: 'Witness interviews conducted.' },
-      { date: '2025-12-12', event: 'Meeting with Student', by: 'Committee Chair', detail: 'Student expressed remorse and offered to cover repair costs.' },
-      { date: '2025-12-18', event: 'Hearing Scheduled', by: 'Discipline Committee', detail: 'Formal hearing conducted.' },
-      { date: '2025-12-20', event: 'Final Decision', by: 'Discipline Committee', detail: 'Official warning issued with financial restitution.' },
-    ],
-    decision: {
-      verdict: 'Warning',
-      details: 'Official written warning placed in student file. Financial restitution of 15,000 DZD for equipment repair. Student placed on behavioral probation for the remainder of the academic year.',
-      issuedBy: 'Prof. Bouzid A., Committee Chair', date: '2025-12-20',
-    },
-  },
-  {
-    id: 'DC-2025-015', studentId: '202100087', studentName: 'Khaled Benali',
-    violationType: 'Plagiarism', status: 'closed', dateOfIncident: '2025-11-15',
-    dateReported: '2025-11-16', department: 'Computer Science',
-    description: "Copy of another student's assignment submitted as original work.",
-    urgency: false,
-    evidence: [{ name: 'Assignment_Comparison.pdf', type: 'PDF', size: '1.8 MB' }],
-    timeline: [
-      { date: '2025-11-16', event: 'Report Submitted', by: 'Dr. Messaoud L.', detail: 'Identical assignments detected.' },
-      { date: '2025-11-18', event: 'Investigation Started', by: 'Discipline Committee', detail: 'Both students interviewed separately.' },
-      { date: '2025-11-22', event: 'Meeting with Student', by: 'Committee Chair', detail: 'Student admitted to sharing assignment.' },
-      { date: '2025-11-28', event: 'Final Decision', by: 'Discipline Committee', detail: 'Zero grade for the assignment. Written warning.' },
-    ],
-    decision: {
-      verdict: 'Warning',
-      details: 'Zero grade assigned for the affected assignment. Official written warning. No further action required.',
-      issuedBy: 'Prof. Bouzid A., Committee Chair', date: '2025-11-28',
-    },
-  },
-  {
-    id: 'DC-2026-003', studentId: '202300621', studentName: 'Sara Djeraba',
-    violationType: 'Exam Fraud', status: 'pending', dateOfIncident: '2026-02-18',
-    dateReported: '2026-02-18', department: 'Biology',
-    description: 'Unauthorized written notes found during S2 midterm examination.',
-    urgency: false,
-    evidence: [
-      { name: 'Confiscated_Notes_Photo.jpg', type: 'Image', size: '1.2 MB' },
-      { name: 'Exam_Proctor_Report.pdf', type: 'PDF', size: '280 KB' },
-    ],
-    timeline: [
-      { date: '2026-02-18', event: 'Report Submitted', by: 'Dr. Rahmani K.', detail: 'Written notes confiscated during midterm.' },
-    ],
-    decision: null,
-  },
-];
+/* Data fetched from API — see component useEffect */
 
 /* ── Mock Data — Meetings ───────────────────────────────────── */
-
-const MOCK_MEETINGS = [
-  {
-    id: 'MTG-001', title: 'Conseil disciplinaire', date: '2026-03-14', time: '10:00',
-    location: 'Salle C12', caseIds: ['DC-2026-001'], status: 'scheduled',
-    participants: ['Prof. Hamidi', 'Prof. Kaci', 'Dr. Merniz'], decision: null,
-  },
-  {
-    id: 'MTG-002', title: 'Conseil disciplinaire', date: '2026-03-10', time: '14:00',
-    location: 'Video Conference', caseIds: ['DC-2026-002'], status: 'finalized',
-    participants: ['Prof. Hamidi', 'Prof. Belkacem'],
-    decision: 'Temporary exclusion (2 weeks)',
-  },
-  {
-    id: 'MTG-003', title: 'Conseil disciplinaire', date: '2026-02-28', time: '09:00',
-    location: 'Salle B5', caseIds: ['DC-2025-018', 'DC-2025-015'], status: 'finalized',
-    participants: ['Prof. Hamidi', 'Dr. Merniz', 'Prof. Kaci'],
-    decision: 'Written warning',
-  },
-];
+/* Data fetched from API — see component useEffect */
 
 const STAFF_MEMBERS = [
   'Prof. Hamidi', 'Prof. Kaci', 'Prof. Belkacem',
@@ -316,11 +205,41 @@ export default function DisciplinaryCasesPage({ role = 'teacher' }) {
   const [meetingFilterStatus, setMeetingFilterStatus] = useState('all');
   const [meetingSearch, setMeetingSearch] = useState('');
 
+  /* Data from API */
+  const [cases, setCases] = useState([]);
+  const [meetings, setMeetings] = useState([]);
+  const [dataLoading, setDataLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const [cRes, mRes] = await Promise.allSettled([
+          request.get('/api/v1/disciplinary/cases'),
+          request.get('/api/v1/disciplinary/meetings'),
+        ]);
+        if (cRes.status === 'fulfilled') setCases(cRes.value.data ?? []);
+        if (mRes.status === 'fulfilled') setMeetings(mRes.value.data ?? []);
+      } catch {
+        /* endpoints may not exist yet */
+      } finally {
+        setDataLoading(false);
+      }
+    })();
+  }, []);
+
   // Students see their own view
   if (role === 'student') return <StudentDisciplinaryView />;
 
+  if (dataLoading) {
+    return (
+      <div className="flex items-center justify-center py-32">
+        <div className="w-8 h-8 border-4 border-brand/30 border-t-brand rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   /* Derived data */
-  const filteredCases = MOCK_CASES.filter((c) => {
+  const filteredCases = cases.filter((c) => {
     if (filterStatus !== 'all' && c.status !== filterStatus) return false;
     if (filterType !== 'All' && c.violationType !== filterType) return false;
     if (searchQuery) {
@@ -331,20 +250,20 @@ export default function DisciplinaryCasesPage({ role = 'teacher' }) {
   });
 
   const stats = {
-    total: MOCK_CASES.length,
-    pending: MOCK_CASES.filter(c => c.status === 'pending').length,
-    hearing: MOCK_CASES.filter(c => c.status === 'hearing').length,
-    resolved: MOCK_CASES.filter(c => c.status === 'sanctioned' || c.status === 'closed').length,
+    total: cases.length,
+    pending: cases.filter(c => c.status === 'pending').length,
+    hearing: cases.filter(c => c.status === 'hearing').length,
+    resolved: cases.filter(c => c.status === 'sanctioned' || c.status === 'closed').length,
   };
 
-  const filteredMeetings = MOCK_MEETINGS
+  const filteredMeetings = meetings
     .filter(m => {
       if (meetingFilterStatus !== 'all' && m.status !== meetingFilterStatus) return false;
       if (meetingSearch) {
         const q = meetingSearch.toLowerCase();
         return m.id.toLowerCase().includes(q) ||
           m.caseIds.some(cid => {
-            const cs = MOCK_CASES.find(c => c.id === cid);
+            const cs = cases.find(c => c.id === cid);
             return cs && cs.studentName.toLowerCase().includes(q);
           });
       }
@@ -367,7 +286,7 @@ export default function DisciplinaryCasesPage({ role = 'teacher' }) {
     return (
       <MeetingDetailView
         meeting={selectedMeeting}
-        cases={MOCK_CASES}
+        cases={cases}
         onBack={() => setSelectedMeeting(null)}
       />
     );
@@ -375,7 +294,7 @@ export default function DisciplinaryCasesPage({ role = 'teacher' }) {
 
   /* Main view */
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 min-w-0">
 
       {/* Confidential banner */}
       <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/50 rounded-lg px-4 py-3 flex items-center gap-3">
@@ -433,7 +352,7 @@ export default function DisciplinaryCasesPage({ role = 'teacher' }) {
       {activeTab === 'cases' && (
         <CasesTab
           cases={filteredCases}
-          allCases={MOCK_CASES}
+          allCases={cases}
           filterStatus={filterStatus}
           setFilterStatus={setFilterStatus}
           filterType={filterType}
@@ -448,7 +367,7 @@ export default function DisciplinaryCasesPage({ role = 'teacher' }) {
       {activeTab === 'meetings' && (
         <MeetingsTab
           meetings={filteredMeetings}
-          cases={MOCK_CASES}
+          cases={cases}
           filterStatus={meetingFilterStatus}
           setFilterStatus={setMeetingFilterStatus}
           search={meetingSearch}
@@ -459,7 +378,7 @@ export default function DisciplinaryCasesPage({ role = 'teacher' }) {
 
       {activeTab === 'new-meeting' && (
         <NewMeetingTab
-          cases={MOCK_CASES}
+          cases={cases}
           preselected={preselectedCases}
           onSave={() => { setPreselectedCases([]); setActiveTab('meetings'); }}
           onCancel={() => { setPreselectedCases([]); setActiveTab('cases'); }}
