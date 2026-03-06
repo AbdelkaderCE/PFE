@@ -10,6 +10,7 @@
 */
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../theme/ThemeProvider';
 import ThemeSwitcher from '../theme/ThemeSwitcher';
 
@@ -85,6 +86,7 @@ function SettingsSection({ title, description, icon, children }) {
 /* ── Component ──────────────────────────────────────────────── */
 export default function SettingsPage() {
   const { mode, accent } = useTheme();
+  const { t, i18n } = useTranslation();
 
   /* Local settings state (mock — would connect to backend) */
   const [notifications, setNotifications] = useState({
@@ -105,7 +107,7 @@ export default function SettingsPage() {
   });
 
   const [general, setGeneral] = useState({
-    language: 'fr',
+    language: i18n.language?.substring(0, 2) || 'fr',
     timezone: 'africa-algiers',
     dateFormat: 'dd-mm-yyyy',
     startPage: '/dashboard',
@@ -131,16 +133,16 @@ export default function SettingsPage() {
 
       {/* ── Page Header ────────────────────────────────────── */}
       <div>
-        <h1 className="text-xl font-bold text-ink tracking-tight">Settings</h1>
+        <h1 className="text-xl font-bold text-ink tracking-tight">{t('settings.title')}</h1>
         <p className="mt-1 text-sm text-ink-tertiary">
-          Manage your preferences, notifications, and privacy.
+          {t('settings.subtitle')}
         </p>
       </div>
 
       {/* ── Appearance ─────────────────────────────────────── */}
       <SettingsSection
-        title="Appearance"
-        description="Theme, colors, and display preferences"
+        title={t('settings.appearance')}
+        description={t('settings.appearanceDesc')}
         icon={
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z" />
@@ -152,21 +154,21 @@ export default function SettingsPage() {
         </div>
         <div className="py-3 flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-ink">Current theme</p>
+            <p className="text-sm font-medium text-ink">{t('settings.currentTheme')}</p>
             <p className="text-xs text-ink-tertiary mt-0.5">
               {mode === 'dark' ? 'Dark' : 'Light'} mode · {accent.charAt(0).toUpperCase() + accent.slice(1)} accent
             </p>
           </div>
           <span className="px-2.5 py-1 text-xs font-medium rounded-md bg-blue-50 dark:bg-blue-950/40 text-brand border border-blue-200 dark:border-blue-800/50">
-            Active
+            {t('settings.active')}
           </span>
         </div>
       </SettingsSection>
 
       {/* ── General ────────────────────────────────────────── */}
       <SettingsSection
-        title="General"
-        description="Language, timezone, and regional settings"
+        title={t('settings.general')}
+        description={t('settings.generalDesc')}
         icon={
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 21l5.25-11.25L21 21m-9-3h7.5M3 5.621a48.474 48.474 0 016-.371m0 0c1.12 0 2.233.038 3.334.114M9 5.25V3m3.334 2.364C11.176 10.658 7.69 15.08 3 17.502m9.334-12.138c.896.061 1.785.147 2.666.257m-4.589 8.495a18.023 18.023 0 01-3.827-5.802" />
@@ -174,10 +176,15 @@ export default function SettingsPage() {
         }
       >
         <SelectRow
-          label="Language"
-          description="Interface language for menus and labels"
+          label={t('settings.language')}
+          description={t('settings.languageDesc')}
           value={general.language}
-          onChange={(v) => setGeneral((p) => ({ ...p, language: v }))}
+          onChange={(v) => {
+            setGeneral((p) => ({ ...p, language: v }));
+            i18n.changeLanguage(v);
+            document.documentElement.dir = v === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = v;
+          }}
           options={[
             { value: 'fr', label: 'Français' },
             { value: 'ar', label: 'العربية' },
@@ -185,8 +192,8 @@ export default function SettingsPage() {
           ]}
         />
         <SelectRow
-          label="Timezone"
-          description="Used for deadlines and calendar events"
+          label={t('settings.timezone')}
+          description={t('settings.timezoneDesc')}
           value={general.timezone}
           onChange={(v) => setGeneral((p) => ({ ...p, timezone: v }))}
           options={[
@@ -196,8 +203,8 @@ export default function SettingsPage() {
           ]}
         />
         <SelectRow
-          label="Date format"
-          description="How dates are displayed throughout the platform"
+          label={t('settings.dateFormat')}
+          description={t('settings.dateFormatDesc')}
           value={general.dateFormat}
           onChange={(v) => setGeneral((p) => ({ ...p, dateFormat: v }))}
           options={[
@@ -207,8 +214,8 @@ export default function SettingsPage() {
           ]}
         />
         <SelectRow
-          label="Start page"
-          description="The page shown after login"
+          label={t('settings.startPage')}
+          description={t('settings.startPageDesc')}
           value={general.startPage}
           onChange={(v) => setGeneral((p) => ({ ...p, startPage: v }))}
           options={[
@@ -223,8 +230,8 @@ export default function SettingsPage() {
 
       {/* ── Notifications ──────────────────────────────────── */}
       <SettingsSection
-        title="Notifications"
-        description="Choose how and when you receive alerts"
+        title={t('settings.notifications')}
+        description={t('settings.notificationsDesc')}
         icon={
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
@@ -236,14 +243,14 @@ export default function SettingsPage() {
           <p className="text-[11px] font-semibold text-ink-muted uppercase tracking-wider">Delivery channels</p>
         </div>
         <Toggle
-          label="Email notifications"
-          description="Receive notifications to your university email"
+          label={t('settings.emailNotif')}
+          description={t('settings.emailNotifDesc')}
           enabled={notifications.email}
           onChange={() => toggleNotif('email')}
         />
         <Toggle
-          label="Push notifications"
-          description="Browser push notifications when the app is open"
+          label={t('settings.pushNotif')}
+          description={t('settings.pushNotifDesc')}
           enabled={notifications.push}
           onChange={() => toggleNotif('push')}
         />
@@ -265,8 +272,8 @@ export default function SettingsPage() {
           onChange={() => toggleNotif('gradeAlerts')}
         />
         <Toggle
-          label="Deadline reminders"
-          description="48h and 24h reminders before assignment deadlines"
+          label={t('settings.deadlineReminders')}
+          description={t('settings.deadlineRemindersDesc')}
           enabled={notifications.deadlineReminders}
           onChange={() => toggleNotif('deadlineReminders')}
         />
@@ -286,8 +293,8 @@ export default function SettingsPage() {
 
       {/* ── Privacy ────────────────────────────────────────── */}
       <SettingsSection
-        title="Privacy"
-        description="Control what others can see about you"
+        title={t('settings.privacy')}
+        description={t('settings.privacyDesc')}
         icon={
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
@@ -295,26 +302,26 @@ export default function SettingsPage() {
         }
       >
         <Toggle
-          label="Show profile publicly"
-          description="Other students and teachers can view your profile"
+          label={t('settings.showProfile')}
+          description={t('settings.showProfileDesc')}
           enabled={privacy.showProfile}
           onChange={() => togglePrivacy('showProfile')}
         />
         <Toggle
-          label="Show email address"
-          description="Display your email on your public profile"
+          label={t('settings.showEmail')}
+          description={t('settings.showEmailDesc')}
           enabled={privacy.showEmail}
           onChange={() => togglePrivacy('showEmail')}
         />
         <Toggle
-          label="Show phone number"
-          description="Display your phone number on your public profile"
+          label={t('settings.showPhone')}
+          description={t('settings.showPhoneDesc')}
           enabled={privacy.showPhone}
           onChange={() => togglePrivacy('showPhone')}
         />
         <Toggle
-          label="Activity status"
-          description="Show when you were last active on the platform"
+          label={t('settings.activityStatus')}
+          description={t('settings.activityStatusDesc')}
           enabled={privacy.activityStatus}
           onChange={() => togglePrivacy('activityStatus')}
         />
@@ -322,8 +329,8 @@ export default function SettingsPage() {
 
       {/* ── Accessibility ──────────────────────────────────── */}
       <SettingsSection
-        title="Accessibility"
-        description="Adjust the interface for your needs"
+        title={t('settings.accessibility')}
+        description={t('settings.accessibilityDesc')}
         icon={
           <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
@@ -332,20 +339,20 @@ export default function SettingsPage() {
         }
       >
         <Toggle
-          label="Reduced motion"
-          description="Minimize animations and transitions"
+          label={t('settings.reducedMotion')}
+          description={t('settings.reducedMotionDesc')}
           enabled={accessibility.reducedMotion}
           onChange={() => toggleA11y('reducedMotion')}
         />
         <Toggle
-          label="High contrast"
-          description="Increase contrast for better readability"
+          label={t('settings.highContrast')}
+          description={t('settings.highContrastDesc')}
           enabled={accessibility.highContrast}
           onChange={() => toggleA11y('highContrast')}
         />
         <Toggle
-          label="Larger text"
-          description="Increase base font size across the platform"
+          label={t('settings.largeText')}
+          description={t('settings.largeTextDesc')}
           enabled={accessibility.largeText}
           onChange={() => toggleA11y('largeText')}
         />

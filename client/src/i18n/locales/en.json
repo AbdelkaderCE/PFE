@@ -1,0 +1,93 @@
+{
+  "brand": {
+    "name": "Ibn Khaldoun",
+    "tagline": "Pedagogical Platform"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "actualites": "News",
+    "projects": "Projects",
+    "ai": "AI Assistant",
+    "documents": "Documents",
+    "calendar": "Calendar",
+    "disciplinary": "Disciplinary",
+    "requests": "Requests",
+    "messages": "Messages",
+    "notifications": "Notifications",
+    "settings": "Settings",
+    "support": "Support",
+    "profile": "Profile"
+  },
+  "sections": {
+    "academic": "Academic",
+    "organization": "Organization",
+    "communication": "Communication",
+    "system": "System"
+  },
+  "topbar": {
+    "openMenu": "Open menu",
+    "expandSidebar": "Expand sidebar",
+    "collapseSidebar": "Collapse sidebar",
+    "lightMode": "Light mode",
+    "darkMode": "Dark mode",
+    "signOut": "Sign out"
+  },
+  "sidebar": {
+    "collapse": "Collapse",
+    "closeMenu": "Close menu",
+    "copyright": "© 2026 Ibn Khaldoun University"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your preferences, notifications and privacy.",
+    "appearance": "Appearance",
+    "appearanceDesc": "Theme, colors and display preferences",
+    "currentTheme": "Current theme",
+    "active": "Active",
+    "general": "General",
+    "generalDesc": "Language, timezone and regional settings",
+    "language": "Language",
+    "languageDesc": "Interface language for menus and labels",
+    "timezone": "Timezone",
+    "timezoneDesc": "Used for deadlines and calendar events",
+    "dateFormat": "Date format",
+    "dateFormatDesc": "How dates are displayed across the platform",
+    "startPage": "Start page",
+    "startPageDesc": "Page shown after login",
+    "notifications": "Notifications",
+    "notificationsDesc": "Choose when and how to be notified",
+    "emailNotif": "Email notifications",
+    "emailNotifDesc": "Receive important notifications by email",
+    "pushNotif": "Push notifications",
+    "pushNotifDesc": "Browser notifications for real-time updates",
+    "newsUpdates": "News updates",
+    "newsUpdatesDesc": "New announcements and upcoming events",
+    "deadlineReminders": "Deadline reminders",
+    "deadlineRemindersDesc": "Alerts for upcoming deadlines and submissions",
+    "privacy": "Privacy",
+    "privacyDesc": "Control who can see your information",
+    "showProfile": "Public profile",
+    "showProfileDesc": "Allow others to view your profile page",
+    "showEmail": "Show email",
+    "showEmailDesc": "Display email on your public profile",
+    "showPhone": "Show phone",
+    "showPhoneDesc": "Display phone number on profile",
+    "activityStatus": "Activity status",
+    "activityStatusDesc": "Show your online status",
+    "accessibility": "Accessibility",
+    "accessibilityDesc": "Motion, contrast and text size settings",
+    "reducedMotion": "Reduced motion",
+    "reducedMotionDesc": "Disable animations and transitions",
+    "highContrast": "High contrast",
+    "highContrastDesc": "Increase contrast for better visibility",
+    "largeText": "Large text",
+    "largeTextDesc": "Increase interface text size"
+  },
+  "common": {
+    "signIn": "Sign in",
+    "loadMore": "Load more articles →",
+    "viewCalendar": "View full calendar →",
+    "noEvents": "No events on this day",
+    "noNews": "No news in this category"
+  }
+}

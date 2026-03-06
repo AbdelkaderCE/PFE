@@ -9,27 +9,30 @@
 */
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../theme/ThemeProvider';
 import ThemeSwitcher from '../../../theme/ThemeSwitcher';
 
-/* ── Page titles mapped to routes ─────────────────────────────── */
-const PAGE_TITLES = {
-  '/dashboard':                'Dashboard',
-  '/dashboard/actualites':     'Actualités',
-  '/dashboard/projects':       'Projects',
-  '/dashboard/ai':             'AI Assistant',
-  '/dashboard/documents':      'Documents',
-  '/dashboard/disciplinary':   'Disciplinary Cases',
-  '/dashboard/requests':       'Requests & Appeals',
-  '/dashboard/messages':       'Messages',
-  '/dashboard/notifications':  'Notifications',
-  '/dashboard/settings':       'Settings',
-  '/dashboard/support':        'Support',
-  '/dashboard/profile':        'Profile',
+/* ── Page titles mapped to routes (i18n keys) ─────────────────── */
+const PAGE_TITLE_KEYS = {
+  '/dashboard':                'nav.dashboard',
+  '/dashboard/actualites':     'nav.actualites',
+  '/dashboard/projects':       'nav.projects',
+  '/dashboard/ai':             'nav.ai',
+  '/dashboard/documents':      'nav.documents',
+  '/dashboard/calendar':       'nav.calendar',
+  '/dashboard/disciplinary':   'nav.disciplinary',
+  '/dashboard/requests':       'nav.requests',
+  '/dashboard/messages':       'nav.messages',
+  '/dashboard/notifications':  'nav.notifications',
+  '/dashboard/settings':       'nav.settings',
+  '/dashboard/support':        'nav.support',
+  '/dashboard/profile':        'nav.profile',
 };
 
 export default function Topbar({ role = 'student', user, onLogout, onHamburger, onNavigate, activeKey = '/dashboard', sidebarCollapsed = false, onToggleSidebar }) {
   const { toggleMode, isDark } = useTheme();
+  const { t } = useTranslation();
   const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -55,7 +58,7 @@ export default function Topbar({ role = 'student', user, onLogout, onHamburger, 
     return () => document.removeEventListener('mousedown', handler);
   }, [profileOpen, dropdownRef]);
 
-  const title = PAGE_TITLES[activeKey] || 'Dashboard';
+  const title = t(PAGE_TITLE_KEYS[activeKey] || 'nav.dashboard');
 
   return (
     <header className="h-16 bg-canvas border-b border-edge flex items-center justify-between px-4 lg:px-6 shrink-0">
@@ -66,7 +69,7 @@ export default function Topbar({ role = 'student', user, onLogout, onHamburger, 
         <button
           onClick={onHamburger}
           className="lg:hidden p-2 -ml-2 rounded-md text-ink-tertiary hover:text-ink-secondary hover:bg-surface-200 transition-colors duration-150"
-          aria-label="Open menu"
+          aria-label={t('topbar.openMenu')}
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
@@ -77,8 +80,8 @@ export default function Topbar({ role = 'student', user, onLogout, onHamburger, 
         <button
           onClick={onToggleSidebar}
           className="hidden lg:flex p-2 -ml-2 rounded-md text-ink-tertiary hover:text-ink-secondary hover:bg-surface-200 transition-colors duration-150"
-          aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          aria-label={sidebarCollapsed ? t('topbar.expandSidebar') : t('topbar.collapseSidebar')}
+          title={sidebarCollapsed ? t('topbar.expandSidebar') : t('topbar.collapseSidebar')}
         >
           <svg className={`w-5 h-5 transition-transform duration-200 ${sidebarCollapsed ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
@@ -95,8 +98,8 @@ export default function Topbar({ role = 'student', user, onLogout, onHamburger, 
         <button
           onClick={toggleMode}
           className="p-2 rounded-md text-ink-tertiary hover:text-ink-secondary hover:bg-surface-200 transition-colors duration-150"
-          aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-          title={isDark ? 'Light mode' : 'Dark mode'}
+          aria-label={isDark ? t('topbar.lightMode') : t('topbar.darkMode')}
+          title={isDark ? t('topbar.lightMode') : t('topbar.darkMode')}
         >
           {isDark ? (
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -144,12 +147,12 @@ export default function Topbar({ role = 'student', user, onLogout, onHamburger, 
               </div>
 
               <div className="py-1">
-                <DropdownItem label="Profile" onClick={() => { onNavigate?.('/dashboard/profile'); setProfileOpen(false); }} icon={
+                <DropdownItem label={t('nav.profile')} onClick={() => { onNavigate?.('/dashboard/profile'); setProfileOpen(false); }} icon={
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                   </svg>
                 } />
-                <DropdownItem label="Settings" onClick={() => { onNavigate?.('/dashboard/settings'); setProfileOpen(false); }} icon={
+                <DropdownItem label={t('nav.settings')} onClick={() => { onNavigate?.('/dashboard/settings'); setProfileOpen(false); }} icon={
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -162,7 +165,7 @@ export default function Topbar({ role = 'student', user, onLogout, onHamburger, 
               </div>
 
               <div className="border-t border-edge-subtle py-1">
-                <DropdownItem label="Sign out" variant="danger" onClick={() => { setProfileOpen(false); onLogout?.(); }} icon={
+                <DropdownItem label={t('topbar.signOut')} variant="danger" onClick={() => { setProfileOpen(false); onLogout?.(); }} icon={
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
                   </svg>

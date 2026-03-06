@@ -1,0 +1,93 @@
+{
+  "brand": {
+    "name": "Ibn Khaldoun",
+    "tagline": "Plateforme Pédagogique"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "actualites": "Actualités",
+    "projects": "Projets",
+    "ai": "Assistant IA",
+    "documents": "Documents",
+    "calendar": "Calendrier",
+    "disciplinary": "Disciplinaire",
+    "requests": "Demandes",
+    "messages": "Messages",
+    "notifications": "Notifications",
+    "settings": "Paramètres",
+    "support": "Aide",
+    "profile": "Profil"
+  },
+  "sections": {
+    "academic": "Académique",
+    "organization": "Organisation",
+    "communication": "Communication",
+    "system": "Système"
+  },
+  "topbar": {
+    "openMenu": "Ouvrir le menu",
+    "expandSidebar": "Développer la barre latérale",
+    "collapseSidebar": "Réduire la barre latérale",
+    "lightMode": "Mode clair",
+    "darkMode": "Mode sombre",
+    "signOut": "Déconnexion"
+  },
+  "sidebar": {
+    "collapse": "Réduire",
+    "closeMenu": "Fermer le menu",
+    "copyright": "© 2026 Université Ibn Khaldoun"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérez vos préférences, notifications et confidentialité.",
+    "appearance": "Apparence",
+    "appearanceDesc": "Thème, couleurs et préférences d'affichage",
+    "currentTheme": "Thème actuel",
+    "active": "Actif",
+    "general": "Général",
+    "generalDesc": "Langue, fuseau horaire et paramètres régionaux",
+    "language": "Langue",
+    "languageDesc": "Langue de l'interface pour les menus et les labels",
+    "timezone": "Fuseau horaire",
+    "timezoneDesc": "Utilisé pour les échéances et les événements du calendrier",
+    "dateFormat": "Format de date",
+    "dateFormatDesc": "Comment les dates sont affichées sur la plateforme",
+    "startPage": "Page de démarrage",
+    "startPageDesc": "Page affichée après la connexion",
+    "notifications": "Notifications",
+    "notificationsDesc": "Choisissez quand et comment vous êtes notifié",
+    "emailNotif": "Notifications par email",
+    "emailNotifDesc": "Recevoir les notifications importantes par email",
+    "pushNotif": "Notifications push",
+    "pushNotifDesc": "Notifications navigateur pour les mises à jour en temps réel",
+    "newsUpdates": "Mises à jour des actualités",
+    "newsUpdatesDesc": "Nouvelles annonces et événements à venir",
+    "deadlineReminders": "Rappels d'échéances",
+    "deadlineRemindersDesc": "Alertes pour les échéances et soumissions à venir",
+    "privacy": "Confidentialité",
+    "privacyDesc": "Contrôlez qui peut voir vos informations",
+    "showProfile": "Profil public",
+    "showProfileDesc": "Permettre aux autres de voir votre page de profil",
+    "showEmail": "Afficher l'email",
+    "showEmailDesc": "Afficher l'email sur votre profil public",
+    "showPhone": "Afficher le téléphone",
+    "showPhoneDesc": "Afficher le numéro de téléphone sur le profil",
+    "activityStatus": "Statut d'activité",
+    "activityStatusDesc": "Montrer quand vous êtes en ligne",
+    "accessibility": "Accessibilité",
+    "accessibilityDesc": "Paramètres de mouvement, contraste et taille du texte",
+    "reducedMotion": "Mouvement réduit",
+    "reducedMotionDesc": "Désactiver les animations et transitions",
+    "highContrast": "Contraste élevé",
+    "highContrastDesc": "Augmenter le contraste pour une meilleure visibilité",
+    "largeText": "Texte agrandi",
+    "largeTextDesc": "Augmenter la taille du texte de l'interface"
+  },
+  "common": {
+    "signIn": "Se connecter",
+    "loadMore": "Charger plus d'articles →",
+    "viewCalendar": "Voir le calendrier complet →",
+    "noEvents": "Aucun événement ce jour",
+    "noNews": "Aucune actualité dans cette catégorie"
+  }
+}

@@ -11,6 +11,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Sidebar from './navigation/Sidebar';
 import Topbar from './navigation/Topbar';
 import TeacherDashboard from '../../pages/TeacherDashboard';
@@ -19,17 +20,18 @@ import { useAuth } from '../../contexts/AuthContext';
 
 /* ── 11 Modules ─────────────────────────────────────────────── */
 const ALL_MODULES = [
-  { name: 'Dashboard',     path: '/dashboard',                roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'SPECIALITE_CHEF', 'DEPARTEMENT_CHEF', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
-  { name: 'Actualités',    path: '/dashboard/actualites',     roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'SPECIALITE_CHEF', 'DEPARTEMENT_CHEF', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
-  { name: 'Projects',      path: '/dashboard/projects',       roles: ['STUDENT', 'DELEGATE', 'TEACHER'] },
-  { name: 'AI Assistant',  path: '/dashboard/ai',             roles: ['STUDENT', 'DELEGATE', 'TEACHER'] },
-  { name: 'Documents',     path: '/dashboard/documents',      roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
-  { name: 'Disciplinary',  path: '/dashboard/disciplinary',   roles: ['TEACHER', 'COMMITTEE_MEMBER', 'COMMITTEE_PRESIDENT', 'ADMIN_FACULTY'] },
-  { name: 'Requests',      path: '/dashboard/requests',       roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'SPECIALITE_CHEF', 'DEPARTEMENT_CHEF', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
-  { name: 'Messages',      path: '/dashboard/messages',       roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
-  { name: 'Notifications', path: '/dashboard/notifications',  roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
-  { name: 'Settings',      path: '/dashboard/settings',       roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'SPECIALITE_CHEF', 'DEPARTEMENT_CHEF', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
-  { name: 'Support',       path: '/dashboard/support',        roles: ['STUDENT', 'DELEGATE', 'TEACHER'] },
+  { nameKey: 'nav.dashboard',     path: '/dashboard',                roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'SPECIALITE_CHEF', 'DEPARTEMENT_CHEF', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
+  { nameKey: 'nav.actualites',    path: '/dashboard/actualites',     roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'SPECIALITE_CHEF', 'DEPARTEMENT_CHEF', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
+  { nameKey: 'nav.projects',      path: '/dashboard/projects',       roles: ['STUDENT', 'DELEGATE', 'TEACHER'] },
+  { nameKey: 'nav.ai',            path: '/dashboard/ai',             roles: ['STUDENT', 'DELEGATE', 'TEACHER'] },
+  { nameKey: 'nav.documents',     path: '/dashboard/documents',      roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
+  { nameKey: 'nav.calendar',      path: '/dashboard/calendar',       roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'SPECIALITE_CHEF', 'DEPARTEMENT_CHEF', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
+  { nameKey: 'nav.disciplinary',  path: '/dashboard/disciplinary',   roles: ['TEACHER', 'COMMITTEE_MEMBER', 'COMMITTEE_PRESIDENT', 'ADMIN_FACULTY'] },
+  { nameKey: 'nav.requests',      path: '/dashboard/requests',       roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'SPECIALITE_CHEF', 'DEPARTEMENT_CHEF', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
+  { nameKey: 'nav.messages',      path: '/dashboard/messages',       roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
+  { nameKey: 'nav.notifications', path: '/dashboard/notifications',  roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
+  { nameKey: 'nav.settings',      path: '/dashboard/settings',       roles: ['STUDENT', 'DELEGATE', 'TEACHER', 'SPECIALITE_CHEF', 'DEPARTEMENT_CHEF', 'ADMIN_FACULTY', 'ADMIN_SUPER'] },
+  { nameKey: 'nav.support',       path: '/dashboard/support',        roles: ['STUDENT', 'DELEGATE', 'TEACHER'] },
 ];
 
 /* Map DB roles to the UI role token used by children (student | teacher | admin) */
@@ -43,6 +45,7 @@ function uiRole(dbRole) {
 
 const DashboardLayout = ({ children }) => {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -53,10 +56,10 @@ const DashboardLayout = ({ children }) => {
 
   const role = uiRole(user?.role);
 
-  /* Filter modules by the user's actual DB role */
-  const visibleModules = ALL_MODULES.filter((m) =>
-    user?.role ? m.roles.includes(user.role) : m.roles.includes('STUDENT')
-  );
+  /* Filter modules by the user's actual DB role and resolve translated names */
+  const visibleModules = ALL_MODULES
+    .filter((m) => user?.role ? m.roles.includes(user.role) : m.roles.includes('STUDENT'))
+    .map((m) => ({ ...m, name: t(m.nameKey) }));
 
   const handleLogout = async () => {
     await logout();

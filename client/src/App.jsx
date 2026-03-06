@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ThemeProvider } from './theme/ThemeProvider';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -23,6 +24,7 @@ import DashboardLayout from './design-system/components/DashboardLayout';
 import SettingsPage from './pages/SettingsPage';
 import ProfilePage from './pages/ProfilePage';
 import DisciplinaryCasesPage from './pages/DisciplinaryCasesPage';
+import CalendarPage from './pages/CalendarPage';
 
 /* ── Misc ── */
 import UnauthorizedPage from './pages/UnauthorizedPage';
@@ -30,6 +32,15 @@ import NotFoundPage from './pages/NotFoundPage';
 import AIChatbot from './components/ai/AIChatbot';
 
 function App() {
+  const { i18n } = useTranslation();
+
+  /* Keep document dir & lang in sync with the active language */
+  useEffect(() => {
+    const lang = i18n.language?.substring(0, 2) || 'fr';
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+  }, [i18n.language]);
+
   return (
     <ThemeProvider>
       <BrowserRouter>
@@ -56,6 +67,7 @@ function App() {
               <Route path="/dashboard/profile" element={<ProtectedRoute><DashboardLayout><ProfilePage /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/disciplinary" element={<ProtectedRoute><DashboardLayout><DisciplinaryCasesPage /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/actualites" element={<ProtectedRoute><DashboardLayout><ActualitesPage /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/calendar" element={<ProtectedRoute><DashboardLayout><CalendarPage /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/requests" element={<ProtectedRoute><DashboardLayout><RequestsPage /></DashboardLayout></ProtectedRoute>} />
 
               {/* ── Error pages ── */}

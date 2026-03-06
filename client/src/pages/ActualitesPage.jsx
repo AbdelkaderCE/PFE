@@ -14,6 +14,7 @@
 */
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import request from '../api';
 
 /* ── Mock Data ──────────────────────────────────────────────── */
@@ -86,6 +87,7 @@ function daysUntilStyle(dateStr) {
 /* ── Component ──────────────────────────────────────────────── */
 export default function ActualitesPage({ role }) {
   const isGuest = !role || role === 'guest';
+  const navigate = useNavigate();
   const [activeFilter, setActiveFilter] = useState('all');
   const [pinnedAnnouncements, setPinnedAnnouncements] = useState([]);
   const [newsFeed, setNewsFeed] = useState([]);
@@ -358,7 +360,10 @@ export default function ActualitesPage({ role }) {
                 </svg>
                 <h2 className="text-base font-semibold text-ink">Upcoming Events</h2>
               </div>
-              <button className="text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150">
+              <button
+                onClick={() => navigate('/dashboard/calendar')}
+                className="text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150"
+              >
                 Calendar
               </button>
             </div>
@@ -409,7 +414,10 @@ export default function ActualitesPage({ role }) {
             </ul>
 
             <div className="px-5 py-3 border-t border-edge-subtle">
-              <button className="w-full text-center text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150">
+              <button
+                onClick={() => navigate('/dashboard/calendar')}
+                className="w-full text-center text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150"
+              >
                 View full calendar →
               </button>
             </div>

@@ -1,0 +1,93 @@
+{
+  "brand": {
+    "name": "ابن خلدون",
+    "tagline": "المنصة البيداغوجية"
+  },
+  "nav": {
+    "dashboard": "لوحة القيادة",
+    "actualites": "الأخبار",
+    "projects": "المشاريع",
+    "ai": "المساعد الذكي",
+    "documents": "الوثائق",
+    "calendar": "التقويم",
+    "disciplinary": "التأديب",
+    "requests": "الطلبات",
+    "messages": "الرسائل",
+    "notifications": "الإشعارات",
+    "settings": "الإعدادات",
+    "support": "المساعدة",
+    "profile": "الملف الشخصي"
+  },
+  "sections": {
+    "academic": "أكاديمي",
+    "organization": "التنظيم",
+    "communication": "التواصل",
+    "system": "النظام"
+  },
+  "topbar": {
+    "openMenu": "فتح القائمة",
+    "expandSidebar": "توسيع الشريط الجانبي",
+    "collapseSidebar": "طي الشريط الجانبي",
+    "lightMode": "الوضع الفاتح",
+    "darkMode": "الوضع الداكن",
+    "signOut": "تسجيل الخروج"
+  },
+  "sidebar": {
+    "collapse": "طي",
+    "closeMenu": "إغلاق القائمة",
+    "copyright": "© 2026 جامعة ابن خلدون"
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "subtitle": "إدارة التفضيلات والإشعارات والخصوصية.",
+    "appearance": "المظهر",
+    "appearanceDesc": "السمة والألوان وتفضيلات العرض",
+    "currentTheme": "السمة الحالية",
+    "active": "نشط",
+    "general": "عام",
+    "generalDesc": "اللغة والمنطقة الزمنية والإعدادات الإقليمية",
+    "language": "اللغة",
+    "languageDesc": "لغة الواجهة للقوائم والتسميات",
+    "timezone": "المنطقة الزمنية",
+    "timezoneDesc": "تُستخدم للمواعيد النهائية وأحداث التقويم",
+    "dateFormat": "صيغة التاريخ",
+    "dateFormatDesc": "كيفية عرض التواريخ عبر المنصة",
+    "startPage": "صفحة البداية",
+    "startPageDesc": "الصفحة التي تظهر بعد تسجيل الدخول",
+    "notifications": "الإشعارات",
+    "notificationsDesc": "اختر متى وكيف يتم إشعارك",
+    "emailNotif": "إشعارات البريد الإلكتروني",
+    "emailNotifDesc": "تلقي الإشعارات المهمة عبر البريد الإلكتروني",
+    "pushNotif": "إشعارات الدفع",
+    "pushNotifDesc": "إشعارات المتصفح للتحديثات الفورية",
+    "newsUpdates": "تحديثات الأخبار",
+    "newsUpdatesDesc": "الإعلانات الجديدة والأحداث القادمة",
+    "deadlineReminders": "تذكيرات المواعيد",
+    "deadlineRemindersDesc": "تنبيهات المواعيد النهائية والتسليمات القادمة",
+    "privacy": "الخصوصية",
+    "privacyDesc": "تحكم في من يمكنه رؤية معلوماتك",
+    "showProfile": "الملف العام",
+    "showProfileDesc": "السماح للآخرين بمشاهدة صفحة ملفك الشخصي",
+    "showEmail": "إظهار البريد",
+    "showEmailDesc": "عرض البريد الإلكتروني في ملفك العام",
+    "showPhone": "إظهار الهاتف",
+    "showPhoneDesc": "عرض رقم الهاتف في الملف الشخصي",
+    "activityStatus": "حالة النشاط",
+    "activityStatusDesc": "إظهار حالة الاتصال",
+    "accessibility": "إمكانية الوصول",
+    "accessibilityDesc": "إعدادات الحركة والتباين وحجم النص",
+    "reducedMotion": "تقليل الحركة",
+    "reducedMotionDesc": "تعطيل الرسوم المتحركة والانتقالات",
+    "highContrast": "تباين عالي",
+    "highContrastDesc": "زيادة التباين لرؤية أفضل",
+    "largeText": "نص كبير",
+    "largeTextDesc": "تكبير حجم نص الواجهة"
+  },
+  "common": {
+    "signIn": "تسجيل الدخول",
+    "loadMore": "تحميل المزيد من المقالات ←",
+    "viewCalendar": "عرض التقويم الكامل ←",
+    "noEvents": "لا توجد أحداث في هذا اليوم",
+    "noNews": "لا توجد أخبار في هذه الفئة"
+  }
+}
