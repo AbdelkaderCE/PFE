@@ -16,6 +16,3 @@ export { TextInput, PasswordInput, Checkbox } from './form';
 
 // Navigation
 export { Sidebar, Topbar } from './navigation';
-
-// Layout
-export { default as DashboardLayout } from './DashboardLayout';

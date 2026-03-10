@@ -12,11 +12,11 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import Sidebar from './navigation/Sidebar';
-import Topbar from './navigation/Topbar';
-import TeacherDashboard from '../../pages/TeacherDashboard';
-import StudentDashboard from '../../pages/StudentDashboard';
-import { useAuth } from '../../contexts/AuthContext';
+import Sidebar from '../design-system/components/navigation/Sidebar';
+import Topbar from '../design-system/components/navigation/Topbar';
+import TeacherDashboard from '../pages/TeacherDashboard';
+import StudentDashboard from '../pages/StudentDashboard';
+import { useAuth } from '../contexts/AuthContext';
 
 /* ── 11 Modules ─────────────────────────────────────────────── */
 const ALL_MODULES = [

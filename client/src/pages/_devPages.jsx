@@ -14,7 +14,7 @@ import HomePage from './HomePage';
 import AboutPage from './AboutPage';
 import ContactPage from './ContactPage';
 import NotFoundPage from './NotFoundPage';
-import DashboardLayout from '../design-system/components/DashboardLayout';
+import DashboardLayout from '../layouts/DashboardLayout';
 
 /* ── New pages from merge ── */
 import UnauthorizedPage from './UnauthorizedPage';

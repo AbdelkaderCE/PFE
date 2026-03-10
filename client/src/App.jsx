@@ -20,7 +20,7 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
 
 /* ── Protected (requires login) ── */
-import DashboardLayout from './design-system/components/DashboardLayout';
+import DashboardLayout from './layouts/DashboardLayout';
 import SettingsPage from './pages/SettingsPage';
 import ProfilePage from './pages/ProfilePage';
 import DisciplinaryCasesPage from './pages/DisciplinaryCasesPage';
