@@ -14,7 +14,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
-import request from '../api';
+import request from '../services/api';
 
 /* ── Helpers ────────────────────────────────────────────────── */
 const TYPE_BADGE = {
@@ -124,7 +124,7 @@ export default function StudentDashboard() {
     return () => { cancelled = true; };
   }, []);
 
-  const displayName = user?.firstName || 'Student';
+  const displayName = user?.prenom || 'Student';
   const dept = user?.student?.department?.name || '';
   const spec = user?.student?.specialite?.name || '';
   const subtitle = [spec, dept].filter(Boolean).join(' · ') || t('studentDashboard.welcomeDefault');

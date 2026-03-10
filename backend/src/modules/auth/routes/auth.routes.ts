@@ -12,8 +12,8 @@ import {
   loginLimiter,
   registerLimiter,
   refreshLimiter,
-} from "../middlewares/rate-limit.middleware";
-import { requireAuth, requireEmailVerified } from "../middlewares/auth.middleware";
+} from "../../../middleware/rate-limit.middleware";
+import { requireAuth, requireEmailVerified } from "../../../middleware/auth.middleware";
 
 const router = Router();
 

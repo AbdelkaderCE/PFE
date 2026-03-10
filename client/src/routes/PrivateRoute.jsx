@@ -28,7 +28,7 @@ const PrivateRoute = ({ allowedRoles = [], redirectTo = '/login' }) => {
     return <Navigate to={redirectTo} replace />;
   }
 
-  if (allowedRoles.length > 0 && user && !allowedRoles.includes(user.role)) {
+  if (allowedRoles.length > 0 && user && !user.roles?.some(r => allowedRoles.includes(r))) {
     return <Navigate to="/unauthorized" replace />;
   }
 

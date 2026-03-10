@@ -66,8 +66,8 @@ export const formatters = {
     return phone;
   },
 
-  fullName: (firstName, lastName) => {
-    return `${firstName} ${lastName}`;
+  fullName: (prenom, nom) => {
+    return `${prenom} ${nom}`;
   },
 
   truncate: (text, length = 100, suffix = '...') => {

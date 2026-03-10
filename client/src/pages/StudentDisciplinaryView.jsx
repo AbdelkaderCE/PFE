@@ -10,7 +10,7 @@
 */
 
 import React, { useState, useEffect } from 'react';
-import request from '../api';
+import request from '../services/api';
 
 /* ── Mock student notifications ─────────────────────────────── */
 /* Data fetched from API — see component useEffect */

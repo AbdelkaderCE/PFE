@@ -7,14 +7,14 @@ import {
   verifyEmail,
   resendVerification,
   getUserById,
-} from "../services/auth.service";
+} from "../auth.service";
 import {
   ACCESS_TOKEN_COOKIE_NAME,
   REFRESH_TOKEN_COOKIE_NAME,
   accessTokenCookieOptions,
   refreshTokenCookieOptions,
-} from "../config/auth";
-import { AuthRequest } from "../middlewares/auth.middleware";
+} from "../../../config/auth";
+import { AuthRequest } from "../../../middleware/auth.middleware";
 
 export const register = async (req: Request, res: Response) => {
   try {

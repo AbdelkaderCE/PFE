@@ -38,13 +38,13 @@ export default function Topbar({ role = 'student', user, onLogout, onHamburger, 
 
   /* Derive display values from the real user object */
   const initials = user
-    ? `${(user.firstName || '')[0] || ''}${(user.lastName || '')[0] || ''}`.toUpperCase()
+    ? `${(user.prenom || '')[0] || ''}${(user.nom || '')[0] || ''}`.toUpperCase()
     : role === 'student' ? 'ST' : 'PR';
   const displayName = user
-    ? `${user.firstName} ${user.lastName}`
+    ? `${user.prenom} ${user.nom}`
     : role === 'student' ? 'Student' : 'Teacher';
   const displayEmail = user?.email || `${role}@univ-ibn-khaldoun.dz`;
-  const roleBadge = user?.role?.replace(/_/g, ' ') || role;
+  const roleBadge = (user?.roles?.[0] || role)?.replace(/_/g, ' ');
 
   /* Close on outside click */
   useEffect(() => {

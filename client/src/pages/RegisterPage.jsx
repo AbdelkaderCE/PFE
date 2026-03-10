@@ -7,7 +7,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { authAPI } from '../api';
+import { authAPI } from '../services/api';
 import { getPasswordStrength } from '../utils/validators';
 
 const registerImage =
@@ -73,7 +73,7 @@ export default function RegisterPage() {
   const { t } = useTranslation();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
-    firstName: '', lastName: '', email: '', phone: '',
+    prenom: '', nom: '', email: '', phone: '',
     studentId: '', department: 'computer-science', level: 'L1', speciality: '',
     password: '', confirmPassword: '',
   });
@@ -97,8 +97,8 @@ export default function RegisterPage() {
   /* ── Step validators ──────────────────────────────────────── */
   const validateStep1 = () => {
     const e = {};
-    if (!formData.firstName) e.firstName = t('register.errorFirstName');
-    if (!formData.lastName) e.lastName = t('register.errorLastName');
+    if (!formData.prenom) e.prenom = t('register.errorFirstName');
+    if (!formData.nom) e.nom = t('register.errorLastName');
     if (!formData.email) e.email = t('register.errorEmail');
     else if (!/\S+@\S+\.\S+/.test(formData.email)) e.email = t('register.errorEmailInvalid');
     if (!formData.phone) e.phone = t('register.errorPhone');
@@ -224,8 +224,8 @@ export default function RegisterPage() {
             {step === 1 && (
               <div className="space-y-4 animate-fadeIn">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormInput label={t('register.firstName')} type="text" value={formData.firstName} onChange={handleChange('firstName')} placeholder="Ahmed" error={errors.firstName} required />
-                  <FormInput label={t('register.lastName')} type="text" value={formData.lastName} onChange={handleChange('lastName')} placeholder="Benali" error={errors.lastName} required />
+                  <FormInput label={t('register.firstName')} type="text" value={formData.prenom} onChange={handleChange('prenom')} placeholder="Ahmed" error={errors.prenom} required />
+                  <FormInput label={t('register.lastName')} type="text" value={formData.nom} onChange={handleChange('nom')} placeholder="Benali" error={errors.nom} required />
                 </div>
                 <FormInput label={t('register.emailAddress')} type="email" value={formData.email} onChange={handleChange('email')} placeholder="you@univ-tiaret.dz" error={errors.email} required />
                 <FormInput label={t('register.phoneNumber')} type="tel" value={formData.phone} onChange={handleChange('phone')} placeholder="0555 12 34 56" error={errors.phone} required />

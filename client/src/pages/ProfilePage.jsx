@@ -36,9 +36,11 @@ function InfoRow({ label, value, icon }) {
   );
 }
 
-/* Helper: is the user a student-like role? */
-function isStudentRole(role) {
-  return ['STUDENT', 'DELEGATE'].includes((role || '').toUpperCase());
+/* Helper: does the user have a student-like role? */
+function isStudentRole(roles) {
+  if (!roles) return true;
+  const arr = Array.isArray(roles) ? roles : [roles];
+  return arr.some(r => ['STUDENT', 'DELEGATE', 'etudiant', 'delegue'].includes(r.toUpperCase ? r.toUpperCase() : r));
 }
 
 /* ── Component ──────────────────────────────────────────────── */
@@ -47,9 +49,9 @@ export default function ProfilePage() {
 
   if (!user) return null;
 
-  const student = isStudentRole(user.role);
-  const initials = `${(user.firstName || '?')[0]}${(user.lastName || '?')[0]}`.toUpperCase();
-  const rolePretty = (user.role || 'STUDENT').replace(/_/g, ' ');
+  const student = isStudentRole(user.roles);
+  const initials = `${(user.prenom || '?')[0]}${(user.nom || '?')[0]}`.toUpperCase();
+  const rolePretty = (user.roles?.[0] || 'etudiant').replace(/_/g, ' ');
 
   /* Student sub-record (populated by /auth/me → getUserById) */
   const dept = user.student?.department?.name || '—';
@@ -97,7 +99,7 @@ export default function ProfilePage() {
           {/* Name & role — below the avatar, clear of the banner */}
           <div className="mt-3 min-w-0">
             <h2 className="text-lg font-bold text-ink tracking-tight">
-              {user.firstName} {user.lastName}
+              {user.prenom} {user.nom}
             </h2>
             <div className="flex items-center gap-2 mt-1 flex-wrap">
               <span className="px-2 py-0.5 text-[11px] font-medium rounded bg-blue-50 dark:bg-blue-950/40 text-brand border border-blue-200 dark:border-blue-800/50 capitalize">
@@ -164,7 +166,7 @@ export default function ProfilePage() {
             <InfoRow label="Email" value={user.email} icon={
               <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
             } />
-            <InfoRow label="Full Name" value={`${user.firstName} ${user.lastName}`} icon={
+            <InfoRow label="Full Name" value={`${user.prenom} ${user.nom}`} icon={
               <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
             } />
             <InfoRow label="Account Created" value={formatDate(user.createdAt)} icon={

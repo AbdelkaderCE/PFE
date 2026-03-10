@@ -14,7 +14,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
-import request from '../api';
+import request from '../services/api';
 
 /* ── Stat card icon definitions ─────────────────────────────── */
 const STAT_ICONS = {
@@ -110,7 +110,7 @@ export default function TeacherDashboard() {
       {/* ── Page Header ────────────────────────────────────── */}
       <div>
         <h1 className="text-xl font-bold text-ink tracking-tight">
-          {t('teacherDashboard.goodMorning', { name: user?.firstName ? `, ${user.firstName}` : '' })}
+          {t('teacherDashboard.goodMorning', { name: user?.prenom ? `, ${user.prenom}` : '' })}
         </h1>
         <p className="mt-1 text-sm text-ink-tertiary">
           {t('teacherDashboard.attentionToday', { date: new Date().toLocaleDateString(i18n.language === 'ar' ? 'ar-DZ' : i18n.language === 'fr' ? 'fr-FR' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) })}

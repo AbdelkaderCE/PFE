@@ -14,7 +14,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import RequestDetailPage from './RequestDetailPage';
 import AdminRequestsPage from './AdminRequestsPage';
-import request from '../api';
+import request from '../services/api';
 
 /* ── Helpers ────────────────────────────────────────────────── */
 

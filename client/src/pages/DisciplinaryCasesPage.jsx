@@ -12,7 +12,7 @@
 import React, { useState, useEffect } from 'react';
 import CaseDetailPage from './CaseDetailPage';
 import StudentDisciplinaryView from './StudentDisciplinaryView';
-import request from '../api';
+import request from '../services/api';
 
 /* ── Inline SVG Icons (stroke 1.5) ─────────────────────────── */
 

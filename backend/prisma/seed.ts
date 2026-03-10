@@ -1,67 +1,103 @@
-import { PrismaClient, Role } from '@prisma/client';
-import bcrypt from 'bcryptjs';
+import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Seeding database...\n');
+  console.log("🌱 Seeding database...\n");
 
-  // ── Departments ──────────────────────────────────────────
-  const deptCS = await prisma.department.upsert({
-    where: { name: 'Computer Science' },
-    update: {},
-    create: { name: 'Computer Science', description: 'Department of Computer Science & Information Technology' },
+  const password = await bcrypt.hash("Test@1234", 10);
+
+  // ── Roles & permissions ──────────────────────────────────
+  const roleData = [
+    { nom: "admin", description: "Administrateur système" },
+    { nom: "admin_faculte", description: "Administrateur de faculté" },
+    { nom: "chef_departement", description: "Chef de département" },
+    { nom: "chef_specialite", description: "Chef de spécialité" },
+    { nom: "enseignant", description: "Enseignant" },
+    { nom: "etudiant", description: "Étudiant" },
+    { nom: "delegue", description: "Délégué de section" },
+    { nom: "president_conseil", description: "Président du conseil de discipline" },
+  ];
+
+  const roles: Record<string, { id: number; nom: string | null }> = {};
+  for (const r of roleData) {
+    const role = await prisma.role.upsert({
+      where: { id: (await prisma.role.findFirst({ where: { nom: r.nom } }))?.id ?? 0 },
+      update: {},
+      create: r,
+    });
+    roles[r.nom] = role;
+  }
+  console.log("✅ Roles created");
+
+  // ── Permissions ──────────────────────────────────────────
+  const permData = [
+    { nom: "manage_users", description: "Gérer les utilisateurs", module: "auth", action: "manage" },
+    { nom: "manage_pfe", description: "Gérer les PFE", module: "pfe", action: "manage" },
+    { nom: "submit_pfe", description: "Soumettre un PFE", module: "pfe", action: "submit" },
+    { nom: "view_documents", description: "Consulter les documents", module: "documents", action: "view" },
+    { nom: "manage_discipline", description: "Gérer les dossiers disciplinaires", module: "discipline", action: "manage" },
+    { nom: "submit_reclamation", description: "Soumettre une réclamation", module: "reclamations", action: "submit" },
+    { nom: "manage_annonces", description: "Gérer les annonces", module: "annonces", action: "manage" },
+  ];
+
+  for (const p of permData) {
+    await prisma.permission.upsert({
+      where: { id: (await prisma.permission.findFirst({ where: { nom: p.nom } }))?.id ?? 0 },
+      update: {},
+      create: p,
+    });
+  }
+  console.log("✅ Permissions created");
+
+  // ── University structure ─────────────────────────────────
+  const faculte = await prisma.faculte.create({
+    data: { nom: "Faculté des Sciences et Technologies" },
   });
 
-  const deptPhysics = await prisma.department.upsert({
-    where: { name: 'Physics' },
-    update: {},
-    create: { name: 'Physics', description: 'Department of Physics' },
+  const deptInfo = await prisma.departement.create({
+    data: { nom: "Informatique", faculteId: faculte.id },
   });
 
-  const deptBiology = await prisma.department.upsert({
-    where: { name: 'Biology' },
-    update: {},
-    create: { name: 'Biology', description: 'Department of Biology & Life Sciences' },
+  const deptPhysique = await prisma.departement.create({
+    data: { nom: "Physique", faculteId: faculte.id },
   });
 
-  await prisma.department.upsert({
-    where: { name: 'Mathematics' },
-    update: {},
-    create: { name: 'Mathematics', description: 'Department of Mathematics' },
+  const filiereInfo = await prisma.filiere.create({
+    data: { nom: "Informatique", departementId: deptInfo.id, description: "Filière informatique" },
   });
 
-  console.log('✅ Departments created');
-
-  // ── Specialités ──────────────────────────────────────────
   const specISI = await prisma.specialite.create({
-    data: { name: 'ISI', description: 'Ingénierie des Systèmes Informatiques', departmentId: deptCS.id },
-  }).catch(() => prisma.specialite.findFirst({ where: { name: 'ISI' } }));
+    data: { nom: "ISI", filiereId: filiereInfo.id, niveau: "M2" },
+  });
 
   const specSIC = await prisma.specialite.create({
-    data: { name: 'SIC', description: 'Systèmes Informatiques et Communication', departmentId: deptCS.id },
-  }).catch(() => prisma.specialite.findFirst({ where: { name: 'SIC' } }));
+    data: { nom: "SIC", filiereId: filiereInfo.id, niveau: "M2" },
+  });
 
-  const specPhysFond = await prisma.specialite.create({
-    data: { name: 'Physique Fondamentale', description: 'Physique Fondamentale', departmentId: deptPhysics.id },
-  }).catch(() => prisma.specialite.findFirst({ where: { name: 'Physique Fondamentale' } }));
+  const promo2025 = await prisma.promo.create({
+    data: { nom: "M2 ISI 2024-2025", specialiteId: specISI.id, anneeUniversitaire: "2024-2025", section: "A" },
+  });
 
-  const specBioMol = await prisma.specialite.create({
-    data: { name: 'Biologie Moléculaire', description: 'Biologie Moléculaire', departmentId: deptBiology.id },
-  }).catch(() => prisma.specialite.findFirst({ where: { name: 'Biologie Moléculaire' } }));
+  console.log("✅ University structure created (Faculté → Département → Filière → Spécialité → Promo)");
 
-  console.log('✅ Specialités created');
+  // ── Grades ───────────────────────────────────────────────
+  const gradeMAA = await prisma.grade.create({ data: { nom: "MAA", description: "Maître assistant A" } });
+  const gradeMCA = await prisma.grade.create({ data: { nom: "MCA", description: "Maître de conférences A" } });
+  const gradeProf = await prisma.grade.create({ data: { nom: "Professeur", description: "Professeur" } });
 
-  // ── Helper: create user ──────────────────────────────────
-  const password = await bcrypt.hash('Test@1234', 10);
+  console.log("✅ Grades created");
 
+  // ── Helper: create user + assign roles ───────────────────
   async function createUser(data: {
     email: string;
-    firstName: string;
-    lastName: string;
-    role: Role;
+    nom: string;
+    prenom: string;
+    roleNames: string[];
     emailVerified?: boolean;
-    studentData?: { departmentId: string; specialiteId?: string };
+    enseignantData?: { gradeId: number };
+    etudiantData?: { promoId: number; matricule: string };
   }) {
     const existing = await prisma.user.findUnique({ where: { email: data.email } });
     if (existing) {
@@ -73,134 +109,126 @@ async function main() {
       data: {
         email: data.email,
         password,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        role: data.role,
+        nom: data.nom,
+        prenom: data.prenom,
         emailVerified: data.emailVerified ?? true,
-        ...(data.studentData
-          ? {
-              student: {
-                create: {
-                  departmentId: data.studentData.departmentId,
-                  specialiteId: data.studentData.specialiteId,
-                },
-              },
-            }
+        ...(data.enseignantData
+          ? { enseignant: { create: { gradeId: data.enseignantData.gradeId } } }
+          : {}),
+        ...(data.etudiantData
+          ? { etudiant: { create: { promoId: data.etudiantData.promoId, matricule: data.etudiantData.matricule } } }
           : {}),
       },
     });
-    console.log(`  ✅ ${data.role.padEnd(20)} ${data.email}`);
+
+    // Assign roles
+    for (const roleName of data.roleNames) {
+      const role = roles[roleName];
+      if (role) {
+        await prisma.userRole.create({ data: { userId: user.id, roleId: role.id } });
+      }
+    }
+
+    console.log(`  ✅ [${data.roleNames.join(", ")}] ${data.email}`);
     return user;
   }
 
   // ── Users ────────────────────────────────────────────────
-  console.log('\n👤 Creating users (password for all: Test@1234)\n');
+  console.log("\n👤 Creating users (password for all: Test@1234)\n");
 
-  // Super Admin
   await createUser({
-    email: 'admin@univ-tiaret.dz',
-    firstName: 'Admin',
-    lastName: 'Super',
-    role: 'ADMIN_SUPER',
-  });
-
-  // Faculty Admin
-  await createUser({
-    email: 'faculty@univ-tiaret.dz',
-    firstName: 'Karim',
-    lastName: 'Bouzid',
-    role: 'ADMIN_FACULTY',
-  });
-
-  // Department Chief
-  await createUser({
-    email: 'chef.cs@univ-tiaret.dz',
-    firstName: 'Mohamed',
-    lastName: 'Hamdani',
-    role: 'DEPARTEMENT_CHEF',
-  });
-
-  // Speciality Chief
-  await createUser({
-    email: 'chef.isi@univ-tiaret.dz',
-    firstName: 'Amina',
-    lastName: 'Berkane',
-    role: 'SPECIALITE_CHEF',
-  });
-
-  // Teachers
-  await createUser({
-    email: 'teacher@univ-tiaret.dz',
-    firstName: 'Youcef',
-    lastName: 'Benali',
-    role: 'TEACHER',
+    email: "admin@univ-tiaret.dz",
+    nom: "Super",
+    prenom: "Admin",
+    roleNames: ["admin"],
   });
 
   await createUser({
-    email: 'teacher2@univ-tiaret.dz',
-    firstName: 'Nadia',
-    lastName: 'Mebarki',
-    role: 'TEACHER',
-  });
-
-  // Students
-  await createUser({
-    email: 'student@univ-tiaret.dz',
-    firstName: 'Amira',
-    lastName: 'Bensalem',
-    role: 'STUDENT',
-    studentData: { departmentId: deptCS.id, specialiteId: specISI!.id },
+    email: "faculty@univ-tiaret.dz",
+    nom: "Bouzid",
+    prenom: "Karim",
+    roleNames: ["admin_faculte"],
   });
 
   await createUser({
-    email: 'student2@univ-tiaret.dz',
-    firstName: 'Yacine',
-    lastName: 'Mehdaoui',
-    role: 'STUDENT',
-    studentData: { departmentId: deptCS.id, specialiteId: specSIC!.id },
+    email: "chef.info@univ-tiaret.dz",
+    nom: "Hamdani",
+    prenom: "Mohamed",
+    roleNames: ["chef_departement"],
   });
 
   await createUser({
-    email: 'student3@univ-tiaret.dz',
-    firstName: 'Fatima',
-    lastName: 'Zerhouni',
-    role: 'STUDENT',
-    studentData: { departmentId: deptPhysics.id, specialiteId: specPhysFond!.id },
+    email: "chef.isi@univ-tiaret.dz",
+    nom: "Berkane",
+    prenom: "Amina",
+    roleNames: ["chef_specialite"],
   });
 
-  // Delegate
   await createUser({
-    email: 'delegate@univ-tiaret.dz',
-    firstName: 'Sara',
-    lastName: 'Djeraba',
-    role: 'DELEGATE',
-    studentData: { departmentId: deptBiology.id, specialiteId: specBioMol!.id },
+    email: "teacher@univ-tiaret.dz",
+    nom: "Benali",
+    prenom: "Youcef",
+    roleNames: ["enseignant"],
+    enseignantData: { gradeId: gradeMCA.id },
   });
 
-  // Committee
   await createUser({
-    email: 'committee@univ-tiaret.dz',
-    firstName: 'Rachid',
-    lastName: 'Touati',
-    role: 'COMMITTEE_PRESIDENT',
+    email: "teacher2@univ-tiaret.dz",
+    nom: "Mebarki",
+    prenom: "Nadia",
+    roleNames: ["enseignant"],
+    enseignantData: { gradeId: gradeMAA.id },
   });
 
-  console.log('\n🎉 Seeding complete!\n');
-  console.log('────────────────────────────────────────────');
-  console.log('  📧 Login credentials (all accounts):');
-  console.log('  Password: Test@1234');
-  console.log('');
-  console.log('  admin@univ-tiaret.dz       (Super Admin)');
-  console.log('  teacher@univ-tiaret.dz     (Teacher)');
-  console.log('  student@univ-tiaret.dz     (Student)');
-  console.log('  chef.cs@univ-tiaret.dz     (Dept Chief)');
-  console.log('  delegate@univ-tiaret.dz    (Delegate)');
-  console.log('────────────────────────────────────────────');
+  await createUser({
+    email: "student@univ-tiaret.dz",
+    nom: "Bensalem",
+    prenom: "Amira",
+    roleNames: ["etudiant"],
+    etudiantData: { promoId: promo2025.id, matricule: "212131234567" },
+  });
+
+  await createUser({
+    email: "student2@univ-tiaret.dz",
+    nom: "Mehdaoui",
+    prenom: "Yacine",
+    roleNames: ["etudiant"],
+    etudiantData: { promoId: promo2025.id, matricule: "212131234568" },
+  });
+
+  await createUser({
+    email: "delegate@univ-tiaret.dz",
+    nom: "Djeraba",
+    prenom: "Sara",
+    roleNames: ["etudiant", "delegue"],
+    etudiantData: { promoId: promo2025.id, matricule: "212131234569" },
+  });
+
+  await createUser({
+    email: "committee@univ-tiaret.dz",
+    nom: "Touati",
+    prenom: "Rachid",
+    roleNames: ["president_conseil"],
+  });
+
+  console.log("\n🎉 Seeding complete!\n");
+  console.log("────────────────────────────────────────────");
+  console.log("  📧 Login credentials (all accounts):");
+  console.log("  Password: Test@1234");
+  console.log("");
+  console.log("  admin@univ-tiaret.dz       (Admin)");
+  console.log("  teacher@univ-tiaret.dz     (Enseignant)");
+  console.log("  student@univ-tiaret.dz     (Étudiant)");
+  console.log("  chef.info@univ-tiaret.dz   (Chef département)");
+  console.log("  delegate@univ-tiaret.dz    (Délégué)");
+  console.log("────────────────────────────────────────────");
 }
 
 main()
   .catch((e) => {
-    console.error('❌ Seed failed:', e);
+    console.error("❌ Seed error:", e);
     process.exit(1);
   })
-  .finally(() => prisma.$disconnect());
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
