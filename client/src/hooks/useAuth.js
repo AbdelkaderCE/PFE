@@ -47,16 +47,7 @@ export const useAuth = () => {
       if (data.data?.requiresPasswordChange) {
         navigate('/change-password');
       } else {
-        /* roles is now an array — pick the first role for the redirect path */
-        const primaryRole = loggedUser.roles?.[0] || 'etudiant';
-        const roleRouteMap = {
-          admin: 'admin', vice_doyen: 'admin',
-          chef_departement: 'department-chef', chef_specialite: 'specialite-chef',
-          enseignant: 'teacher', etudiant: 'student', delegue: 'delegate',
-          president_conseil: 'committee-president',
-        };
-        const routeKey = roleRouteMap[primaryRole] || 'student';
-        navigate(`/${routeKey}/dashboard`);
+        navigate('/dashboard');
       }
 
       return { success: true };
