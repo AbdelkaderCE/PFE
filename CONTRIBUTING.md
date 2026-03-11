@@ -75,21 +75,34 @@ cd ../frontend
 npm install
 ```
 
-### 3. Set up your .env
+### 3. Set up your database & `.env`
 
-Create `backend/.env`:
-```env
-DATABASE_URL="postgresql://postgres:super4USER@localhost:5432/university_pfe?schema=public"
-JWT_ACCESS_SECRET="your-access-secret"
-JWT_REFRESH_SECRET="your-refresh-secret"
-```
-
-### 4. Run Prisma migrations
+> 📖 **Full guide:** See [`backend/README.md`](backend/README.md) for detailed PostgreSQL **or** MySQL/XAMPP setup.
 
 ```bash
 cd backend
-npx prisma db push
-npx prisma generate
+copy .env.example .env        # Windows
+# cp .env.example .env        # Linux/Mac
+```
+
+Edit `backend/.env` — set `DATABASE_URL` for your database:
+
+```env
+# PostgreSQL (recommended)
+DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@localhost:5432/university_pfe?schema=public"
+
+# MySQL / XAMPP (if you can't use PostgreSQL)
+# DATABASE_URL="mysql://root:@localhost:3306/university_pfe"
+# ⚠️ Also change provider in prisma/schema.prisma to "mysql" (see backend/README.md)
+```
+
+### 4. Create tables & seed data
+
+```bash
+cd backend
+npx prisma db push       # Creates all 38 tables
+npx prisma generate      # Generates Prisma client
+npx prisma db seed       # Inserts test users & data
 ```
 
 ### 5. Build your module

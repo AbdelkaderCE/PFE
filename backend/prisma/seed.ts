@@ -60,7 +60,7 @@ async function main() {
     data: { nom: "Informatique", faculteId: faculte.id },
   });
 
-  const deptPhysique = await prisma.departement.create({
+  await prisma.departement.create({
     data: { nom: "Physique", faculteId: faculte.id },
   });
 
@@ -72,7 +72,7 @@ async function main() {
     data: { nom: "ISI", filiereId: filiereInfo.id, niveau: "M2" },
   });
 
-  const specSIC = await prisma.specialite.create({
+  await prisma.specialite.create({
     data: { nom: "SIC", filiereId: filiereInfo.id, niveau: "M2" },
   });
 
@@ -85,7 +85,7 @@ async function main() {
   // ── Grades ───────────────────────────────────────────────
   const gradeMAA = await prisma.grade.create({ data: { nom: "MAA", description: "Maître assistant A" } });
   const gradeMCA = await prisma.grade.create({ data: { nom: "MCA", description: "Maître de conférences A" } });
-  const gradeProf = await prisma.grade.create({ data: { nom: "Professeur", description: "Professeur" } });
+  await prisma.grade.create({ data: { nom: "Professeur", description: "Professeur" } });
 
   console.log("✅ Grades created");
 
