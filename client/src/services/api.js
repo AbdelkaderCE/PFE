@@ -104,7 +104,7 @@ export const authAPI = {
     request('/api/v1/auth/me'),
 
   verifyEmail: (token) =>
-    request(`/api/v1/auth/verify-email?token=${token}`),
+    request(`/api/v1/auth/verify-email/${token}`),
 
   resendVerification: (email) =>
     request('/api/v1/auth/resend-verification', {

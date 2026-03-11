@@ -44,7 +44,7 @@ export const useAuth = () => {
       setUser(loggedUser);
       setIsAuthenticated(true);
 
-      if (data.data?.requiresPasswordChange) {
+      if (data.data?.requiresPasswordChange || loggedUser?.firstUse) {
         navigate('/change-password');
       } else {
         navigate('/dashboard');
@@ -52,6 +52,11 @@ export const useAuth = () => {
 
       return { success: true };
     } catch (err) {
+      // Handle PASSWORD_CHANGE_REQUIRED from middleware
+      if (err.code === 'PASSWORD_CHANGE_REQUIRED') {
+        navigate('/change-password');
+        return { success: true, requiresPasswordChange: true };
+      }
       setError(err.message || 'Login failed');
       return { success: false, error: err.message };
     } finally {

@@ -1,5 +1,10 @@
 import prisma from "../../config/database";
-import { hashPassword, comparePasswords, isStrongPassword } from "../../utils/password";
+import {
+  hashPassword,
+  comparePasswords,
+  isStrongPassword,
+  generateRandomPassword,
+} from "../../utils/password";
 import {
   signAccessToken,
   signRefreshToken,
@@ -31,9 +36,11 @@ export interface LoginResponse {
     nom: string;
     prenom: string;
     roles: string[];
+    firstUse?: boolean;
   };
   accessToken: string;
   refreshToken: string;
+  requiresPasswordChange: boolean;
 }
 
 export class AuthServiceError extends Error {
@@ -88,6 +95,7 @@ export const registerUser = async (data: RegisterInput): Promise<LoginResponse> 
         password: hashedPassword,
         nom: data.nom,
         prenom: data.prenom,
+        firstUse: false,
       },
     });
 
@@ -133,6 +141,7 @@ export const registerUser = async (data: RegisterInput): Promise<LoginResponse> 
     },
     accessToken,
     refreshToken,
+    requiresPasswordChange: false,
   };
 };
 
@@ -189,10 +198,141 @@ export const loginUser = async (email: string, password: string): Promise<LoginR
       nom: user.nom,
       prenom: user.prenom,
       roles,
+      firstUse: user.firstUse,
     },
     accessToken,
     refreshToken,
+    requiresPasswordChange: user.firstUse,
   };
+};
+
+// ── Change password ─────────────────────────────────────────────
+
+export const changePassword = async (
+  userId: number,
+  currentPassword: string,
+  newPassword: string
+): Promise<void> => {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) {
+    throw new AuthServiceError("User not found");
+  }
+
+  const isValid = await comparePasswords(currentPassword, user.password);
+  if (!isValid) {
+    throw new AuthServiceError("Current password is incorrect");
+  }
+
+  if (!isStrongPassword(newPassword)) {
+    throw new AuthServiceError(
+      "Password must be at least 8 characters and contain uppercase, lowercase, number, and special character"
+    );
+  }
+
+  const hashedPassword = await hashPassword(newPassword);
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      password: hashedPassword,
+      firstUse: false,
+    },
+  });
+};
+
+// ── Create user by admin ────────────────────────────────────────
+
+export const createUserByAdmin = async (data: {
+  email: string;
+  nom: string;
+  prenom: string;
+  roleName: string;
+  sexe?: "H" | "F";
+  telephone?: string;
+}): Promise<{
+  user: { id: number; email: string; nom: string; prenom: string; roles: string[] };
+  tempPassword: string;
+}> => {
+  const existingUser = await prisma.user.findUnique({ where: { email: data.email } });
+  if (existingUser) {
+    throw new AuthServiceError("User with this email already exists");
+  }
+
+  const tempPassword = generateRandomPassword(12);
+  const hashedPassword = await hashPassword(tempPassword);
+
+  const result = await prisma.$transaction(async (tx) => {
+    const newUser = await tx.user.create({
+      data: {
+        email: data.email,
+        password: hashedPassword,
+        nom: data.nom,
+        prenom: data.prenom,
+        sexe: data.sexe as any,
+        telephone: data.telephone,
+        firstUse: true, // force password change on first login
+      },
+    });
+
+    // Assign the requested role
+    const role = await tx.role.findFirst({ where: { nom: data.roleName } });
+    if (!role) {
+      throw new AuthServiceError(`Role '${data.roleName}' not found`);
+    }
+
+    await tx.userRole.create({
+      data: { userId: newUser.id, roleId: role.id },
+    });
+
+    return newUser;
+  });
+
+  const roles = await getUserRoles(result.id);
+
+  return {
+    user: {
+      id: result.id,
+      email: result.email,
+      nom: result.nom,
+      prenom: result.prenom,
+      roles,
+    },
+    tempPassword,
+  };
+};
+
+// ── Admin reset password ────────────────────────────────────────
+
+export const adminResetPassword = async (
+  adminUserId: number,
+  targetUserId: number
+): Promise<string> => {
+  // Verify the admin has admin role
+  const adminRoles = await getUserRoles(adminUserId);
+  const isAdmin = adminRoles.some((r) =>
+    ["admin", "vice_doyen"].includes(r)
+  );
+  if (!isAdmin) {
+    throw new AuthServiceError("Unauthorized: Only admins can reset passwords");
+  }
+
+  const targetUser = await prisma.user.findUnique({ where: { id: targetUserId } });
+  if (!targetUser) {
+    throw new AuthServiceError("User not found");
+  }
+
+  const tempPassword = generateRandomPassword(12);
+  const hashedPassword = await hashPassword(tempPassword);
+
+  await prisma.user.update({
+    where: { id: targetUserId },
+    data: {
+      password: hashedPassword,
+      firstUse: true, // force password change
+    },
+  });
+
+  return tempPassword;
 };
 
 // ── Refresh tokens ──────────────────────────────────────────────
@@ -225,7 +365,6 @@ export const refreshTokens = async (
 
 export const logoutUser = async (_refreshToken: string): Promise<void> => {
   // With stateless JWT (no RefreshToken table) clearing the cookie is enough.
-  // If you later add a token blacklist, add logic here.
 };
 
 // ── Email verification ──────────────────────────────────────────
@@ -293,6 +432,7 @@ export const getUserById = async (userId: number) => {
       telephone: true,
       photo: true,
       emailVerified: true,
+      firstUse: true,
       status: true,
       lastLogin: true,
       createdAt: true,
