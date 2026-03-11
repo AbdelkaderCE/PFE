@@ -8,6 +8,6 @@
 - [ ] Ensure Documentation is Complete
 
 ## Notes
-- React frontend: `/client` (with Tailwind CSS)
-- Express backend: `/server`
+- React frontend: `/frontend` (with Tailwind CSS)
+- Express backend: `/backend`
 - See each folder's README.md for usage.

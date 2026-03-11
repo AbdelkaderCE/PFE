@@ -1,4 +1,4 @@
-# React Client
+# React Frontend
 
 ## Development
 

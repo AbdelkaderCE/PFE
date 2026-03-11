@@ -17,7 +17,7 @@ PFE/
 │   ├── documents/           ← Group 6
 │   └── annonces/            ← Group 7
 │
-├── client/src/pages/        ← ✅ Frontend pages (Group 8 — DO NOT MODIFY)
+├── frontend/src/pages/       ← ✅ Frontend pages (Group 8 — DO NOT MODIFY)
 │   ├── Student/
 │   ├── Teacher/
 │   ├── Delegate/
@@ -29,8 +29,8 @@ PFE/
 │   ├── CommitteeMember/
 │   └── AssignmentManager/
 │
-├── client/src/services/api.js   ← Shared API client (Group 8 — DO NOT MODIFY)
-├── client/src/layouts/          ← DashboardLayout (Group 8 — DO NOT MODIFY)
+├── frontend/src/services/api.js ← Shared API client (Group 8 — DO NOT MODIFY)
+├── frontend/src/layouts/        ← DashboardLayout (Group 8 — DO NOT MODIFY)
 ├── backend/prisma/schema.prisma ← Database schema (DO NOT MODIFY)
 └── docs/API_CONTRACT.md         ← 📄 Read this first!
 ```
@@ -71,7 +71,7 @@ cd backend
 npm install
 
 # Frontend (to test pages)
-cd ../client
+cd ../frontend
 npm install
 ```
 
