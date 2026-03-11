@@ -41,12 +41,15 @@ PFE/
 
 | Group | Module          | Branch                  | Backend folder               |
 |-------|-----------------|-------------------------|------------------------------|
-| G2    | Discipline      | `group2-discipline`     | `backend/src/modules/discipline/`   |
-| G3    | PFE             | `group3-pfe`            | `backend/src/modules/pfe/`          |
-| G4    | Affectation     | `group4-affectation`    | `backend/src/modules/affectation/`  |
-| G5    | Réclamations    | `group5-reclamations`   | `backend/src/modules/reclamations/` |
-| G6    | Documents       | `group6-documents`      | `backend/src/modules/documents/`    |
-| G7    | Annonces        | `group7-annonces`       | `backend/src/modules/annonces/`     |
+| G2    | Discipline      | `group2-discipline`            | `backend/src/modules/discipline/`   |
+| G3    | PFE             | `group3-pfe`                   | `backend/src/modules/pfe/`          |
+| G4    | Affectation     | `group4-affectation`           | `backend/src/modules/affectation/`  |
+| G5    | Réclamations    | `group5-reclamations`          | `backend/src/modules/reclamations/` |
+| G6    | Documents       | `group6-documents`             | `backend/src/modules/documents/`    |
+| G7    | Annonces        | `group7-annonces`              | `backend/src/modules/annonces/`     |
+| G9    | Dashboard Enseignant | `group9-dashboard-enseignant`  | `backend/src/modules/dashboard/` (teacher endpoints) |
+| G10   | Dashboard Étudiant   | `group10-dashboard-etudiant`   | `backend/src/modules/dashboard/` (student endpoints) |
+| G11   | AI              | `group11-ai`                   | `backend/src/modules/ai/`           |
 
 ---
 
@@ -186,6 +189,9 @@ The pages call your API endpoints. Here's what each page expects:
 | G5    | `Student/MyComplaints`, `Delegate/Complaints`, `RequestsPage`      |
 | G6    | `Teacher/MyCourses`, documents-related pages                       |
 | G7    | `ActualitesPage` (public + dashboard versions)                     |
+| G9    | `TeacherDashboard`, `Teacher/*` pages                              |
+| G10   | `StudentDashboard`, `Student/*` pages                              |
+| G11   | `AIChatbot` component                                              |
 
 Each page receives a `role` prop (`"student"`, `"teacher"`, or `"admin"`) and calls `request('/api/v1/your-module/...')`.
 
