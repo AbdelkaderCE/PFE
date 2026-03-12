@@ -118,6 +118,18 @@ export const authAPI = {
       body: JSON.stringify({ currentPassword, newPassword }),
     }),
 
+  forgotPassword: (email) =>
+    request('/api/v1/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
+
+  resetPassword: (token, newPassword) =>
+    request('/api/v1/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, newPassword }),
+    }),
+
   /* Admin-only endpoints */
   adminCreateUser: (userData) =>
     request('/api/v1/auth/admin/create-user', {
@@ -128,6 +140,28 @@ export const authAPI = {
   adminResetPassword: (userId) =>
     request(`/api/v1/auth/admin/reset-password/${userId}`, {
       method: 'POST',
+    }),
+
+  adminListUsers: () =>
+    request('/api/v1/auth/admin/users'),
+  adminGetUsers: () =>
+    request('/api/v1/auth/admin/users'),
+
+  adminListRoles: () =>
+    request('/api/v1/auth/admin/roles'),
+  adminGetRoles: () =>
+    request('/api/v1/auth/admin/roles'),
+
+  adminUpdateUserRoles: (userId, roleNames) =>
+    request(`/api/v1/auth/admin/users/${userId}/roles`, {
+      method: 'PUT',
+      body: JSON.stringify({ roleNames }),
+    }),
+
+  adminUpdateUserStatus: (userId, status) =>
+    request(`/api/v1/auth/admin/users/${userId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
     }),
 };
 

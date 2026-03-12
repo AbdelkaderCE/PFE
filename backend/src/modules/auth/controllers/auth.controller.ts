@@ -10,6 +10,12 @@ import {
   changePassword,
   createUserByAdmin,
   adminResetPassword,
+  listRolesForAdmin,
+  listUsersForAdmin,
+  updateUserRolesByAdmin,
+  updateUserStatusByAdmin,
+  requestPasswordReset,
+  resetPasswordWithToken,
 } from "../auth.service";
 import {
   ACCESS_TOKEN_COOKIE_NAME,
@@ -345,6 +351,137 @@ export const adminResetPasswordHandler = async (req: AuthRequest, res: Response)
         code: "RESET_PASSWORD_FAILED",
         message: error.message,
       },
+    });
+  }
+};
+
+export const listAdminUsersHandler = async (_req: AuthRequest, res: Response) => {
+  try {
+    const users = await listUsersForAdmin();
+    return res.json({ success: true, data: { users } });
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      error: { code: "LIST_USERS_FAILED", message: error.message },
+    });
+  }
+};
+
+export const listRolesHandler = async (_req: AuthRequest, res: Response) => {
+  try {
+    const roles = await listRolesForAdmin();
+    return res.json({ success: true, data: { roles } });
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      error: { code: "LIST_ROLES_FAILED", message: error.message },
+    });
+  }
+};
+
+export const updateUserRolesByAdminHandler = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({
+        success: false,
+        error: { code: "UNAUTHORIZED", message: "Not authenticated" },
+      });
+    }
+    const userId = Number(req.params.userId);
+    const { roleNames } = req.body;
+    if (!userId || Number.isNaN(userId)) {
+      return res.status(400).json({
+        success: false,
+        error: { code: "MISSING_USER_ID", message: "Valid user ID is required" },
+      });
+    }
+    if (!Array.isArray(roleNames) || roleNames.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: { code: "MISSING_ROLES", message: "roleNames must be a non-empty array" },
+      });
+    }
+    const user = await updateUserRolesByAdmin(req.user.id, userId, roleNames);
+    return res.json({ success: true, data: { user }, message: "User roles updated successfully" });
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      error: { code: "UPDATE_ROLES_FAILED", message: error.message },
+    });
+  }
+};
+
+export const updateUserStatusByAdminHandler = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({
+        success: false,
+        error: { code: "UNAUTHORIZED", message: "Not authenticated" },
+      });
+    }
+    const userId = Number(req.params.userId);
+    const { status } = req.body;
+    if (!userId || Number.isNaN(userId)) {
+      return res.status(400).json({
+        success: false,
+        error: { code: "MISSING_USER_ID", message: "Valid user ID is required" },
+      });
+    }
+    if (!status || !["active", "inactive", "suspended"].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        error: { code: "MISSING_STATUS", message: "status must be one of: active, inactive, suspended" },
+      });
+    }
+    const user = await updateUserStatusByAdmin(req.user.id, userId, status);
+    return res.json({ success: true, data: { user }, message: "User status updated successfully" });
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      error: { code: "UPDATE_STATUS_FAILED", message: error.message },
+    });
+  }
+};
+
+export const forgotPasswordHandler = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    if (!email || typeof email !== "string") {
+      return res.status(400).json({
+        success: false,
+        error: { code: "MISSING_EMAIL", message: "Email is required" },
+      });
+    }
+    const rawToken = await requestPasswordReset(email);
+    return res.json({
+      success: true,
+      message: "If this email is registered, a reset link has been generated.",
+      ...(process.env.NODE_ENV !== "production" && rawToken ? { data: { resetToken: rawToken } } : {}),
+    });
+  } catch (error: any) {
+    return res.status(500).json({
+      success: false,
+      error: { code: "FORGOT_PASSWORD_FAILED", message: error.message },
+    });
+  }
+};
+
+export const resetPasswordHandler = async (req: Request, res: Response) => {
+  try {
+    const { token, newPassword } = req.body;
+    if (!token || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        error: { code: "MISSING_FIELDS", message: "Token and new password are required" },
+      });
+    }
+    await resetPasswordWithToken(token, newPassword);
+    return res.json({ success: true, message: "Password reset successfully. You can now log in." });
+  } catch (error: any) {
+    const status = error.message?.includes("Invalid or expired") ? 400 : 500;
+    return res.status(status).json({
+      success: false,
+      error: { code: "RESET_PASSWORD_FAILED", message: error.message },
     });
   }
 };

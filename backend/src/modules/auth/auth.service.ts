@@ -418,6 +418,152 @@ export const resendVerification = async (email: string): Promise<void> => {
   console.log(`📧 New verification link: ${process.env.APP_BASE_URL}/api/v1/auth/verify-email/${rawToken}`);
 };
 
+// ── Admin: list users ────────────────────────────────────────────
+
+export const listRolesForAdmin = async (): Promise<Array<{ id: number; nom: string; description: string | null }>> => {
+  const roles = await prisma.role.findMany({
+    where: { nom: { not: null } },
+    select: { id: true, nom: true, description: true },
+    orderBy: { nom: "asc" },
+  });
+  return roles.map((role) => ({
+    id: role.id,
+    nom: role.nom ?? "unknown",
+    description: role.description,
+  }));
+};
+
+export const listUsersForAdmin = async (): Promise<Array<{
+  id: number;
+  email: string;
+  nom: string;
+  prenom: string;
+  sexe: "H" | "F" | null;
+  telephone: string | null;
+  status: "active" | "inactive" | "suspended";
+  createdAt: Date;
+  lastLogin: Date | null;
+  roles: string[];
+}>> => {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      email: true,
+      nom: true,
+      prenom: true,
+      sexe: true,
+      telephone: true,
+      status: true,
+      createdAt: true,
+      lastLogin: true,
+      userRoles: { include: { role: { select: { nom: true } } } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+  return users.map((user) => ({
+    ...user,
+    roles: user.userRoles
+      .map((ur) => ur.role.nom)
+      .filter((name): name is string => !!name),
+  }));
+};
+
+export const updateUserRolesByAdmin = async (
+  adminUserId: number,
+  targetUserId: number,
+  roleNames: string[]
+): Promise<{ id: number; email: string; nom: string; prenom: string; roles: string[] }> => {
+  const adminRoles = await getUserRoles(adminUserId);
+  const isAdmin = adminRoles.some((r) => ["admin", "vice_doyen"].includes(r));
+  if (!isAdmin) throw new AuthServiceError("Unauthorized: Only admins can update user roles");
+
+  const normalizedRoleNames = Array.from(
+    new Set(roleNames.map((r) => r?.trim()).filter((r): r is string => !!r))
+  );
+  if (normalizedRoleNames.length === 0) throw new AuthServiceError("At least one role is required");
+
+  const targetUser = await prisma.user.findUnique({ where: { id: targetUserId } });
+  if (!targetUser) throw new AuthServiceError("User not found");
+
+  const roles = await prisma.role.findMany({ where: { nom: { in: normalizedRoleNames } } });
+  if (roles.length !== normalizedRoleNames.length) {
+    const found = new Set(roles.map((r) => r.nom).filter((n): n is string => !!n));
+    const missing = normalizedRoleNames.filter((n) => !found.has(n));
+    throw new AuthServiceError(`Role(s) not found: ${missing.join(", ")}`);
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.userRole.deleteMany({ where: { userId: targetUserId } });
+    await tx.userRole.createMany({
+      data: roles.map((r) => ({ userId: targetUserId, roleId: r.id })),
+      skipDuplicates: true,
+    });
+  });
+
+  const updatedRoles = await getUserRoles(targetUserId);
+  return { id: targetUser.id, email: targetUser.email, nom: targetUser.nom, prenom: targetUser.prenom, roles: updatedRoles };
+};
+
+export const updateUserStatusByAdmin = async (
+  adminUserId: number,
+  targetUserId: number,
+  status: "active" | "inactive" | "suspended"
+): Promise<{ id: number; email: string; nom: string; prenom: string; status: "active" | "inactive" | "suspended"; roles: string[] }> => {
+  const adminRoles = await getUserRoles(adminUserId);
+  const isAdmin = adminRoles.some((r) => ["admin", "vice_doyen"].includes(r));
+  if (!isAdmin) throw new AuthServiceError("Unauthorized: Only admins can update user status");
+
+  const targetUser = await prisma.user.findUnique({ where: { id: targetUserId } });
+  if (!targetUser) throw new AuthServiceError("User not found");
+
+  if (!["active", "inactive", "suspended"].includes(status))
+    throw new AuthServiceError("Invalid status value");
+
+  const updatedUser = await prisma.user.update({ where: { id: targetUserId }, data: { status } });
+  const updatedRoles = await getUserRoles(targetUserId);
+  return { id: updatedUser.id, email: updatedUser.email, nom: updatedUser.nom, prenom: updatedUser.prenom, status: updatedUser.status, roles: updatedRoles };
+};
+
+// ── Forgot / reset password (public token flow) ──────────────────
+
+export const requestPasswordReset = async (email: string): Promise<string> => {
+  const user = await prisma.user.findUnique({
+    where: { email: email.trim().toLowerCase() },
+  });
+  if (!user || user.status !== "active") return "";
+
+  const rawToken = generateRawToken();
+  const tokenHash = hashToken(rawToken);
+  const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { resetToken: tokenHash, resetTokenExpire: expires },
+  });
+
+  console.log(`🔑 Password reset token for ${email}: ${rawToken}`);
+  return rawToken;
+};
+
+export const resetPasswordWithToken = async (token: string, newPassword: string): Promise<void> => {
+  const tokenHash = hashToken(token);
+  const user = await prisma.user.findFirst({
+    where: { resetToken: tokenHash, resetTokenExpire: { gt: new Date() } },
+  });
+  if (!user) throw new AuthServiceError("Invalid or expired reset token");
+
+  if (!isStrongPassword(newPassword))
+    throw new AuthServiceError(
+      "Password must be at least 8 characters and contain uppercase, lowercase, number, and special character"
+    );
+
+  const hashedPassword = await hashPassword(newPassword);
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { password: hashedPassword, resetToken: null, resetTokenExpire: null, firstUse: false },
+  });
+};
+
 // ── Get user by ID (for /me endpoint) ───────────────────────────
 
 export const getUserById = async (userId: number) => {

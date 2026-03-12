@@ -10,6 +10,8 @@
 
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import { authAPI } from '../services/api';
 
 export default function ForgotPasswordPage({ onBackToLogin } = {}) {
   const { t } = useTranslation();
@@ -26,17 +28,21 @@ export default function ForgotPasswordPage({ onBackToLogin } = {}) {
       setError(t('forgotPassword.errorEmpty'));
       return;
     }
-
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-
     if (!email.includes('@')) {
       setError(t('forgotPassword.errorInvalid'));
       return;
     }
 
-    setSent(true);
+    setLoading(true);
+    try {
+      await authAPI.forgotPassword(email.trim().toLowerCase());
+      setSent(true);
+    } catch (err) {
+      // Always show success to prevent user enumeration — mirror backend behaviour
+      setSent(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -79,15 +85,15 @@ export default function ForgotPasswordPage({ onBackToLogin } = {}) {
                 Didn't receive the email? Check your spam folder or try again.
               </p>
 
-              <button
-                onClick={onBackToLogin}
-                className="w-full py-2.5 px-4 rounded-md text-sm font-medium text-white
+              <Link
+                to="/login"
+                className="w-full inline-flex items-center justify-center py-2.5 px-4 rounded-md text-sm font-medium text-white
                            bg-brand hover:bg-brand-hover active:bg-brand-dark
                            focus:outline-none focus:ring-2 focus:ring-brand/30 focus:ring-offset-2
                            transition-all duration-150"
               >
                 Back to sign in
-              </button>
+              </Link>
             </div>
           ) : (
             <form onSubmit={handleSubmit}>
@@ -141,16 +147,15 @@ export default function ForgotPasswordPage({ onBackToLogin } = {}) {
               </button>
 
               {/* Back link */}
-              <button
-                type="button"
-                onClick={onBackToLogin}
+              <Link
+                to="/login"
                 className="mt-4 w-full flex items-center justify-center gap-1.5 text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
                 </svg>
                 Back to sign in
-              </button>
+              </Link>
             </form>
           )}
         </div>

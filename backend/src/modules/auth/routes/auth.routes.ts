@@ -10,14 +10,19 @@ import {
   changePasswordHandler,
   createUserByAdminHandler,
   adminResetPasswordHandler,
+  listAdminUsersHandler,
+  listRolesHandler,
+  updateUserRolesByAdminHandler,
+  updateUserStatusByAdminHandler,
+  forgotPasswordHandler,
+  resetPasswordHandler,
 } from "../controllers/auth.controller";
 import {
   loginLimiter,
   registerLimiter,
   refreshLimiter,
 } from "../../../middleware/rate-limit.middleware";
-import { requireAuth } from "../../../middleware/auth.middleware";
-import { requirePermission } from "../../../middleware/permission.middleware";
+import { requireAuth, requireRole } from "../../../middleware/auth.middleware";
 
 const router = Router();
 
@@ -27,6 +32,10 @@ router.post("/login", loginLimiter, login);
 router.post("/refresh-token", refreshLimiter, refresh);
 router.post("/logout", logout);
 
+// ── Password reset (public – no auth required) ──────────────────
+router.post("/forgot-password", forgotPasswordHandler);
+router.post("/reset-password", resetPasswordHandler);
+
 // ==================== EMAIL VERIFICATION ====================
 router.get("/verify-email/:token", verifyEmailHandler);
 router.post("/resend-verification", resendVerificationHandler);
@@ -35,22 +44,48 @@ router.post("/resend-verification", resendVerificationHandler);
 router.get("/me", requireAuth, getMeHandler);
 router.post("/change-password", requireAuth, changePasswordHandler);
 
-// ==================== ADMIN ROUTES (Using permissions) ====================
+// ==================== ADMIN ROUTES ====================
 
-// Create user - requires 'users:create' permission
 router.post(
   "/admin/create-user",
   requireAuth,
-  requirePermission("users:create"),
+  requireRole(["admin", "vice_doyen"]),
   createUserByAdminHandler
 );
 
-// Reset password - requires 'users:edit' permission
 router.post(
   "/admin/reset-password/:userId",
   requireAuth,
-  requirePermission("users:edit"),
+  requireRole(["admin", "vice_doyen"]),
   adminResetPasswordHandler
+);
+
+router.get(
+  "/admin/users",
+  requireAuth,
+  requireRole(["admin", "vice_doyen"]),
+  listAdminUsersHandler
+);
+
+router.get(
+  "/admin/roles",
+  requireAuth,
+  requireRole(["admin", "vice_doyen"]),
+  listRolesHandler
+);
+
+router.put(
+  "/admin/users/:userId/roles",
+  requireAuth,
+  requireRole(["admin", "vice_doyen"]),
+  updateUserRolesByAdminHandler
+);
+
+router.put(
+  "/admin/users/:userId/status",
+  requireAuth,
+  requireRole(["admin", "vice_doyen"]),
+  updateUserStatusByAdminHandler
 );
 
 export default router;
