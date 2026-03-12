@@ -13,6 +13,7 @@ import {
   listAdminUsersHandler,
   listRolesHandler,
   updateUserRolesByAdminHandler,
+  updateUserStatusByAdminHandler,
   forgotPasswordHandler,
   resetPasswordHandler,
 } from "../controllers/auth.controller";
@@ -80,6 +81,13 @@ router.put(
   requireAuth,
   requireRole(["admin", "vice_doyen"]),
   updateUserRolesByAdminHandler
+);
+
+router.put(
+  "/admin/users/:userId/status",
+  requireAuth,
+  requireRole(["admin", "vice_doyen"]),
+  updateUserStatusByAdminHandler
 );
 
 export default router;

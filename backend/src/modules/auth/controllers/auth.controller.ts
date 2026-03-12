@@ -13,6 +13,7 @@ import {
   listRolesForAdmin,
   listUsersForAdmin,
   updateUserRolesByAdmin,
+  updateUserStatusByAdmin,
   requestPasswordReset,
   resetPasswordWithToken,
 } from "../auth.service";
@@ -443,6 +444,59 @@ export const updateUserRolesByAdminHandler = async (req: AuthRequest, res: Respo
       success: false,
       error: {
         code: "UPDATE_ROLES_FAILED",
+        message: error.message,
+      },
+    });
+  }
+};
+
+export const updateUserStatusByAdminHandler = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({
+        success: false,
+        error: {
+          code: "UNAUTHORIZED",
+          message: "Not authenticated",
+        },
+      });
+    }
+
+    const userId = Number(req.params.userId);
+    const { status } = req.body;
+
+    if (!userId || Number.isNaN(userId)) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: "MISSING_USER_ID",
+          message: "Valid user ID is required",
+        },
+      });
+    }
+
+    if (!status || !["active", "inactive", "suspended"].includes(status)) {
+      return res.status(400).json({
+        success: false,
+        error: {
+          code: "MISSING_STATUS",
+          message: "status must be one of: active, inactive, suspended",
+        },
+      });
+    }
+
+    const user = await updateUserStatusByAdmin(req.user.id, userId, status);
+
+    return res.json({
+      success: true,
+      data: { user },
+      message: "User status updated successfully",
+    });
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      error: {
+        code: "UPDATE_STATUS_FAILED",
         message: error.message,
       },
     });

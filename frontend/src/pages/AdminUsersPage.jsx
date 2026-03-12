@@ -21,6 +21,7 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
   const [savingByUserId, setSavingByUserId] = useState({});
   const [editingRolesByUserId, setEditingRolesByUserId] = useState({});
+  const [editingStatusByUserId, setEditingStatusByUserId] = useState({});
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [lastCreatedCredentials, setLastCreatedCredentials] = useState(null);
@@ -80,6 +81,9 @@ export default function AdminUsersPage() {
       setRoles(rolesData);
       setEditingRolesByUserId(
         Object.fromEntries(usersData.map((u) => [u.id, [...(u.roles || [])]]))
+      );
+      setEditingStatusByUserId(
+        Object.fromEntries(usersData.map((u) => [u.id, u.status || 'active']))
       );
     } catch (err) {
       setError(err.message || 'Failed to load admin users data.');
@@ -186,6 +190,27 @@ export default function AdminUsersPage() {
       setMessage('User roles updated successfully.');
     } catch (err) {
       setError(err.message || 'Failed to update user roles.');
+    } finally {
+      setSavingByUserId((prev) => ({ ...prev, [userId]: false }));
+    }
+  };
+
+  const saveUserStatus = async (userId) => {
+    const status = editingStatusByUserId[userId] || 'active';
+
+    setSavingByUserId((prev) => ({ ...prev, [userId]: true }));
+    setError('');
+    setMessage('');
+
+    try {
+      const res = await authAPI.adminUpdateUserStatus(userId, status);
+      const updatedUser = res?.data?.user;
+      if (updatedUser?.id) {
+        setUsers((prev) => prev.map((u) => (u.id === updatedUser.id ? { ...u, status: updatedUser.status } : u)));
+      }
+      setMessage('User status updated successfully.');
+    } catch (err) {
+      setError(err.message || 'Failed to update user status.');
     } finally {
       setSavingByUserId((prev) => ({ ...prev, [userId]: false }));
     }
@@ -558,6 +583,32 @@ export default function AdminUsersPage() {
                   <div>
                     <p className="text-xs uppercase tracking-wide text-ink-tertiary">Created</p>
                     <p className="mt-1 text-sm font-medium text-ink">{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'Unknown'}</p>
+                  </div>
+                </div>
+
+                <div className="mt-4 rounded-2xl border border-edge bg-surface px-4 py-4">
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <p className="text-sm font-medium text-ink">Account Status</p>
+                    <span className="text-xs text-ink-tertiary">Change access availability</span>
+                  </div>
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <select
+                      value={editingStatusByUserId[u.id] || u.status || 'active'}
+                      onChange={(event) => setEditingStatusByUserId((prev) => ({ ...prev, [u.id]: event.target.value }))}
+                      className="rounded-xl border border-edge bg-canvas px-3 py-2 text-sm text-ink outline-none focus:border-brand focus:ring-2 focus:ring-brand/20"
+                    >
+                      <option value="active">active</option>
+                      <option value="inactive">inactive</option>
+                      <option value="suspended">suspended</option>
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => saveUserStatus(u.id)}
+                      disabled={!!savingByUserId[u.id]}
+                      className="rounded-xl border border-edge bg-surface-200 px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface disabled:opacity-60"
+                    >
+                      {savingByUserId[u.id] ? 'Saving...' : 'Save Status'}
+                    </button>
                   </div>
                 </div>
 

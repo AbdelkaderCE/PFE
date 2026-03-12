@@ -439,6 +439,54 @@ export const updateUserRolesByAdmin = async (
   };
 };
 
+export const updateUserStatusByAdmin = async (
+  adminUserId: number,
+  targetUserId: number,
+  status: "active" | "inactive" | "suspended"
+): Promise<{
+  id: number;
+  email: string;
+  nom: string;
+  prenom: string;
+  status: "active" | "inactive" | "suspended";
+  roles: string[];
+}> => {
+  const adminRoles = await getUserRoles(adminUserId);
+  const isAdmin = adminRoles.some((roleName) => ["admin", "vice_doyen"].includes(roleName));
+
+  if (!isAdmin) {
+    throw new AuthServiceError("Unauthorized: Only admins can update user status");
+  }
+
+  const targetUser = await prisma.user.findUnique({ where: { id: targetUserId } });
+  if (!targetUser) {
+    throw new AuthServiceError("User not found");
+  }
+
+  const nextStatus = ["active", "inactive", "suspended"].includes(status)
+    ? status
+    : null;
+  if (!nextStatus) {
+    throw new AuthServiceError("Invalid status value");
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id: targetUserId },
+    data: { status: nextStatus },
+  });
+
+  const updatedRoles = await getUserRoles(targetUserId);
+
+  return {
+    id: updatedUser.id,
+    email: updatedUser.email,
+    nom: updatedUser.nom,
+    prenom: updatedUser.prenom,
+    status: updatedUser.status,
+    roles: updatedRoles,
+  };
+};
+
 // ── Admin reset password ────────────────────────────────────────
 
 export const adminResetPassword = async (

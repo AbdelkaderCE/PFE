@@ -13,6 +13,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import request from '../services/api';
 
@@ -96,6 +97,7 @@ function formatDeadline(dateStr, t) {
 export default function StudentDashboard() {
   const { user } = useAuth();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [specialties, setSpecialties] = useState([]);
   const [deadlines, setDeadlines] = useState([]);
   const [documents, setDocuments] = useState([]);
@@ -339,7 +341,11 @@ export default function StudentDashboard() {
                 ))}
               </ul>
               <div className="px-5 py-3 border-t border-edge-subtle">
-                <button className="w-full text-center text-sm font-medium text-brand hover:text-brand-hover transition-colors duration-150">
+                <button
+                  type="button"
+                  onClick={() => navigate('/dashboard/documents')}
+                  className="w-full rounded-xl border border-edge bg-canvas px-3 py-2.5 text-center text-sm font-medium text-brand transition-colors duration-150 hover:bg-blue-50 dark:hover:bg-blue-950/40"
+                >
                   {t('studentDashboard.goToDocuments')}
                 </button>
               </div>

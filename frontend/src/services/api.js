@@ -154,6 +154,12 @@ export const authAPI = {
       method: 'PUT',
       body: JSON.stringify({ roleNames }),
     }),
+
+  adminUpdateUserStatus: (userId, status) =>
+    request(`/api/v1/auth/admin/users/${userId}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status }),
+    }),
 };
 
 export default request;
