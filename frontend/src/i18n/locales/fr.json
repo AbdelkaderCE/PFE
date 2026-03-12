@@ -16,13 +16,19 @@
     "notifications": "Notifications",
     "settings": "Paramètres",
     "support": "Aide",
-    "profile": "Profil"
+    "profile": "Profil",
+    "affectation": "Affectation",
+    "adminPanel": "Panneau Admin",
+    "users": "Utilisateurs",
+    "roles": "Rôles & Permissions",
+    "manageAnnonces": "Gérer les annonces"
   },
   "sections": {
     "academic": "Académique",
     "organization": "Organisation",
     "communication": "Communication",
-    "system": "Système"
+    "system": "Système",
+    "administration": "Administration"
   },
   "topbar": {
     "openMenu": "Ouvrir le menu",

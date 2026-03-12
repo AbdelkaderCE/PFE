@@ -26,6 +26,15 @@ import ProfilePage from './pages/ProfilePage';
 import DisciplinaryCasesPage from './pages/DisciplinaryCasesPage';
 import CalendarPage from './pages/CalendarPage';
 
+/* ── Module pages ── */
+import SuperAdminDashboard from './pages/SuperAdminDashboard';
+import UsersManagementPage from './pages/UsersManagementPage';
+import RolesPermissionsPage from './pages/RolesPermissionsPage';
+import PFEProjectsPage from './pages/PFEProjectsPage';
+import AffectationPage from './pages/AffectationPage';
+import DocumentsPage from './pages/DocumentsPage';
+import AnnonceManagementPage from './pages/AnnonceManagementPage';
+
 /* ── Misc ── */
 import UnauthorizedPage from './pages/UnauthorizedPage';
 import NotFoundPage from './pages/NotFoundPage';
@@ -69,6 +78,17 @@ function App() {
               <Route path="/dashboard/actualites" element={<ProtectedRoute><DashboardLayout><ActualitesPage /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/calendar" element={<ProtectedRoute><DashboardLayout><CalendarPage /></DashboardLayout></ProtectedRoute>} />
               <Route path="/dashboard/requests" element={<ProtectedRoute><DashboardLayout><RequestsPage /></DashboardLayout></ProtectedRoute>} />
+
+              {/* ── Admin / SuperAdmin routes ── */}
+              <Route path="/dashboard/admin" element={<ProtectedRoute><DashboardLayout><SuperAdminDashboard /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/admin/users" element={<ProtectedRoute><DashboardLayout><UsersManagementPage /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/admin/roles" element={<ProtectedRoute><DashboardLayout><RolesPermissionsPage /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/admin/announcements" element={<ProtectedRoute><DashboardLayout><AnnonceManagementPage /></DashboardLayout></ProtectedRoute>} />
+
+              {/* ── Module routes ── */}
+              <Route path="/dashboard/projects" element={<ProtectedRoute><DashboardLayout><PFEProjectsPage /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/affectation" element={<ProtectedRoute><DashboardLayout><AffectationPage /></DashboardLayout></ProtectedRoute>} />
+              <Route path="/dashboard/documents" element={<ProtectedRoute><DashboardLayout><DocumentsPage /></DashboardLayout></ProtectedRoute>} />
 
               {/* ── Error pages ── */}
               <Route path="/unauthorized" element={<UnauthorizedPage />} />

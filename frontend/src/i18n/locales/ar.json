@@ -16,13 +16,19 @@
     "notifications": "الإشعارات",
     "settings": "الإعدادات",
     "support": "المساعدة",
-    "profile": "الملف الشخصي"
+    "profile": "الملف الشخصي",
+    "affectation": "التوزيع",
+    "adminPanel": "لوحة الإدارة",
+    "users": "المستخدمون",
+    "roles": "الأدوار والصلاحيات",
+    "manageAnnonces": "إدارة الإعلانات"
   },
   "sections": {
     "academic": "أكاديمي",
     "organization": "التنظيم",
     "communication": "التواصل",
-    "system": "النظام"
+    "system": "النظام",
+    "administration": "الإدارة"
   },
   "topbar": {
     "openMenu": "فتح القائمة",

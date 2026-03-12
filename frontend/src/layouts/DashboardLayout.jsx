@@ -23,8 +23,9 @@ const ALL_MODULES = [
   { nameKey: 'nav.dashboard',     path: '/dashboard',                roles: ['etudiant', 'delegue', 'enseignant', 'chef_specialite', 'chef_departement', 'vice_doyen', 'admin'] },
   { nameKey: 'nav.actualites',    path: '/dashboard/actualites',     roles: ['etudiant', 'delegue', 'enseignant', 'chef_specialite', 'chef_departement', 'vice_doyen', 'admin'] },
   { nameKey: 'nav.projects',      path: '/dashboard/projects',       roles: ['etudiant', 'delegue', 'enseignant'] },
+  { nameKey: 'nav.affectation',   path: '/dashboard/affectation',    roles: ['etudiant', 'delegue', 'chef_specialite', 'chef_departement', 'vice_doyen', 'admin'] },
   { nameKey: 'nav.ai',            path: '/dashboard/ai',             roles: ['etudiant', 'delegue', 'enseignant'] },
-  { nameKey: 'nav.documents',     path: '/dashboard/documents',      roles: ['etudiant', 'delegue', 'enseignant', 'vice_doyen', 'admin'] },
+  { nameKey: 'nav.documents',     path: '/dashboard/documents',      roles: ['enseignant', 'chef_specialite', 'chef_departement', 'vice_doyen', 'admin'] },
   { nameKey: 'nav.calendar',      path: '/dashboard/calendar',       roles: ['etudiant', 'delegue', 'enseignant', 'chef_specialite', 'chef_departement', 'vice_doyen', 'admin'] },
   { nameKey: 'nav.disciplinary',  path: '/dashboard/disciplinary',   roles: ['enseignant', 'president_conseil', 'vice_doyen', 'admin'] },
   { nameKey: 'nav.requests',      path: '/dashboard/requests',       roles: ['etudiant', 'delegue', 'enseignant', 'chef_specialite', 'chef_departement', 'vice_doyen', 'admin'] },
@@ -32,6 +33,12 @@ const ALL_MODULES = [
   { nameKey: 'nav.notifications', path: '/dashboard/notifications',  roles: ['etudiant', 'delegue', 'enseignant', 'vice_doyen', 'admin'] },
   { nameKey: 'nav.settings',      path: '/dashboard/settings',       roles: ['etudiant', 'delegue', 'enseignant', 'chef_specialite', 'chef_departement', 'vice_doyen', 'admin'] },
   { nameKey: 'nav.support',       path: '/dashboard/support',        roles: ['etudiant', 'delegue', 'enseignant'] },
+
+  /* ── Admin-only module pages ── */
+  { nameKey: 'nav.adminPanel',    path: '/dashboard/admin',              roles: ['admin'] },
+  { nameKey: 'nav.users',         path: '/dashboard/admin/users',        roles: ['admin'] },
+  { nameKey: 'nav.roles',         path: '/dashboard/admin/roles',        roles: ['admin'] },
+  { nameKey: 'nav.manageAnnonces',path: '/dashboard/admin/announcements',roles: ['admin', 'vice_doyen', 'chef_departement'] },
 ];
 
 /* Map DB roles to the UI role token used by children (student | teacher | admin) */
