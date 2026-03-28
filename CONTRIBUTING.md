@@ -80,8 +80,8 @@ npm install
 Create `backend/.env`:
 ```env
 DATABASE_URL="postgresql://postgres:super4USER@localhost:5432/university_pfe?schema=public"
-JWT_ACCESS_SECRET="your-access-secret"
-JWT_REFRESH_SECRET="your-refresh-secret"
+JWT_ACCESS_SECRET="your_real_key"
+JWT_REFRESH_SECRET="your_real_key"
 ```
 
 ### 4. Run Prisma migrations

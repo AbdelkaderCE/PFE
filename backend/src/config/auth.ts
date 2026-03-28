@@ -1,6 +1,6 @@
 // JWT Secrets
-export const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'fallback-secret-change-me';
-export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'fallback-refresh-secret-change-me';
+export const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || 'your_real_key';
+export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'your_real_key';
 
 // Token TTL (Time to Live)
 export const ACCESS_TOKEN_TTL = process.env.JWT_ACCESS_EXPIRES_IN || '15m';
